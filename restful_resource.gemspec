@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'restful_resource/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "rest_resource"
+  spec.name          = "restful_resource"
   spec.version       = RestfulResource::VERSION
   spec.authors       = ["David Santoro"]
   spec.email         = ["developers@carwow.co.uk"]
   spec.description   = %q{A simple activerecord inspired rest resource base class implemented using rest-client}
   spec.summary       = %q{A simple activerecord inspired rest resource base class implemented using rest-client}
-  spec.homepage      = "http://www.github.com/carwow/rest_resource"
+  spec.homepage      = "http://www.github.com/carwow/restful_resource"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

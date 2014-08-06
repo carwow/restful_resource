@@ -10,7 +10,7 @@ module RestfulResource
         url = url.gsub(':'+key.to_s, params[key].to_s)
       end
 
-      url_params = url.scan(/:([^\/]+)/)
+      url_params = url.scan(/:([A-Za-z][^\/]*)/)
       if url_params.any?
         raise ParameterMissingError.new(url_params)
       end

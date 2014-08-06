@@ -43,6 +43,12 @@ describe RestfulResource::Base do
       expected_error_message = 'You must pass values for the following parameters: [country_slug, team_id]'
       expect { Player.url }.to raise_error(RestfulResource::ParameterMissingError, expected_error_message)
     end
+
+    it "should not confuse port number as a parameter" do
+      Player.url = 'http://api.carwow.co.uk:7000/teams/:team_id/players'
+
+      expect { Player.url(team_id: 13) }.not_to raise_error
+    end
   end
 
   context "#all" do

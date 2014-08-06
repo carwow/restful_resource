@@ -1,4 +1,4 @@
-# RestfulResource
+# [[RestfulResource]]
 
 TODO: Write a gem description
 

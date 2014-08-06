@@ -15,7 +15,7 @@ task :upload => :build do
   end
 
   create_tag(current_tag_name)
-  upload_gem 
+  Rake::Task[:release].invoke
 end
 
 desc "Increase the revision number"

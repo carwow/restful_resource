@@ -1,4 +1,4 @@
-module RestResource
+module RestfulResource
   class ParameterMissingError < StandardError
     def initialize(missing_parameters)
       @missing_parameters = missing_parameters

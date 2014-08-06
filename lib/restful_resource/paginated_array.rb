@@ -1,5 +1,5 @@
-module ResearchSiteApiClient
-  class PaginatableArray < Array
+module RestfulResource
+  class PaginatedArray < Array
     def initialize(original_array, previous_page_url: previous_page_url, next_page_url: next_page_url)
       super(original_array)
 

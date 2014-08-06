@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../lib/rest_resource'
+require_relative '../lib/restful_resource'
 
 RSpec.configure do |config|
   config.color = true

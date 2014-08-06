@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe RestResource::Base do
+describe RestfulResource::Base do
   context "#find" do
     it "should retrieve a resource with a simple url" do
       response = { id: 15, name: 'Arsenal' }.to_json 
@@ -41,7 +41,24 @@ describe RestResource::Base do
       Player.url = 'http://api.carwow.co.uk/countries/:country_slug/teams/:team_id/players'
 
       expected_error_message = 'You must pass values for the following parameters: [country_slug, team_id]'
-      expect { Player.url }.to raise_error(RestResource::ParameterMissingError, expected_error_message)
+      expect { Player.url }.to raise_error(RestfulResource::ParameterMissingError, expected_error_message)
+    end
+  end
+
+  context "#all" do
+    it "should provide a paginated result if response contains rest pagination headers" do
+      response = [{ id: 1, name: 'Arsenal'}, { id: 2, name: 'Chelsea' }].to_json 
+      allow(response).to receive(:headers) { 
+        {:links => '<http://api.carwow.co.uk/teams.json?page=6>;rel="last",<http://api.carwow.co.uk/teams.json?page=2>;rel="next"'}
+      }
+      stub_get('http://api.carwow.co.uk/teams', response)
+
+      teams = Team.all
+
+      expect(teams.previous_page).to be_nil
+      expect(teams.next_page).to eq 2
+      expect(teams.first.name).to eq 'Arsenal'
+      expect(teams.last.name).to eq 'Chelsea'
     end
   end
 
@@ -53,18 +70,18 @@ describe RestResource::Base do
   end
 
   private
-  def stub_get(url, fake_response)
+  def stub_get(url, fake_response, params = {})
     expect(RestClient).to receive(:get).
-                          with(url).
+                          with(url, params: params).
                           and_return(fake_response)
   end
 end
 
-class Team < RestResource::Base
+class Team < RestfulResource::Base
   self.url = "http://api.carwow.co.uk/teams"
 end
 
-class Player < RestResource::Base
+class Player < RestfulResource::Base
   self.url = "http://api.carwow.co.uk/teams/:team_id/players"
 end
 

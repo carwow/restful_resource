@@ -20,7 +20,7 @@ end
 
 desc "Increase the revision number"
 task :increase_revision_number do
-  version_file = "lib/rest_resource/version.rb"
+  version_file = "lib/restful_resource/version.rb"
   file_content = File.read(version_file)
   rule = /(\d+\.\d+\.)(\d+)/
   new_revision_number = rule.match(file_content)[2].to_i + 1
@@ -40,5 +40,5 @@ def create_tag(tag_name)
 end
 
 def current_tag_name
-  "v#{RestResource::VERSION}"
+  "v#{RestfulResource::VERSION}"
 end

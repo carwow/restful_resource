@@ -1,4 +1,4 @@
-module RestResource
+module RestfulResource
   class Base
     def self.url=(url)
       @url = url
@@ -50,8 +50,9 @@ module RestResource
       errors.nil? || errors.count == g
     end
 
-    def self.find(id, params={})
-      self.new(ActiveSupport::JSON.decode(RestClient.get("#{url(params)}/#{id}")))
+    def self.find(id, url_params={})
+      response = RestClient.get("#{url(url_params)}/#{id}", params: {})
+      self.new(ActiveSupport::JSON.decode(response))
     end
 
     def self.update_attributes(id, attributes)
@@ -130,7 +131,7 @@ module RestResource
       next_url = links.find_link(['rel', 'next']).try(:href)
 
       array = ActiveSupport::JSON.decode(response).map { |attributes| self.new(attributes) }
-      PaginatableArray.new(array, previous_page_url: prev_url, next_page_url: next_url)
+      PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url)
     end
   end
 end

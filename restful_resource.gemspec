@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'rest_resource/version'
+require 'restful_resource/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rest_resource"
-  spec.version       = RestResource::VERSION
+  spec.version       = RestfulResource::VERSION
   spec.authors       = ["David Santoro"]
   spec.email         = ["developers@carwow.co.uk"]
   spec.description   = %q{A simple activerecord inspired rest resource base class implemented using rest-client}
@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rest-client"
   spec.add_dependency "link_header"
   spec.add_dependency "activesupport"
+  spec.add_dependency "rack"
 end

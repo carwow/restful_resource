@@ -4,19 +4,32 @@ module RestfulResource
       @url = url
     end
 
-    def self.url(params={})
+    def self.processed_url_and_params(params={})
       url = @url
-      params.keys.each do |key|
-        url = url.gsub(':'+key.to_s, params[key].to_s)
+      other_params = params.clone
+      missing_params = []
+
+      url_params = url.scan(/:([A-Za-z][^\/]*)/).flatten
+      url_params.each do |key|
+        value = other_params.delete(key.to_sym)
+        if value.nil?
+          missing_params << key
+        else
+          url = url.gsub(':'+key.to_s, value.to_s)
+        end
       end
 
-      url_params = url.scan(/:([A-Za-z][^\/]*)/)
-      if url_params.any?
-        raise ParameterMissingError.new(url_params)
+      if missing_params.any?
+        raise ParameterMissingError.new(missing_params)
       end
 
-      url
+      [url, other_params]
     end
+
+    def self.url(params={})
+      processed_url_and_params(params).first
+    end
+
 
     def self.has_one(nested_resource_type)
       klass = nested_resource_type.to_s.camelize.safe_constantize
@@ -81,7 +94,8 @@ module RestfulResource
     end
 
     def self.all(params = {})
-      response = RestClient.get("#{url}", params: params)
+      url, other_params = processed_url_and_params(params)
+      response = RestClient.get("#{url}", params: other_params)
       paginate_response(response)
     end
 

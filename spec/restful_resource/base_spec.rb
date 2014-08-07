@@ -53,10 +53,7 @@ describe RestfulResource::Base do
 
   context "#all" do
     it "should provide a paginated result if response contains rest pagination headers" do
-      response = [{ id: 1, name: 'Arsenal'}, { id: 2, name: 'Chelsea' }].to_json 
-      allow(response).to receive(:headers) { 
-        {:links => '<http://api.carwow.co.uk/teams.json?page=6>;rel="last",<http://api.carwow.co.uk/teams.json?page=2>;rel="next"'}
-      }
+      response = response_with_page_information()
       stub_get('http://api.carwow.co.uk/teams', response)
 
       teams = Team.all
@@ -75,11 +72,26 @@ describe RestfulResource::Base do
     expect(example.surname).to eq 'Santoro'
   end
 
+  it "should use some params for the url and other for the query string" do
+    stub_get('http://api.carwow.co.uk/teams/15/players', response_with_page_information,
+             {name_like: 'Ars'})
+
+    players = Player.all(team_id: 15, name_like: 'Ars')
+  end
+
   private
   def stub_get(url, fake_response, params = {})
     expect(RestClient).to receive(:get).
                           with(url, params: params).
                           and_return(fake_response)
+  end
+
+  def response_with_page_information
+    response = [{ id: 1, name: 'Arsenal'}, { id: 2, name: 'Chelsea' }].to_json 
+    allow(response).to receive(:headers) { 
+      {:links => '<http://api.carwow.co.uk/teams.json?page=6>;rel="last",<http://api.carwow.co.uk/teams.json?page=2>;rel="next"'}
+    }
+    response
   end
 end
 

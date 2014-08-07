@@ -33,7 +33,7 @@ module RestfulResource
 
     def self.has_one(nested_resource_type)
       klass = nested_resource_type.to_s.camelize.safe_constantize
-      klass = OpenStruct if (klass.nil? || klass.superclass != RestResource)
+      klass = OpenStruct if (klass.nil? || klass.superclass != RestfulResource)
 
       self.send(:define_method, nested_resource_type) do
         nested_resource = @inner_object.send(nested_resource_type)
@@ -44,7 +44,7 @@ module RestfulResource
 
     def self.has_many(nested_resource_type)
       klass = nested_resource_type.to_s.singularize.camelize.safe_constantize
-      klass = OpenStruct if (klass.nil? || (klass.superclass != RestResource))
+      klass = OpenStruct if (klass.nil? || (klass.superclass != RestfulResource))
 
       self.send(:define_method, nested_resource_type) do
         @inner_object.send(nested_resource_type).map { |obj| klass.new(obj) }

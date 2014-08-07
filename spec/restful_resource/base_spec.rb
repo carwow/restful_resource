@@ -106,6 +106,8 @@ class Team < RestfulResource::Base
 end
 
 class Player < RestfulResource::Base
+  has_one :team
+
   self.url = "http://api.carwow.co.uk/teams/:team_id/players"
 end
 

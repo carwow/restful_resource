@@ -79,6 +79,12 @@ describe RestfulResource::Base do
     players = Player.all(team_id: 15, name_like: 'Ars')
   end
 
+  it "should raise an error when accessing a field that doesn't exist" do
+    player = Player.new({name: 'David', surname: 'Santoro'})
+    
+    expect { player.age }.to raise_error(NoMethodError)
+  end
+
   private
   def stub_get(url, fake_response, params = {})
     expect(RestClient).to receive(:get).

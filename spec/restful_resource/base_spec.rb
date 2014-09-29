@@ -54,7 +54,7 @@ describe RestfulResource::Base do
   context "#all" do
     it "should provide a paginated result if response contains rest pagination headers" do
       response = response_with_page_information()
-      stub_get('http://api.carwow.co.uk/teams', response)
+      stub_new_resource('http://api.carwow.co.uk/teams', response)
 
       teams = Team.all
 
@@ -73,8 +73,7 @@ describe RestfulResource::Base do
   end
 
   it "should use some params for the url and other for the query string" do
-    stub_get('http://api.carwow.co.uk/teams/15/players', response_with_page_information,
-             {name_like: 'Ars'})
+    stub_new_resource('http://api.carwow.co.uk/teams/15/players?name_like=Ars', response_with_page_information)
 
     players = Player.all(team_id: 15, name_like: 'Ars')
   end
@@ -86,6 +85,11 @@ describe RestfulResource::Base do
   end
 
   private
+  def stub_new_resource(url, fake_response)
+    resource = instance_double('RestClient::Resource', get: fake_response)
+    allow(RestClient::Resource).to receive(:new).with(url).and_return resource
+  end
+
   def stub_get(url, fake_response, params = {})
     expect(RestClient).to receive(:get).
                           with(url, params: params).

@@ -76,6 +76,12 @@ module RestfulResource
       self.new(ActiveSupport::JSON.decode(response))
     end
 
+    def self.get_one(url_params={})
+      resource = create_new_resource(url_params)
+      response = resource.get
+      self.new(ActiveSupport::JSON.decode(response))      
+    end
+
     def self.update_attributes(id, attributes)
       begin
         result = parse(RestClient.put("#{url}/#{id}", attributes))
@@ -102,8 +108,8 @@ module RestfulResource
     end
 
     def self.all(params = {})
-      url, other_params = processed_url_and_params(params)
-      response = RestClient.get("#{url}", params: other_params)
+      resource = create_new_resource(params)
+      response = resource.get
       paginate_response(response)
     end
 
@@ -155,5 +161,12 @@ module RestfulResource
       array = ActiveSupport::JSON.decode(response).map { |attributes| self.new(attributes) }
       PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url)
     end
+
+    def self.create_new_resource(params={})
+      url, other_params = processed_url_and_params(params)
+      url += "?#{other_params.to_query}" if not other_params.empty?
+      resource = RestClient::Resource.new("#{url}")
+    end
+
   end
 end

@@ -21,14 +21,24 @@ module RestfulResource
       self.new(parse_json(response))
     end
 
+    def self.where(params={})
+      response = http.get(collection_url(params))
+      self.new_collection(parse_json(response))
+    end
+
     private
     def self.member_url(id, params)
-      resource_url = replace_parameters(@resource_url, params)
+      replace_parameters(@@base_url.merge("#{@resource_url}/").merge(id.to_s).to_s, params)
+    end
 
-      @@base_url.
-        merge("#{resource_url}/").
-        merge(id.to_s).
-        to_s
+    def self.collection_url(params)
+      replace_parameters(@@base_url.merge("#{@resource_url}/").to_s, params)
+    end
+
+    def self.new_collection(json)
+      json.map do |element|
+        self.new(element)
+      end
     end
 
     def self.parse_json(json)
@@ -41,7 +51,7 @@ module RestfulResource
 
       url_params = url.scan(/:([A-Za-z][^\/]*)/).flatten
       url_params.each do |key|
-        value = params[key]
+        value = params.delete(key)
         if value.nil?
           missing_params << key
         else
@@ -53,6 +63,7 @@ module RestfulResource
         raise ParameterMissingError.new(missing_params)
       end
 
+      url = url + "?#{params.to_query}" unless params.empty?
       url
     end
   end

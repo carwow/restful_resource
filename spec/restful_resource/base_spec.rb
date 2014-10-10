@@ -36,6 +36,18 @@ describe RestfulResource::Base do
       expect(object.price).to eq 15000
     end
   end
+
+  describe "#where" do
+    it "should return an array of objects" do
+      expect(@mock_http).to receive(:get).with("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models/?on_sale=true").and_return([{name: 'Golf', price: 15000}, {name: 'Polo', price: 11000}].to_json)
+      object = Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15)
+
+      expect(object).not_to be_nil
+      expect(object.length).to eq 2
+      expect(object.first.name).to eq 'Golf'
+      expect(object.first.price).to eq 15000
+    end
+  end
 end
 
 

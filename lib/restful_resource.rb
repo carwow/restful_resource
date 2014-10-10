@@ -7,4 +7,5 @@ require "restful_resource/version"
 require "restful_resource/paginated_array"
 require "restful_resource/parameter_missing_error"
 require "restful_resource/base"
+require "restful_resource/old_base"
 

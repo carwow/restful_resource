@@ -5,25 +5,27 @@ module RestfulResource
     end
 
     def self.processed_url_and_params(params={})
-      url = @url
+      uri = URI(@url)
+      path = uri.path
       other_params = params.clone
       missing_params = []
 
-      url_params = url.scan(/:([A-Za-z][^\/]*)/).flatten
-      url_params.each do |key|
+      path_params = path.scan(/:([A-Za-z][^\/]*)/).flatten
+      path_params.each do |key|
         value = other_params.delete(key.to_sym)
         if value.nil?
           missing_params << key
         else
-          url = url.gsub(':'+key.to_s, value.to_s)
+          path = path.gsub(':'+key.to_s, value.to_s)
         end
       end
 
       if missing_params.any?
         raise ParameterMissingError.new(missing_params)
       end
-
-      [url, other_params]
+      
+      uri.path = path
+      [uri.to_s, other_params]
     end
 
     def self.url(params={})

@@ -49,6 +49,12 @@ describe RestfulResource::Base do
 
       expect { Player.url(team_id: 13) }.not_to raise_error
     end
+
+    it "should not substitue parameters in the http auth part of the url" do
+      Player.url = 'http://admin:secret@api.carwow.co.uk:7000/teams/:team_id/players'
+
+      expect { Player.url(team_id: 13) }.not_to raise_error
+    end
   end
 
   context "#all" do

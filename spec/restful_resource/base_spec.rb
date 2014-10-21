@@ -41,7 +41,7 @@ describe RestfulResource::Base do
   describe "#where" do
     it "should return an array of objects" do
       expected_response = RestfulResource::Response.new(body: [{name: 'Golf', price: 15000}, {name: 'Polo', price: 11000}].to_json)
-      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models/?on_sale=true", expected_response)
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true", expected_response)
       object = Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15)
 
       expect(object).not_to be_nil
@@ -52,7 +52,7 @@ describe RestfulResource::Base do
 
     it "should provide a paginated result if response contains rest pagination headers" do
       expected_response = response_with_page_information()
-      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models/", expected_response)
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models", expected_response)
 
       models = Model.where(group_id: 15, make_slug: 'Volkswagen')
 
@@ -60,6 +60,18 @@ describe RestfulResource::Base do
       expect(models.last.name).to eq 'Polo'
       expect(models.previous_page).to be_nil
       expect(models.next_page).to eq 2
+    end
+  end
+
+  describe "#all" do
+    it "should return all items" do
+      expected_response = RestfulResource::Response.new(body: [{name: 'Volkswagen'}, {name: 'Audi'}].to_json)
+      expect_get("http://api.carwow.co.uk/makes", expected_response)
+      makes = Make.all
+
+      expect(makes).not_to be_nil
+      expect(makes.length).to eq 2
+      expect(makes.first.name).to eq 'Volkswagen'
     end
   end
 
@@ -76,6 +88,36 @@ describe RestfulResource::Base do
     end
   end
 
+  describe "#action" do
+    it "should retrieve a resource using a custom action" do
+      expect_get('http://api.carwow.co.uk/makes/15/lazy', RestfulResource::Response.new(body: {name: 'Volk.'}.to_json))
+
+      make = Make.action(:lazy).find(15)
+
+      expect(make.name).to eq 'Volk.'
+    end
+
+    it 'should retrieve many resources using a custom action' do
+      expect_get('http://api.carwow.co.uk/makes/available', RestfulResource::Response.new(body: [{name: 'Audi'}, {name: 'Fiat'}].to_json))
+
+      make = Make.action(:available).all
+
+      expect(make.first.name).to eq 'Audi'
+      expect(make.last.name).to eq 'Fiat'
+    end
+  end
+
+  describe "#get" do 
+    it "should return an open_object" do
+      expected_response = RestfulResource::Response.new(body: {average_score: 4.3}.to_json)
+      expect_get('http://api.carwow.co.uk/makes/average_score?make_slug%5B%5D=Volkswagen&make_slug%5B%5D=Audi', expected_response)
+
+      object = Make.action(:average_score).get(make_slug: ['Volkswagen', 'Audi'])
+
+      expect(object.average_score).to eq 4.3
+      expect(object.class).to eq RestfulResource::OpenObject
+    end
+  end
 
   def expect_get(url, response)
     expect(@mock_http).to receive(:get).with(url).and_return(response)
@@ -87,24 +129,3 @@ describe RestfulResource::Base do
   end
 end
 
-class Make < RestfulResource::Base
-  self.resource_url = "makes"
-end
-
-class Model < RestfulResource::Base
-  self.resource_url = "groups/:group_id/makes/:make_slug/models"
-end
-
-class BaseA < RestfulResource::Base
-end
-
-class BaseB < RestfulResource::Base
-end
-
-class TestA < BaseA
-  self.resource_url = "testa"
-end
-
-class TestB < BaseB
-  self.resource_url = "testb"
-end

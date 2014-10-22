@@ -51,6 +51,10 @@ module RestfulResource
       @action_prefix = action_prefix.to_s
     end
 
+    def as_json(options=nil)
+      @inner_object.send(:table).as_json(options)
+    end
+
     private
     def self.merge_url_paths(uri, *paths)
       uri.merge(paths.compact.join('/')).to_s 

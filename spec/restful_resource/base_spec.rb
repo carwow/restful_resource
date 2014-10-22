@@ -119,6 +119,23 @@ describe RestfulResource::Base do
     end
   end
 
+  describe ".as_json" do
+    before :each do
+      expected_response = RestfulResource::Response.new(body: [{name: 'Audi', slug: 'Audi-Slug'}, {name: 'Fiat', slug: 'Fiat-Slug'}].to_json)
+      expect_get('http://api.carwow.co.uk/makes', expected_response)
+
+      @makes = Make.all
+    end
+
+    it 'should not return inner object table' do
+      expect(@makes.first.as_json).to eq ({'name' => 'Audi', 'slug' => 'Audi-Slug'})
+    end
+
+    it 'should return inner object table on selected fields' do
+      expect(@makes.last.as_json(only: [:name])).to eq ({'name' => 'Fiat'})
+    end
+  end
+
   def expect_get(url, response)
     expect(@mock_http).to receive(:get).with(url).and_return(response)
   end

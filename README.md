@@ -31,21 +31,10 @@ TODO: Write usage instructions here
 ## Planned Features
 
 ### Core
-
-- has_one, has_many
-  - with different class type
-  - with no class type
-
-- get_one, get_many, post, put, save
-  - standard url format (e.g. "/offers", "/offers/1010")
-  - custom url, standard format
-  - custom url e.g.
-  - parameters
-
-- Access result as object
-
-
+  - Test that has_many and has_one pick correct class for children (if defined)
+  - Make base_url resilient when missing trailing slash
+  - Implement http authentication
 
 ### Active record style validation
 
-### Constraints(mandatory fiedls)
+### Constraints(mandatory fields)

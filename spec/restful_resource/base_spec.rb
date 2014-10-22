@@ -136,10 +136,6 @@ describe RestfulResource::Base do
     end
   end
 
-  def expect_get(url, response)
-    expect(@mock_http).to receive(:get).with(url).and_return(response)
-  end
-
   def response_with_page_information
     RestfulResource::Response.new(body: [{ id: 1, name: 'Golf'}, { id: 2, name: 'Polo' }].to_json,
                                  headers: { links: '<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=6>;rel="last",<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=2>;rel="next"'})

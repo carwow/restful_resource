@@ -7,7 +7,11 @@ module RestfulResource
     end
 
     def self.http
-      @@http ||= RestfulResource::HttpClient.new()
+      @@http ||= RestfulResource::HttpClient.new(authorization: @base_authorization)
+    end
+
+    def self.http_authorization(user, password)
+      @base_authorization = RestfulResource::Authorization.http_authorization(user, password)
     end
 
     def self.base_url=(url)

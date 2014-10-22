@@ -9,6 +9,7 @@ require_relative "restful_resource/paginated_array"
 require_relative "restful_resource/parameter_missing_error"
 require_relative "restful_resource/open_object"
 require_relative 'restful_resource/response'
+require_relative 'restful_resource/authorization'
 require_relative 'restful_resource/http_client'
 require_relative "restful_resource/associations"
 require_relative "restful_resource/base"

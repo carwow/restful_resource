@@ -7,7 +7,7 @@ module RestfulResource
     end
 
     def self.http
-      @@http ||= RestfulResource::HttpClient.new(authorization: @base_authorization)
+      @@http ||= RestfulResource::HttpClient.new(authorization: superclass.base_authorization)
     end
 
     def self.http_authorization(user, password)
@@ -16,10 +16,6 @@ module RestfulResource
 
     def self.base_url=(url)
       @base_url = URI.parse(url)
-    end
-
-    def self.base_url
-      @base_url
     end
 
     def self.resource_path(url)
@@ -57,6 +53,15 @@ module RestfulResource
 
     def as_json(options=nil)
       @inner_object.send(:table).as_json(options)
+    end
+
+    protected
+    def self.base_url
+      @base_url
+    end
+
+    def self.base_authorization
+      @base_authorization
     end
 
     private

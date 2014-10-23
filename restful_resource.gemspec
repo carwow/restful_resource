@@ -6,7 +6,7 @@ require 'restful_resource/version'
 Gem::Specification.new do |spec|
   spec.name          = "restful_resource"
   spec.version       = RestfulResource::VERSION
-  spec.authors       = ["David Santoro"]
+  spec.authors       = ["David Santoro", "Federico Rebora"]
   spec.email         = ["developers@carwow.co.uk"]
   spec.description   = %q{A simple activerecord inspired rest resource base class implemented using rest-client}
   spec.summary       = %q{A simple activerecord inspired rest resource base class implemented using rest-client}

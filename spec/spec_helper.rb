@@ -11,3 +11,7 @@ end
 def expect_get(url, response)
   expect(@mock_http).to receive(:get).with(url).and_return(response)
 end
+
+def expect_put(url, response, data: {})
+  expect(@mock_http).to receive(:put).with(url, data).and_return(response)
+end

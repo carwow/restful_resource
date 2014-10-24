@@ -107,7 +107,7 @@ describe RestfulResource::Base do
     end
   end
 
-  describe "#get" do 
+  describe "#get" do
     it "should return an open_object" do
       expected_response = RestfulResource::Response.new(body: {average_score: 4.3}.to_json)
       expect_get('http://api.carwow.co.uk/makes/average_score?make_slug%5B%5D=Volkswagen&make_slug%5B%5D=Audi', expected_response)
@@ -116,6 +116,17 @@ describe RestfulResource::Base do
 
       expect(object.average_score).to eq 4.3
       expect(object.class).to eq RestfulResource::OpenObject
+    end
+  end
+
+  describe "#put" do
+    it 'should put data properly' do
+      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expect_put('http://api.carwow.co.uk/makes?make_slug=Volkswagen', expected_response)
+
+      Make.put(make_slug: 'Volkswagen')
+
+      expect(expected_response.status).to eq 200
     end
   end
 

@@ -120,11 +120,42 @@ describe RestfulResource::Base do
   end
 
   describe "#put" do
-    it 'should put data properly' do
+    it 'should put no data with no params' do
+      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expect_put('http://api.carwow.co.uk/makes', expected_response)
+
+      Make.put
+
+      expect(expected_response.status).to eq 200
+    end
+
+    it 'should put no data with params passed' do
       expected_response = RestfulResource::Response.new(body: nil, status: 200)
       expect_put('http://api.carwow.co.uk/makes?make_slug=Volkswagen', expected_response)
 
       Make.put(make_slug: 'Volkswagen')
+
+      expect(expected_response.status).to eq 200
+    end
+
+    it 'should put data with no params passed' do
+      data = {make_slug: 'Audi'}.to_json
+
+      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expect_put('http://api.carwow.co.uk/makes', expected_response, data: data)
+
+      Make.put(data: data)
+
+      expect(expected_response.status).to eq 200
+    end
+
+    it 'should put data with params passed' do
+      data = {make_slug: 'Audi'}.to_json
+
+      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expect_put('http://api.carwow.co.uk/makes?make_slug=Volkswagen', expected_response, data: data)
+
+      Make.put(data: data, make_slug: 'Volkswagen')
 
       expect(expected_response.status).to eq 200
     end

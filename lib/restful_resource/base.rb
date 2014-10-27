@@ -37,8 +37,8 @@ module RestfulResource
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
-    def self.put(data: {}, **params)
-      http.put(collection_url(params), data)
+    def self.put(id, data: {}, **params)
+      http.put(member_url(id, params), data)
     end
 
     def self.all

@@ -139,18 +139,18 @@ describe RestfulResource::Base do
     end
 
     it 'should put data with no params passed' do
-      data = {make_slug: 'Audi'}.to_json
+      data = {make_slug: 'Audi'}
 
       expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1', expected_response, data: data)
 
-      object = Make.put(1, data: data)
+      object = Make.put(1, data: {make_slug: 'Audi'})
 
       expect(object.name).to eq 'Audi'
     end
 
     it 'should put data with params passed' do
-      data = {make_slug: 'Audi'}.to_json
+      data = {make_slug: 'Audi'}
 
       expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response, data: data)
@@ -183,4 +183,3 @@ describe RestfulResource::Base do
                                  headers: { links: '<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=6>;rel="last",<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=2>;rel="next"'})
   end
 end
-

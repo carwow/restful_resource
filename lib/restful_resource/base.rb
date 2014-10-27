@@ -38,7 +38,9 @@ module RestfulResource
     end
 
     def self.put(id, data: {}, **params)
-      response = http.put(member_url(id, params), data)
+      url = member_url(id, params)
+
+      response = http.put(url, data: data)
       self.new(parse_json(response.body))
     end
 
@@ -71,7 +73,7 @@ module RestfulResource
 
     private
     def self.merge_url_paths(uri, *paths)
-      uri.merge(paths.compact.join('/')).to_s 
+      uri.merge(paths.compact.join('/')).to_s
     end
 
     def self.member_url(id, params)
@@ -80,7 +82,7 @@ module RestfulResource
     end
 
     def self.collection_url(params)
-      url = merge_url_paths(superclass.base_url, @resource_path, @action_prefix)  
+      url = merge_url_paths(superclass.base_url, @resource_path, @action_prefix)
       replace_parameters(url, params)
     end
 

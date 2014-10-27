@@ -7,6 +7,24 @@ describe RestfulResource::RailsValidations do
     RestfulResource::Base.base_url = "http://api.carwow.co.uk/"
   end
 
+  context "#put without errors" do
+    before :each do
+      data = {name: 'Barak'}
+      expected_response = RestfulResource::Response.new(body: {name: 'Barak'}.to_json)
+      expect_put("http://api.carwow.co.uk/dealers/1", expected_response, data: data)
+
+      @object = Dealer.put(1, data: data)
+    end
+
+    it 'should return object' do
+      expect(@object.name).to eq 'Barak'
+    end
+
+    it 'should return valid object' do
+      expect(@object.valid?).to be_truthy
+    end
+  end
+
   context "#put with errors" do
     before :each do
       data = {name: 'Leonardo'}

@@ -17,7 +17,7 @@ module RestfulResource
     end
 
     def valid?
-      errors.nil? || errors.count == 0
+      @inner_object.errors.nil? || @inner_object.errors.count == 0
     end
   end
 end

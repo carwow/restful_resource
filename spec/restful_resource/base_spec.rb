@@ -121,43 +121,43 @@ describe RestfulResource::Base do
 
   describe "#put" do
     it 'should put no data with no params' do
-      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1', expected_response)
 
-      Make.put(1)
+      object = Make.put(1)
 
-      expect(expected_response.status).to eq 200
+      expect(object.name).to eq 'Audi'
     end
 
     it 'should put no data with params passed' do
-      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response)
 
-      Make.put(1, make_slug: 'Volkswagen')
+      object = Make.put(1, make_slug: 'Volkswagen')
 
-      expect(expected_response.status).to eq 200
+      expect(object.name).to eq 'Audi'
     end
 
     it 'should put data with no params passed' do
       data = {make_slug: 'Audi'}.to_json
 
-      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1', expected_response, data: data)
 
-      Make.put(1, data: data)
+      object = Make.put(1, data: data)
 
-      expect(expected_response.status).to eq 200
+      expect(object.name).to eq 'Audi'
     end
 
     it 'should put data with params passed' do
       data = {make_slug: 'Audi'}.to_json
 
-      expected_response = RestfulResource::Response.new(body: nil, status: 200)
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
       expect_put('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response, data: data)
 
-      Make.put(1, data: data, make_slug: 'Volkswagen')
+      object = Make.put(1, data: data, make_slug: 'Volkswagen')
 
-      expect(expected_response.status).to eq 200
+      expect(object.name).to eq 'Audi'
     end
   end
 

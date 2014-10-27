@@ -12,6 +12,7 @@ require_relative 'restful_resource/response'
 require_relative 'restful_resource/authorization'
 require_relative 'restful_resource/http_client'
 require_relative "restful_resource/associations"
+require_relative 'restful_resource/rails_validations'
 require_relative "restful_resource/base"
 require_relative "restful_resource/old_base"
 

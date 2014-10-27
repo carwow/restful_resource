@@ -15,6 +15,10 @@ describe RestfulResource::HttpClient do
       response = @http_client.put('http://httpbin.org/put', data: { name: 'Alfred' })
       expect(response.status).to eq 200
     end
+
+    it 'should raise error 422' do
+      expect { @http_client.put('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
+    end
   end
 
   describe 'Authentication' do

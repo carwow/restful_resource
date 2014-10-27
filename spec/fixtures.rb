@@ -8,6 +8,12 @@ class Model < RestfulResource::Base
   resource_path "groups/:group_id/makes/:make_slug/models"
 end
 
+class Dealer < RestfulResource::Base
+  include RestfulResource::RailsValidations
+
+  resource_path "dealers"
+end
+
 class BaseA < RestfulResource::Base
 end
 

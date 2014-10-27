@@ -1,5 +1,13 @@
 module RestfulResource
   class HttpClient
+    class UnprocessableEntity < RuntimeError
+      attr_reader :response
+
+      def initialize(response)
+        @response = Response.new(body: response.body, headers: response.headers, status: response.code)
+      end
+    end
+
     def initialize(authorization: nil)
       @authorization = authorization
     end
@@ -10,7 +18,11 @@ module RestfulResource
     end
 
     def put(url, data: {})
-      response = RestClient.put(url, data, :accept => :json, authorization: @authorization)
+      begin
+        response = RestClient.put(url, data, :accept => :json, authorization: @authorization)
+      rescue RestClient::UnprocessableEntity => e
+        raise HttpClient::UnprocessableEntity.new(e.response)
+      end
       Response.new(body: response.body, headers: response.headers, status: response.code)
     end
   end

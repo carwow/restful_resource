@@ -38,7 +38,8 @@ module RestfulResource
     end
 
     def self.put(id, data: {}, **params)
-      http.put(member_url(id, params), data)
+      response = http.put(member_url(id, params), data)
+      self.new(parse_json(response.body))
     end
 
     def self.all

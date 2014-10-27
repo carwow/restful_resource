@@ -68,7 +68,7 @@ module RestfulResource
     end
 
     def valid?
-      errors.nil? || errors.count == g
+      errors.nil? || errors.count == 0
     end
 
     def self.find(id, url_params={})

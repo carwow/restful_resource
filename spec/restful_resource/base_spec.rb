@@ -3,8 +3,8 @@ require_relative '../spec_helper'
 describe RestfulResource::Base do
   before :each do
     @mock_http = double("mock_http")
-    RestfulResource::Base.http = @mock_http
-    RestfulResource::Base.base_url = "http://api.carwow.co.uk/"
+    allow(RestfulResource::Base).to receive(:http).and_return(@mock_http)
+    RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
   end
 
   it "should act as an openobject" do
@@ -77,11 +77,9 @@ describe RestfulResource::Base do
 
   describe "#base_url" do
     it "should be different for each subclass of Base" do
-      BaseA.base_url = "http://a.carwow.co.uk"
-      BaseA.http = @mock_http
+      BaseA.configure(base_url: "http://a.carwow.co.uk")
 
-      BaseB.base_url = "http://b.carwow.co.uk"
-      BaseB.http = @mock_http
+      BaseB.configure(base_url: "http://b.carwow.co.uk")
 
       expect_get('http://a.carwow.co.uk/testa/1', RestfulResource::Response.new())
       expect_get('http://b.carwow.co.uk/testb/2', RestfulResource::Response.new())

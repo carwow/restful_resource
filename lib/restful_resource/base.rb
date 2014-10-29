@@ -2,20 +2,16 @@ module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
 
-    def self.http=(http)
-      @http = http
-    end
+    def self.configure(base_url: nil, username: nil, password: nil)
+      @base_url = URI.parse(base_url)
 
-    def self.http
-      @http ||= RestfulResource::HttpClient.new(authorization: superclass.base_authorization)
-    end
+      auth = nil
 
-    def self.http_authorization(user, password)
-      @base_authorization = RestfulResource::Authorization.http_authorization(user, password)
-    end
+      if (username.present? && password.present?)
+        auth = RestfulResource::Authorization.http_authorization(username, password)
+      end
 
-    def self.base_url=(url)
-      @base_url = URI.parse(url)
+      @http = RestfulResource::HttpClient.new(authorization: auth)
     end
 
     def self.resource_path(url)
@@ -23,24 +19,24 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      response = superclass.http.get(member_url(id, params))
+      response = http.get(member_url(id, params))
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
-      response = superclass.http.get(collection_url(params))
+      response = http.get(collection_url(params))
       self.paginate_response(response)
     end
 
     def self.get(params={})
-      response = superclass.http.get(collection_url(params))
+      response = http.get(collection_url(params))
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
     def self.put(id, data: {}, **params)
       url = member_url(id, params)
 
-      response = superclass.http.put(url, data: data)
+      response = http.put(url, data: data)
       self.new(parse_json(response.body))
     end
 
@@ -63,14 +59,17 @@ module RestfulResource
     end
 
     protected
-    def self.base_url
-      raise BaseUrlMissing.new if @base_url.nil? 
-
-      @base_url
+    def self.http
+      @http || superclass.http
     end
 
-    def self.base_authorization
-      @base_authorization
+    def self.base_url
+      result = @base_url
+      if result.nil? && superclass.respond_to?(:base_url)
+        result = superclass.base_url
+      end
+      raise "Base url missing" if result.nil?
+      result
     end
 
     private
@@ -79,12 +78,12 @@ module RestfulResource
     end
 
     def self.member_url(id, params)
-      url = merge_url_paths(superclass.base_url, @resource_path, id, @action_prefix)
+      url = merge_url_paths(base_url, @resource_path, id, @action_prefix)
       replace_parameters(url, params)
     end
 
     def self.collection_url(params)
-      url = merge_url_paths(superclass.base_url, @resource_path, @action_prefix)
+      url = merge_url_paths(base_url, @resource_path, @action_prefix)
       replace_parameters(url, params)
     end
 

@@ -78,7 +78,10 @@ describe RestfulResource::Base do
   describe "#base_url" do
     it "should be different for each subclass of Base" do
       BaseA.base_url = "http://a.carwow.co.uk"
+      BaseA.http = @mock_http
+
       BaseB.base_url = "http://b.carwow.co.uk"
+      BaseB.http = @mock_http
 
       expect_get('http://a.carwow.co.uk/testa/1', RestfulResource::Response.new())
       expect_get('http://b.carwow.co.uk/testb/2', RestfulResource::Response.new())

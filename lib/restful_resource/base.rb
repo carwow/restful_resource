@@ -3,11 +3,11 @@ module RestfulResource
     extend RestfulResource::Associations
 
     def self.http=(http)
-      @@http = http
+      @http = http
     end
 
     def self.http
-      @@http ||= RestfulResource::HttpClient.new(authorization: superclass.base_authorization)
+      @http ||= RestfulResource::HttpClient.new(authorization: superclass.base_authorization)
     end
 
     def self.http_authorization(user, password)
@@ -23,24 +23,24 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      response = http.get(member_url(id, params))
+      response = superclass.http.get(member_url(id, params))
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
-      response = http.get(collection_url(params))
+      response = superclass.http.get(collection_url(params))
       self.paginate_response(response)
     end
 
     def self.get(params={})
-      response = http.get(collection_url(params))
+      response = superclass.http.get(collection_url(params))
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
     def self.put(id, data: {}, **params)
       url = member_url(id, params)
 
-      response = http.put(url, data: data)
+      response = superclass.http.put(url, data: data)
       self.new(parse_json(response.body))
     end
 
@@ -64,6 +64,8 @@ module RestfulResource
 
     protected
     def self.base_url
+      raise BaseUrlMissing.new if @base_url.nil? 
+
       @base_url
     end
 

@@ -16,6 +16,7 @@ describe RestfulResource::Associations do
       expect(make.models.last.name).to eq 'Passat'
       expect(make.models.first.rrp).to eq 1000
       expect(make.models.last.rrp).to eq 3000
+      expect(make.models.first.to_json).to eq({name: 'Golf', rrp: 1000}.to_json)
     end
   end
 
@@ -27,6 +28,7 @@ describe RestfulResource::Associations do
       })
 
       expect(model.make.name).to eq 'Volkswagen'
+      expect(model.make.to_json).to eq({name: 'Volkswagen'}.to_json)
     end
   end
 end

@@ -54,10 +54,6 @@ module RestfulResource
       @action_prefix = action_prefix.to_s
     end
 
-    def as_json(options=nil)
-      @inner_object.send(:table).as_json(options)
-    end
-
     protected
     def self.http
       @http || superclass.http

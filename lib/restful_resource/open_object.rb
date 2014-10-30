@@ -19,5 +19,17 @@ module RestfulResource
     def as_json(options=nil)
       @inner_object.send(:table).as_json(options)
     end
+
+    def ==(other)
+      @inner_object == other.instance_variable_get(:@inner_object)
+    end
+
+    def eql?(other)
+      @inner_object.eql?(other.instance_variable_get(:@inner_object))
+    end
+
+    def equal?(other)
+      @inner_object.equal?(other.instance_variable_get(:@inner_object))
+    end
   end
 end

@@ -31,5 +31,9 @@ module RestfulResource
     def equal?(other)
       @inner_object.equal?(other.instance_variable_get(:@inner_object))
     end
+
+    def hash
+      @inner_object.hash
+    end
   end
 end

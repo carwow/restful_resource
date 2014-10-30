@@ -19,6 +19,8 @@ describe RestfulResource::OpenObject do
     b = RestfulResource::OpenObject.new({name: 'Joe', age: 13})
     c = RestfulResource::OpenObject.new({name: 'Mike', age: 13})
 
+    list = [a, b, c]
+
     expect(a == b).to eq true
     expect(a.eql?(b)).to eq true
     expect(a.equal?(b)).to eq false
@@ -26,5 +28,6 @@ describe RestfulResource::OpenObject do
     expect(a == c).to eq false
     expect(a.eql?(c)).to eq false
     expect(a.equal?(c)).to eq false
+    expect(list.uniq.length).to eq 2
   end
 end

@@ -25,5 +25,14 @@ module RestfulResource
       end
       Response.new(body: response.body, headers: response.headers, status: response.code)
     end
+
+    def post(url, data: {})
+      begin
+        response = RestClient.post(url, data, :accept => :json, authorization: @authorization)
+      rescue RestClient::UnprocessableEntity => e
+        raise HttpClient::UnprocessableEntity.new(e.response)
+      end
+      Response.new(body: response.body, headers: response.headers, status: response.code)
+    end
   end
 end

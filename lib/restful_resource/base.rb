@@ -40,6 +40,13 @@ module RestfulResource
       self.new(parse_json(response.body))
     end
 
+    def self.post(data: {}, **params)
+      url = collection_url(params)
+
+      response = http.post(url, data: data)
+      self.new(parse_json(response.body))
+    end
+
     def self.all
       self.where
     end

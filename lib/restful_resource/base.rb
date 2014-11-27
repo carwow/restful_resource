@@ -110,7 +110,7 @@ module RestfulResource
         if value.nil?
           missing_params << key
         else
-          url = url.gsub(':'+key, URI.escape(value.to_s))
+          url = url.gsub(':'+key, CGI.escape(value.to_s))
         end
       end
 

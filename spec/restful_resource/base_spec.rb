@@ -39,9 +39,9 @@ describe RestfulResource::Base do
 
     it "should encode parameters correctly in the url" do
       expected_response = RestfulResource::Response.new(body: {name: 'Golf', price: 15000}.to_json)
-      expect_get("http://api.carwow.co.uk/groups/15/makes/Land%20Rover/models/Golf", expected_response)
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Land+Rover%3Fx%3D0.123/models/Golf", expected_response)
 
-      object = Model.find('Golf', make_slug: 'Land Rover', group_id: 15)
+      object = Model.find('Golf', make_slug: 'Land Rover?x=0.123', group_id: 15)
     end
   end
 

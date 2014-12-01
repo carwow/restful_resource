@@ -32,6 +32,7 @@ module ComplicatedModule
   class Parent < BaseA
     resource_path "parent"
     has_many :children
+    has_many :other_things
 
     def is_parent?
       true

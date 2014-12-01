@@ -4,9 +4,9 @@ module RestfulResource
       @inner_object = OpenStruct.new(attributes)
     end
 
-    def method_missing(method)
+    def method_missing(method, *args, &block)
       if @inner_object.respond_to?(method)
-        @inner_object.send(method)
+        @inner_object.send(method, *args, &block)
       else
         super(method)
       end

@@ -29,7 +29,7 @@ class TestB < BaseB
 end
 
 module ComplicatedModule
-  class Parent < RestfulResource::Base
+  class Parent < BaseA
     resource_path "parent"
     has_many :children
 
@@ -38,7 +38,7 @@ module ComplicatedModule
     end
   end
 
-  class Child < RestfulResource::Base
+  class Child < BaseA
     resource_path 'parents/:parent_id/children'
     has_one :parent
 

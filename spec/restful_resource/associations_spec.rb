@@ -2,33 +2,43 @@ require_relative '../spec_helper'
 
 describe RestfulResource::Associations do
   describe "#has_many" do
-    it "should add a method to access nested resource" do
-      make = Make.new({
-        name: 'Volkswagen',
-        models:
+    before :each do
+      @parent = ComplicatedModule::Parent.new({
+        name: 'John Doe',
+        children:
           [
-            {name: 'Golf', rrp: 1000},
-            {name: 'Passat', rrp: 3000}
+            {first_name: 'David', second_name: 'Doe'},
+            {first_name: 'Mary', second_name: 'Doe'}
           ]
       })
+    end
 
-      expect(make.models.first.name).to eq 'Golf'
-      expect(make.models.last.name).to eq 'Passat'
-      expect(make.models.first.rrp).to eq 1000
-      expect(make.models.last.rrp).to eq 3000
-      expect(make.models.first.to_json).to eq({name: 'Golf', rrp: 1000}.to_json)
+    it "should add a method to access nested resource" do
+      expect(@parent.children.first.first_name).to eq 'David'
+      expect(@parent.children.last.first_name).to eq 'Mary'
+      expect(@parent.children.first.to_json).to eq({first_name: 'David', second_name: 'Doe'}.to_json)
+    end
+
+    it "should pick the right class for the instantiation of chilren" do
+      expect(@parent.children.first.full_name).to eq 'David Doe'
     end
   end
 
   describe "#has_one" do
-    it "should add a method to access nested resource" do
-      model = Model.new({
-        name: 'Golf',
-        make: {name: 'Volkswagen'}
+    before :each do
+      @child = ComplicatedModule::Child.new({
+        first_name: 'David', second_name: 'Smith',
+        parent: {name: 'John Smith'}
       })
+    end
 
-      expect(model.make.name).to eq 'Volkswagen'
-      expect(model.make.to_json).to eq({name: 'Volkswagen'}.to_json)
+    it "should add a method to access nested resource" do
+      expect(@child.parent.name).to eq 'John Smith'
+      expect(@child.parent.to_json).to eq({name: 'John Smith'}.to_json)
+    end
+
+    it "should pick the right class for the instantiation of chilren" do
+      expect(@child.parent.is_parent?).to be_truthy
     end
   end
 end

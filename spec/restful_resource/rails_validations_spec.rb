@@ -51,4 +51,49 @@ describe RestfulResource::RailsValidations do
       expect(@object.valid?).to be_falsey
     end
   end
+
+  context "#post without errors" do
+    before :each do
+      data = {name: 'Barak'}
+      expected_response = RestfulResource::Response.new(body: {name: 'Barak'}.to_json)
+      expect_post("http://api.carwow.co.uk/dealers", expected_response, data: data)
+
+      @object = Dealer.post(data: data)
+    end
+
+    it 'should return object' do
+      expect(@object.name).to eq 'Barak'
+    end
+
+    it 'should return valid object' do
+      expect(@object.valid?).to be_truthy
+    end
+  end
+
+  context "#post with errors" do
+    before :each do
+      data = {name: 'Leonardo'}
+      @error = 'Cannot use Ninja Turtles names'
+      expected_response = RestfulResource::Response.new(body: {errors: [@error]}.to_json)
+      expect_post_with_unprocessable_entity("http://api.carwow.co.uk/dealers", expected_response, data: data)
+
+      @object = Dealer.post(data: data)
+    end
+
+    it "should have an error" do
+      expect(@object.errors.count).to eq 1
+    end
+
+    it 'should have correct error' do
+      expect(@object.errors.first).to eq @error
+    end
+
+    it 'should return properly built object' do
+      expect(@object.name).to eq 'Leonardo'
+    end
+
+    it 'should return not valid object' do
+      expect(@object.valid?).to be_falsey
+    end
+  end
 end

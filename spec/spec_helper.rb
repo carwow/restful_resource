@@ -25,3 +25,9 @@ def expect_put_with_unprocessable_entity(url, response, data: {})
   exception = RestfulResource::HttpClient::UnprocessableEntity.new(rest_client_response)
   expect(@mock_http).to receive(:put).with(url, data: data).and_raise(exception)
 end
+
+def expect_post_with_unprocessable_entity(url, response, data: {})
+  rest_client_response = OpenStruct.new({body: response.body, headers: response.headers, code: response.status})
+  exception = RestfulResource::HttpClient::UnprocessableEntity.new(rest_client_response)
+  expect(@mock_http).to receive(:post).with(url, data: data).and_raise(exception)
+end

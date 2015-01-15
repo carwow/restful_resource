@@ -10,6 +10,16 @@ module RestfulResource
           self.new(result)
         end
       end
+
+      def post(data: {}, **params)
+        begin
+          super(data: data, **params)
+        rescue HttpClient::UnprocessableEntity => e
+          errors = parse_json(e.response.body)
+          result = data.merge(errors)
+          self.new(result)
+        end
+      end
     end
 
     def self.included(base)

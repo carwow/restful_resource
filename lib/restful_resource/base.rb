@@ -97,6 +97,7 @@ module RestfulResource
     end
 
     def self.parse_json(json)
+      return nil if json.strip.empty?
       ActiveSupport::JSON.decode(json)
     end
 

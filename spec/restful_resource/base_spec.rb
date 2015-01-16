@@ -15,6 +15,12 @@ describe RestfulResource::Base do
     expect { object.age }.to raise_error(NoMethodError)
   end
 
+  describe '#parse_json' do
+    it 'should not fail on empty string' do
+      expect {RestfulResource::Base.send(:parse_json, ' ')}.not_to raise_error
+    end
+  end
+
   describe "#find" do
     it "should return an object instance for the correct id" do
       expected_response = RestfulResource::Response.new(body: {id: 12}.to_json)

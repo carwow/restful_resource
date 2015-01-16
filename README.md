@@ -1,4 +1,4 @@
-# [[RestfulResource]]
+# RestfulResource ![build status](https://circleci.com/gh/carwow/restful_resource.svg?style=shield&circle-token=0558310359000e8786d1fe42774b0e30b2b0e12c)
 
 TODO: Write a gem description
 

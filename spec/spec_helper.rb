@@ -12,6 +12,10 @@ def expect_get(url, response)
   expect(@mock_http).to receive(:get).with(url).and_return(response)
 end
 
+def expect_delete(url, response)
+  expect(@mock_http).to receive(:delete).with(url).and_return(response)
+end
+
 def expect_put(url, response, data: {})
   expect(@mock_http).to receive(:put).with(url, data: data).and_return(response)
 end

@@ -22,6 +22,11 @@ describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
 
+    it 'should execute delete' do
+      response = @http_client.delete('http://httpbin.org/delete')
+      expect(response.status).to eq 200
+    end
+
     it 'put should raise error 422' do
       expect { @http_client.put('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end

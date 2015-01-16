@@ -189,6 +189,17 @@ describe RestfulResource::Base do
     end
   end
 
+  describe "#delete" do
+    it "should delete to the member url" do
+      expected_response = RestfulResource::Response.new(body: {deleted: true}.to_json, status: 200)
+      expect_delete('http://api.carwow.co.uk/makes/1', expected_response)
+
+      object = Make.delete(1)
+
+      expect(object.deleted).to be_truthy
+    end
+  end
+
   describe ".as_json" do
     before :each do
       expected_response = RestfulResource::Response.new(body: [{name: 'Audi', slug: 'Audi-Slug'}, {name: 'Fiat', slug: 'Fiat-Slug'}].to_json)

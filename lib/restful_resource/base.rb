@@ -33,6 +33,11 @@ module RestfulResource
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
+    def self.delete(id, **params)
+      response = http.delete(member_url(id, params))
+      RestfulResource::OpenObject.new(parse_json(response.body))
+    end
+
     def self.put(id, data: {}, **params)
       url = member_url(id, params)
 

@@ -17,6 +17,11 @@ module RestfulResource
       Response.new(body: response.body, headers: response.headers, status: response.code)
     end
 
+    def delete(url)
+      response = RestClient.delete(url, :accept => :json, authorization: @authorization)
+      Response.new(body: response.body, headers: response.headers, status: response.code)
+    end
+
     def put(url, data: {})
       begin
         response = RestClient.put(url, data, :accept => :json, authorization: @authorization)

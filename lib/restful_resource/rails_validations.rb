@@ -6,7 +6,14 @@ module RestfulResource
           super(id, data: data, **params)
         rescue HttpClient::UnprocessableEntity => e
           errors = parse_json(e.response.body)
-          result = data.merge(errors)
+          result = nil
+          if errors.is_a?(Hash) && errors.has_key?('errors')
+            result = data.merge(errors)
+          elsif errors.is_a?(Array)
+            result = data.merge(errors: errors)
+          else
+            result = data.merge(errors: [errors])
+          end
           self.new(result)
         end
       end
@@ -16,7 +23,14 @@ module RestfulResource
           super(data: data, **params)
         rescue HttpClient::UnprocessableEntity => e
           errors = parse_json(e.response.body)
-          result = data.merge(errors)
+          result = nil
+          if errors.is_a?(Hash) && errors.has_key?('errors')
+            result = data.merge(errors)
+          elsif errors.is_a?(Array)
+            result = data.merge(errors: errors)
+          else
+            result = data.merge(errors: [errors])
+          end
           self.new(result)
         end
       end

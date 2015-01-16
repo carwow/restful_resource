@@ -9,10 +9,8 @@ module RestfulResource
           result = nil
           if errors.is_a?(Hash) && errors.has_key?('errors')
             result = data.merge(errors)
-          elsif errors.is_a?(Array)
-            result = data.merge(errors: errors)
           else
-            result = data.merge(errors: [errors])
+            result = data.merge(errors: errors)
           end
           self.new(result)
         end
@@ -26,10 +24,8 @@ module RestfulResource
           result = nil
           if errors.is_a?(Hash) && errors.has_key?('errors')
             result = data.merge(errors)
-          elsif errors.is_a?(Array)
-            result = data.merge(errors: errors)
           else
-            result = data.merge(errors: [errors])
+            result = data.merge(errors: errors)
           end
           self.new(result)
         end
@@ -41,7 +37,7 @@ module RestfulResource
     end
 
     def valid?
-      @inner_object.errors.nil? || @inner_object.errors.count == 0
+      @inner_object.errors.nil?
     end
   end
 end

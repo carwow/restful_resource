@@ -51,17 +51,6 @@ describe RestfulResource::RailsValidations do
       expect(@object.valid?).to be_falsey
     end
 
-    it 'should handle errors returned as root array' do
-      data = {name: 'Michelangelo'}
-      expected_response = RestfulResource::Response.new(body: [@error].to_json)
-      expect_put_with_unprocessable_entity("http://api.carwow.co.uk/dealers/1", expected_response, data: data)
-
-      @object = Dealer.put(1, data: data)
-      expect(@object.valid?).to be_falsey
-      expect(@object.errors.count).to eq 1
-      expect(@object.errors.first).to eq @error
-    end
-
     it 'should handle errors returned as root object' do
       data = {name: 'Michelangelo'}
       expected_response = RestfulResource::Response.new(body: @error.to_json)
@@ -69,8 +58,7 @@ describe RestfulResource::RailsValidations do
 
       @object = Dealer.put(1, data: data)
       expect(@object.valid?).to be_falsey
-      expect(@object.errors.count).to eq 1
-      expect(@object.errors.first).to eq @error
+      expect(@object.errors).to eq @error
     end
 
   end
@@ -121,24 +109,12 @@ describe RestfulResource::RailsValidations do
 
     it 'should handle errors returned as root object' do
       data = {name: 'Michelangelo'}
-      expected_response = RestfulResource::Response.new(body: [@error].to_json)
-      expect_post_with_unprocessable_entity("http://api.carwow.co.uk/dealers", expected_response, data: data)
-
-      @object = Dealer.post(data: data)
-      expect(@object.valid?).to be_falsey
-      expect(@object.errors.count).to eq 1
-      expect(@object.errors.first).to eq @error
-    end
-
-    it 'should handle errors returned as root object' do
-      data = {name: 'Michelangelo'}
       expected_response = RestfulResource::Response.new(body: @error.to_json)
       expect_post_with_unprocessable_entity("http://api.carwow.co.uk/dealers", expected_response, data: data)
 
       @object = Dealer.post(data: data)
       expect(@object.valid?).to be_falsey
-      expect(@object.errors.count).to eq 1
-      expect(@object.errors.first).to eq @error
+      expect(@object.errors).to eq @error
     end
   end
 end

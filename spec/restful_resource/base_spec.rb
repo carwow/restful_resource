@@ -217,6 +217,12 @@ describe RestfulResource::Base do
     end
   end
 
+  describe ".member_url" do
+    it "requires a member ID" do
+      expect{ RestfulResource::Base.member_url('', {}) }.to raise_error(RestfulResource::ResourceIdMissingError)
+    end
+  end
+
   def response_with_page_information
     RestfulResource::Response.new(body: [{ id: 1, name: 'Golf'}, { id: 2, name: 'Polo' }].to_json,
                                  headers: { links: '<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=6>;rel="last",<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=2>;rel="next"'})

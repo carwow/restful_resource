@@ -86,6 +86,7 @@ module RestfulResource
     end
 
     def self.member_url(id, params)
+      raise ResourceIdMissingError if id.blank?
       url = merge_url_paths(base_url, @resource_path, CGI.escape(id.to_s), @action_prefix)
       replace_parameters(url, params)
     end

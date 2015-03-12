@@ -12,6 +12,7 @@ module RestfulResource
           else
             result = data.merge(errors: errors)
           end
+          result = result.merge(id: id)
           self.new(result)
         end
       end

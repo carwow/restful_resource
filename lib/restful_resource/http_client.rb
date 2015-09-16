@@ -1,5 +1,6 @@
 module RestfulResource
   class HttpClient
+    class UnknownError < StandardError; end
     class UnprocessableEntity < RuntimeError
       attr_reader :response
 
@@ -13,8 +14,10 @@ module RestfulResource
     end
 
     def get(url)
-      response = RestClient.get(url, :accept => :json, authorization: @authorization)
-      Response.new(body: response.body, headers: response.headers, status: response.code)
+      request_resource(url) do
+        response = RestClient.get(url, :accept => :json, authorization: @authorization)
+        Response.new(body: response.body, headers: response.headers, status: response.code)
+      end
     end
 
     def delete(url)
@@ -38,6 +41,19 @@ module RestfulResource
         raise HttpClient::UnprocessableEntity.new(e.response)
       end
       Response.new(body: response.body, headers: response.headers, status: response.code)
+    end
+
+    private
+
+    def request_resource(url, &block)
+      block.call
+    rescue NoMethodError => e
+      if e.message.include?('each')
+        message = "#{url}: failed with #{e.message}"
+        raise HttpClient::UnknownError.new(message)
+      else
+        raise e
+      end
     end
   end
 end

@@ -6,9 +6,42 @@ describe RestfulResource::HttpClient do
       @http_client = RestfulResource::HttpClient.new
     end
 
-    it 'should execute get' do
-      response = @http_client.get('http://httpbin.org/get')
-      expect(response.status).to eq 200
+    describe '#get' do
+      it 'successfully executes get' do
+        response = @http_client.get('http://httpbin.org/get')
+        expect(response.status).to eq 200
+      end
+
+      context 'when there is an error' do
+        before do
+          allow(RestClient).to receive(:get) { raise error }
+        end
+
+        let(:error) { StandardError }
+
+        it 'raises the error' do
+          expect {
+            @http_client.get('http://httpbin.org/get')
+          }.to raise_error(error)
+        end
+      end
+
+      context 'when there is an UnknownError' do
+        before do
+          allow(RestClient).to receive(:get) { raise error }
+        end
+
+        let(:error) { NoMethodError.new("undefined method `each` for nil:NilClass") }
+
+        it 'raises the error' do
+          expect {
+            @http_client.get('http://httpbin.org/get')
+          }.to raise_error(
+            RestfulResource::HttpClient::UnknownError,
+            "http://httpbin.org/get: failed with undefined method `each` for nil:NilClass"
+          )
+        end
+      end
     end
 
     it 'should execute put' do

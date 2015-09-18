@@ -1,6 +1,6 @@
 module RestfulResource
   class PaginatedArray < Array
-    def initialize(original_array, previous_page_url: previous_page_url, next_page_url: next_page_url)
+    def initialize(original_array, previous_page_url: nil, next_page_url: nil)
       super(original_array)
 
       @previous_page_url = previous_page_url
@@ -17,7 +17,7 @@ module RestfulResource
 
     private
     def get_page_from_url(url)
-      return nil unless url
+      return unless url
       params = Rack::Utils.parse_query URI(url).query
       params['page'].to_i
     end

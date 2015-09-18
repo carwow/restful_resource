@@ -5,6 +5,7 @@ require 'restclient'
 require 'active_support'
 require 'active_support/all'
 require_relative "restful_resource/version"
+require_relative 'restful_resource/null_logger'
 require_relative "restful_resource/paginated_array"
 require_relative "restful_resource/parameter_missing_error"
 require_relative "restful_resource/resource_id_missing_error"

@@ -2,8 +2,10 @@ module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
 
-    def self.configure(base_url: nil, username: nil, password: nil)
+    def self.configure(base_url: nil, username: nil, password: nil, logger: NullLogger.new)
       @base_url = URI.parse(base_url)
+
+      RestClient.log = logger
 
       auth = nil
 
@@ -24,7 +26,8 @@ module RestfulResource
     end
 
     def self.where(params={})
-      response = http.get(collection_url(params))
+      url = collection_url(params)
+      response = http.get(url)
       self.paginate_response(response)
     end
 
@@ -40,7 +43,6 @@ module RestfulResource
 
     def self.put(id, data: {}, **params)
       url = member_url(id, params)
-
       response = http.put(url, data: data)
       self.new(parse_json(response.body))
     end

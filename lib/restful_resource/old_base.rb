@@ -159,7 +159,7 @@ module RestfulResource
       next_url = links.find_link(['rel', 'next']).try(:href)
 
       array = ActiveSupport::JSON.decode(response).map { |attributes| self.new(attributes) }
-      PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url)
+      PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url, total_count: response.headers['X-Total-Count'])
     end
 
     def self.create_new_resource(params={})

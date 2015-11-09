@@ -17,7 +17,7 @@ module RestfulResource
     end
 
     def total_count
-      @total_count
+      @total_count.to_i
     end
 
     private

@@ -2,18 +2,18 @@ module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
 
-    def self.configure(base_url: nil, username: nil, password: nil, logger: NullLogger.new)
+    def self.configure(base_url: nil, 
+                       username: nil, 
+                       password: nil, 
+                       logger: nil, 
+                       cache_store: nil)
+
       @base_url = URI.parse(base_url)
 
-      RestClient.log = logger
-
-      auth = nil
-
-      if (username.present? && password.present?)
-        auth = RestfulResource::Authorization.http_authorization(username, password)
-      end
-
-      @http = RestfulResource::HttpClient.new(authorization: auth)
+      @http = RestfulResource::HttpClient.new(username: username, 
+                                              password: password, 
+                                              logger: logger, 
+                                              cache_store: cache_store)
     end
 
     def self.resource_path(url)

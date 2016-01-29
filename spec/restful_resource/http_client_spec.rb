@@ -34,12 +34,18 @@ describe RestfulResource::HttpClient do
     it 'post should raise error 422' do
       expect { @http_client.post('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
+
+    it 'should raise error on 404' do
+      expect { @http_client.get('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+      expect { @http_client.delete('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+      expect { @http_client.put('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+      expect { @http_client.post('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+    end
   end
 
   describe 'Authentication' do
     before :each do
-      auth = RestfulResource::Authorization.http_authorization('user', 'passwd')
-      @http_client = RestfulResource::HttpClient.new(authorization: auth)
+      @http_client = RestfulResource::HttpClient.new(username: 'user', password: 'passwd')
     end
 
     it 'should execute authenticated get' do

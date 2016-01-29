@@ -28,22 +28,6 @@ describe RestfulResource::Base, 'authorization' do
     expect(FirstTest.send(:http)).not_to equal(SecondTest.send(:http))
   end
 
-  it 'should have http auth on SecondClient when initialised first' do
-    SecondTest.send(:http)
-    FirstTest.send(:http)
-
-    authorization = SecondTest.send(:http).instance_variable_get :@authorization
-    expect(authorization).to be_truthy
-  end
-
-  it 'should have http auth on SecondTest when initialised second' do
-    FirstTest.send(:http)
-    SecondTest.send(:http)
-
-    authorization = SecondTest.send(:http).instance_variable_get :@authorization
-    expect(authorization).to be_truthy
-  end
-
   it 'should have same http auth on superclass' do
     expect(SecondTest.send(:http)).to equal(SecondClient.send(:http))
   end

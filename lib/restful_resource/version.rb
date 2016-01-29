@@ -1,3 +1,3 @@
 module RestfulResource
-  VERSION = '0.8.35'
+  VERSION = '0.9.0'
 end

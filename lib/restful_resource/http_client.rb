@@ -37,7 +37,7 @@ module RestfulResource
         end
 
         if cache_store
-          b.user :http_cache, store: cache_store
+          b.use :http_cache, store: cache_store
         end
 
         if username.present? && password.present?

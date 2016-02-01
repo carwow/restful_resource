@@ -41,6 +41,10 @@ describe RestfulResource::HttpClient do
       expect { @http_client.put('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { @http_client.post('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
     end
+
+    it 'should raise normal exception' do
+      expect { @http_client.get('https://localhost:3005') }.to raise_error(Faraday::ConnectionFailed)
+    end
   end
 
   describe 'Authentication' do

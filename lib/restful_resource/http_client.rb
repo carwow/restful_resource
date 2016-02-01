@@ -51,20 +51,20 @@ module RestfulResource
       end
     end
 
-    def get(url)
-      http_request(method: :get, url: url)
+    def get(url, accept: 'application/json')
+      http_request(method: :get, url: url, accept: accept)
     end
 
-    def delete(url)
-      http_request(method: :delete, url: url)
+    def delete(url, accept: 'application/json')
+      http_request(method: :delete, url: url, accept: accept)
     end
 
-    def put(url, data: {})
-      http_request(method: :put, url: url, data: data)
+    def put(url, data: {}, accept: 'application/json')
+      http_request(method: :put, url: url, data: data, accept: accept)
     end
 
-    def post(url, data: {})
-      http_request(method: :post, url: url, data: data)
+    def post(url, data: {}, accept: 'application/json')
+      http_request(method: :post, url: url, data: data, accept: accept)
     end
 
     private
@@ -78,9 +78,11 @@ module RestfulResource
         end
       end
       Response.new(body: response.body, headers: response.headers, status: response.status)
-    rescue Faraday::Error::ResourceNotFound
+    rescue Faraday::ResourceNotFound
       raise HttpClient::ResourceNotFound
-    rescue Faraday::Error::ClientError => e
+    rescue Faraday::ConnectionFailed
+      raise
+    rescue Faraday::ClientError => e
       response = e.response
       if response[:status] == 422
         raise HttpClient::UnprocessableEntity.new(response)

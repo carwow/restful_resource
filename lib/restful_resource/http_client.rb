@@ -18,7 +18,6 @@ module RestfulResource
       attr_reader :response
 
       def initialize(response)
-        puts response
         @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
       end
 
@@ -29,6 +28,10 @@ module RestfulResource
 
     def initialize(username: nil, password: nil, logger: nil, cache_store: nil)
       @client = Faraday.new do |b|
+        if username.present? && password.present?
+          b.basic_auth username, password
+        end
+
         b.request :url_encoded
         b.response :raise_error
 
@@ -40,9 +43,9 @@ module RestfulResource
           b.use :http_cache, store: cache_store
         end
 
-        if username.present? && password.present?
-          b.basic_auth username, password
-        end
+
+        b.response :encoding
+        b.use :gzip
 
         b.adapter :net_http
       end

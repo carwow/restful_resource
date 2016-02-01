@@ -23,7 +23,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.1"
 
   spec.add_dependency "faraday"
+  spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-http-cache"
+  spec.add_dependency "faraday-encoding"
   spec.add_dependency "link_header"
   spec.add_dependency "activesupport"
   spec.add_dependency "rack"

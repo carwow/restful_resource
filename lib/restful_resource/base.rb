@@ -68,6 +68,19 @@ module RestfulResource
       @action_prefix = action_prefix.to_s
     end
 
+    def self.fetch_all!(conditions={})
+      Enumerator.new do |y|
+        next_page = 1
+        begin
+          resources = self.where(conditions.merge(page: next_page))
+          resources.each do |resource| 
+            y << resource
+          end
+          next_page = resources.next_page
+        end while(!next_page.nil?)
+      end
+    end
+
     protected
     def self.http
       @http || superclass.http

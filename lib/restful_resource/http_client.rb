@@ -43,9 +43,10 @@ module RestfulResource
           b.use :http_cache, store: cache_store
         end
 
-
         b.response :encoding
         b.use :gzip
+
+        b.use FaradayMiddleware::FollowRedirects
 
         b.adapter :net_http
       end

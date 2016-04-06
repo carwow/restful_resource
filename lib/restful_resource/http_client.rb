@@ -46,8 +46,6 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.use FaradayMiddleware::FollowRedirects
-
         b.adapter :net_http
       end
     end

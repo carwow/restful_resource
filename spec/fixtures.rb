@@ -28,6 +28,12 @@ class TestB < BaseB
   self.resource_path "testb"
 end
 
+class ModelWithRedirections < RestfulResource::Base
+  include RestfulResource::Redirections
+
+  resource_path 'model_with_redirections'
+end
+
 module ComplicatedModule
   class Parent < BaseA
     resource_path "parent"

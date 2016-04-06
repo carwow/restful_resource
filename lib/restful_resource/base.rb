@@ -2,17 +2,17 @@ module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
 
-    def self.configure(base_url: nil, 
-                       username: nil, 
-                       password: nil, 
-                       logger: nil, 
+    def self.configure(base_url: nil,
+                       username: nil,
+                       password: nil,
+                       logger: nil,
                        cache_store: nil)
 
       @base_url = URI.parse(base_url)
 
-      @http = RestfulResource::HttpClient.new(username: username, 
-                                              password: password, 
-                                              logger: logger, 
+      @http = RestfulResource::HttpClient.new(username: username,
+                                              password: password,
+                                              logger: logger,
                                               cache_store: cache_store)
     end
 
@@ -51,6 +51,7 @@ module RestfulResource
       url = collection_url(params)
 
       response = http.post(url, data: data)
+
       self.new(parse_json(response.body))
     end
 
@@ -73,7 +74,7 @@ module RestfulResource
         next_page = 1
         begin
           resources = self.where(conditions.merge(page: next_page))
-          resources.each do |resource| 
+          resources.each do |resource|
             y << resource
           end
           next_page = resources.next_page
@@ -95,6 +96,11 @@ module RestfulResource
       result
     end
 
+    def self.collection_url(params)
+      url = merge_url_paths(base_url, @resource_path, @action_prefix)
+      replace_parameters(url, params)
+    end
+
     private
     def self.merge_url_paths(uri, *paths)
       uri.merge(paths.compact.join('/')).to_s
@@ -103,11 +109,6 @@ module RestfulResource
     def self.member_url(id, params)
       raise ResourceIdMissingError if id.blank?
       url = merge_url_paths(base_url, @resource_path, CGI.escape(id.to_s), @action_prefix)
-      replace_parameters(url, params)
-    end
-
-    def self.collection_url(params)
-      url = merge_url_paths(base_url, @resource_path, @action_prefix)
       replace_parameters(url, params)
     end
 

@@ -8,7 +8,7 @@ module RestfulResource
   module Redirections
     def self.included(base)
       base.instance_eval do
-        def post(data: {}, delay: 0.5, max_attempts: 10, **params)
+        def post(data: {}, delay: 1.0, max_attempts: 10, **params)
           url = collection_url(params)
 
           response = self.accept_redirected_result(response: http.post(url, data: data), delay: delay, max_attempts: max_attempts)

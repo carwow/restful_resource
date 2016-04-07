@@ -37,22 +37,22 @@ describe RestfulResource::Redirections do
         expect(subject.test_data).to eq 42
       end
 
-      it 'should wait 0.5 seconds after first redirect' do
+      it 'should wait 1.0 seconds after first redirect' do
         expected_get_response = RestfulResource::Response.new(body: {test_data: 42}.to_json, status: 200)
 
-        expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+        expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
         expect_get(redirect_target, expected_get_response).ordered
 
         expect(subject.test_data).to eq 42
       end
 
-      it 'should wait 0.5 between retries' do
+      it 'should wait 1.0 seconds between retries' do
         resource_not_ready_get_response = RestfulResource::Response.new(body: 'pending', status: 202)
         resource_ready_get_response = RestfulResource::Response.new(body: {test_data: 42}.to_json, status: 200)
 
-        expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+        expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
         expect_get(redirect_target, resource_not_ready_get_response).ordered
-        expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+        expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
         expect_get(redirect_target, resource_ready_get_response).ordered
 
         expect(subject.test_data).to eq 42
@@ -63,10 +63,10 @@ describe RestfulResource::Redirections do
         resource_ready_get_response = RestfulResource::Response.new(body: {test_data: 42}.to_json, status: 200)
 
         9.times do
-          expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+          expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
           expect_get(redirect_target, resource_not_ready_get_response).ordered
         end
-        expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+        expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
         expect_get(redirect_target, resource_ready_get_response).ordered
 
         expect(subject.test_data).to eq 42
@@ -77,7 +77,7 @@ describe RestfulResource::Redirections do
         resource_ready_get_response = RestfulResource::Response.new(body: {test_data: 42}.to_json, status: 200)
 
         11.times do
-          expect(RestfulResource::Redirections).to receive(:wait).with(0.5).ordered
+          expect(RestfulResource::Redirections).to receive(:wait).with(1.0).ordered
           expect_get(redirect_target, resource_not_ready_get_response).ordered
         end
 

@@ -72,6 +72,53 @@ describe RestfulResource::RailsValidations do
     end
   end
 
+  context "#patch with errors" do
+    before :each do
+      data = {name: 'Leonardo'}
+      @error = 'Cannot use Ninja Turtles names'
+      expected_response = RestfulResource::Response.new(body: {errors: [@error]}.to_json)
+      expect_patch_with_unprocessable_entity("http://api.carwow.co.uk/dealers/1", expected_response, data: data)
+
+      @object = Dealer.patch(1, data: data)
+    end
+
+    it "should have an error" do
+      expect(@object.errors.count).to eq 1
+    end
+
+    it 'should have correct error' do
+      expect(@object.errors.first).to eq @error
+    end
+
+    it 'should return properly built object' do
+      expect(@object.name).to eq 'Leonardo'
+    end
+
+    it 'should return not valid object' do
+      expect(@object.valid?).to be_falsey
+    end
+
+    it 'should handle errors returned as root object' do
+      data = {name: 'Michelangelo'}
+      expected_response = RestfulResource::Response.new(body: @error.to_json)
+      expect_patch_with_unprocessable_entity("http://api.carwow.co.uk/dealers/1", expected_response, data: data)
+
+      @object = Dealer.patch(1, data: data)
+      expect(@object.valid?).to be_falsey
+      expect(@object.errors).to eq @error
+    end
+
+    it 'should return the resource id as part of the response' do
+      data = {name: 'Michelangelo'}
+      expected_response = RestfulResource::Response.new(body: @error.to_json)
+      expect_patch_with_unprocessable_entity("http://api.carwow.co.uk/dealers/1", expected_response, data: data)
+
+      @object = Dealer.patch(1, data: data)
+      expect(@object.valid?).to be_falsey
+      expect(@object.id).to be(1)
+    end
+  end
+
   context "#post without errors" do
     before :each do
       data = {name: 'Barak'}

@@ -62,6 +62,10 @@ module RestfulResource
       http_request(method: :put, url: url, data: data, accept: accept)
     end
 
+    def patch(url, data: {}, accept: 'application/json')
+      http_request(method: :patch, url: url, data: data, accept: accept)
+    end
+
     def post(url, data: {}, accept: 'application/json')
       http_request(method: :post, url: url, data: data, accept: accept)
     end

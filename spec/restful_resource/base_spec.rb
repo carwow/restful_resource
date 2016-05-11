@@ -175,6 +175,48 @@ describe RestfulResource::Base do
     end
   end
 
+  describe "#patch" do
+    it 'should patch no data with no params' do
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1', expected_response)
+
+      object = Make.patch(1)
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'should patch no data with no params passed' do
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response)
+
+      object = Make.patch(1, make_slug: 'Volkswagen')
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'should patch data with params passed' do
+      data = {make_slug: 'Audi'}
+
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1', expected_response, data: data)
+
+      object = Make.patch(1, data: {make_slug: 'Audi'})
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'should patch data with params passed' do
+      data = {make_slug: 'Audi'}
+
+      expected_response = RestfulResource::Response.new(body: {name: 'Audi'}.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response, data: data)
+
+      object = Make.patch(1, data: data, make_slug: 'Volkswagen')
+
+      expect(object.name).to eq 'Audi'
+    end
+  end
+
   describe "#post" do
     it "should post parameters to the collection url" do
       data = {slug: 'audi-make', name: 'Audi', num_of_cars: 3}

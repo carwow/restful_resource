@@ -35,6 +35,14 @@ describe RestfulResource::HttpClient do
       expect { @http_client.post('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
 
+    it 'put should raise error 503' do
+      expect { @http_client.put('http://httpbin.org/status/503', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
+    end
+
+    it 'post should raise error 503' do
+      expect { @http_client.post('http://httpbin.org/status/503', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
+    end
+
     it 'should raise error on 404' do
       expect { @http_client.get('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { @http_client.delete('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)

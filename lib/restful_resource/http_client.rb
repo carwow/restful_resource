@@ -1,11 +1,14 @@
 module RestfulResource
   class HttpClient
-    class UnprocessableEntity < StandardError
+    class HttpError < StandardError
       attr_reader :response
 
       def initialize(response)
         @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
       end
+    end
+
+    class UnprocessableEntity < HttpError
     end
 
     class ResourceNotFound < StandardError
@@ -14,15 +17,15 @@ module RestfulResource
       end
     end
 
-    class OtherHttpError < StandardError
-      attr_reader :response
-
-      def initialize(response)
-        @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
-      end
-
+    class OtherHttpError < HttpError
       def message
         "Http Error - Status code: #{response.status}"
+      end
+    end
+
+    class ServiceUnavailable < HttpError
+      def message
+        "HTTP 503: Service unavailable"
       end
     end
 
@@ -83,10 +86,10 @@ module RestfulResource
       raise
     rescue Faraday::ClientError => e
       response = e.response
-      if response[:status] == 422
-        raise HttpClient::UnprocessableEntity.new(response)
-      else
-        raise HttpClient::OtherHttpError.new(response)
+      case response[:status]
+      when 422 then raise HttpClient::UnprocessableEntity.new(response)
+      when 503 then raise HttpClient::ServiceUnavailable.new(response)
+      else raise HttpClient::OtherHttpError.new(response)
       end
     end
   end

@@ -1,10 +1,11 @@
 module RestfulResource
   class HttpClient
     class HttpError < StandardError
-      attr_reader :response
+      attr_reader :request, :response
 
-      def initialize(response)
+      def initialize(request, response)
         @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
+        @request = request
       end
     end
 
@@ -54,29 +55,29 @@ module RestfulResource
     end
 
     def get(url, accept: 'application/json')
-      http_request(method: :get, url: url, accept: accept)
+      http_request(Request.new(:get, url, accept: accept))
     end
 
     def delete(url, accept: 'application/json')
-      http_request(method: :delete, url: url, accept: accept)
+      http_request(Request.new(:delete, url, accept: accept))
     end
 
     def put(url, data: {}, accept: 'application/json')
-      http_request(method: :put, url: url, data: data, accept: accept)
+      http_request(Request.new(:put, url, body: data, accept: accept))
     end
 
     def post(url, data: {}, accept: 'application/json')
-      http_request(method: :post, url: url, data: data, accept: accept)
+      http_request(Request.new(:post, url, body: data, accept: accept))
     end
 
     private
-    def http_request(method: , url: , data: nil, accept: 'application/json')
-      response = @client.send(method) do |req|
-        req.body = data unless data.nil?
-        req.url url
+    def http_request(request)
+      response = @client.send(request.method) do |req|
+        req.body = request.body unless request.body.nil?
+        req.url request.url
 
-        if accept
-          req.headers['Accept'] = accept
+        if request.accept
+          req.headers['Accept'] = request.accept
         end
       end
       Response.new(body: response.body, headers: response.headers, status: response.status)
@@ -87,9 +88,9 @@ module RestfulResource
     rescue Faraday::ClientError => e
       response = e.response
       case response[:status]
-      when 422 then raise HttpClient::UnprocessableEntity.new(response)
-      when 503 then raise HttpClient::ServiceUnavailable.new(response)
-      else raise HttpClient::OtherHttpError.new(response)
+      when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
+      when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
+      else raise HttpClient::OtherHttpError.new(request, response)
       end
     end
   end

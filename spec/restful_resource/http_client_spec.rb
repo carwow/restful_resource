@@ -16,6 +16,11 @@ describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
 
+    it 'should execute patch' do
+      response = @http_client.patch('http://httpbin.org/patch', data: { name: 'Alfred' })
+      expect(response.status).to eq 200
+    end
+
     it 'should execute post' do
       response = @http_client.post('http://httpbin.org/post', data: { name: 'Alfred' })
       expect(response.body).to include "name\": \"Alfred"
@@ -29,6 +34,10 @@ describe RestfulResource::HttpClient do
 
     it 'put should raise error 422' do
       expect { @http_client.put('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
+    end
+
+    it 'patch should raise error 422' do
+      expect { @http_client.patch('http://httpbin.org/status/422', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
 
     it 'post should raise error 422' do
@@ -47,6 +56,7 @@ describe RestfulResource::HttpClient do
       expect { @http_client.get('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { @http_client.delete('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { @http_client.put('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+      expect { @http_client.patch('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { @http_client.post('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
     end
 

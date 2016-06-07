@@ -47,6 +47,12 @@ module RestfulResource
       self.new(parse_json(response.body))
     end
 
+    def self.patch(id, data: {}, **params)
+      url = member_url(id, params)
+      response = http.patch(url, data: data)
+      self.new(parse_json(response.body))
+    end
+
     def self.post(data: {}, **params)
       url = collection_url(params)
 

@@ -17,6 +17,22 @@ module RestfulResource
         end
       end
 
+      def patch(id, data: {}, **params)
+        begin
+          super(id, data: data, **params)
+        rescue HttpClient::UnprocessableEntity => e
+          errors = parse_json(e.response.body)
+          result = nil
+          if errors.is_a?(Hash) && errors.has_key?('errors')
+            result = data.merge(errors)
+          else
+            result = data.merge(errors: errors)
+          end
+          result = result.merge(id: id)
+          self.new(result)
+        end
+      end
+
       def post(data: {}, **params)
         begin
           super(data: data, **params)

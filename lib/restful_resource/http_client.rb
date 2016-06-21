@@ -12,7 +12,7 @@ module RestfulResource
     class UnprocessableEntity < HttpError
     end
 
-    class ResourceNotFound < StandardError
+    class ResourceNotFound < HttpError
       def message
         "404 Resource Not Found"
       end
@@ -81,13 +81,12 @@ module RestfulResource
         end
       end
       Response.new(body: response.body, headers: response.headers, status: response.status)
-    rescue Faraday::ResourceNotFound
-      raise HttpClient::ResourceNotFound
     rescue Faraday::ConnectionFailed
       raise
     rescue Faraday::ClientError => e
       response = e.response
       case response[:status]
+      when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
       when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
       else raise HttpClient::OtherHttpError.new(request, response)

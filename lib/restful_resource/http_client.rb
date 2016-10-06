@@ -26,7 +26,7 @@ module RestfulResource
 
     class ServiceUnavailable < HttpError
       def message
-        "HTTP 503: Service unavailable"
+        "HTTP 503: Service unavailable #{request.url}"
       end
     end
 

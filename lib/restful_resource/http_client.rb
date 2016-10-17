@@ -50,7 +50,12 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.adapter :net_http
+        b.adapter :excon,
+                  nonblock: true, # Always use non-blocking IO (for safe timeouts)
+                  persistent: true, # Re-use TCP connections
+                  connect_timeout: 2, # seconds
+                  read_timeout: 10, # seconds
+                  write_timeout: 2 # seconds
       end
     end
 

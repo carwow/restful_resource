@@ -30,6 +30,16 @@ module RestfulResource
       end
     end
 
+    class ClientError < HttpError
+      def initalize(request)
+        super(request, {})
+      end
+
+      def message
+        "There was some client error"
+      end
+    end
+
     def initialize(username: nil, password: nil, logger: nil, cache_store: nil)
       @client = Faraday.new do |b|
         if username.present? && password.present?
@@ -90,6 +100,7 @@ module RestfulResource
       raise
     rescue Faraday::ClientError => e
       response = e.response
+      raise ClientError.new(request) unless response
       case response[:status]
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)

@@ -3,8 +3,12 @@ module RestfulResource
     class HttpError < StandardError
       attr_reader :request, :response
 
-      def initialize(request, response)
-        @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
+      def initialize(request, response = nil)
+        if response
+          @response = Response.new body: response[:body], headers: response[:headers], status: response[:status]
+        else
+          @response = Response.new
+        end
         @request = request
       end
     end
@@ -31,10 +35,6 @@ module RestfulResource
     end
 
     class ClientError < HttpError
-      def initalize(request)
-        super(request, {})
-      end
-
       def message
         "There was some client error"
       end
@@ -64,7 +64,7 @@ module RestfulResource
                   nonblock: true, # Always use non-blocking IO (for safe timeouts)
                   persistent: true, # Re-use TCP connections
                   connect_timeout: 2, # seconds
-                  read_timeout: 10, # seconds
+                  read_timeout: 20, # seconds
                   write_timeout: 2 # seconds
       end
     end

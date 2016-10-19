@@ -3,9 +3,16 @@ module RestfulResource
     class HttpError < StandardError
       attr_reader :request, :response
 
-      def initialize(request, response)
-        @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
-        @request = request
+      def initialize(request, response = nil)
+        @request, @response = request, assign_response(response)
+      end
+
+      def assign_response(response = nil)
+        if response
+          @response = Response.new body: response[:body], headers: response[:headers], status: response[:status]
+        else
+          @response = Response.new
+        end
       end
     end
 
@@ -31,21 +38,40 @@ module RestfulResource
     end
 
     class ClientError < HttpError
-      def initalize(request)
-        super(request, {})
-      end
-
       def message
         "There was some client error"
       end
     end
 
-    def initialize(username: nil, password: nil, logger: nil, cache_store: nil)
-      @client = Faraday.new do |b|
-        if username.present? && password.present?
-          b.basic_auth username, password
-        end
+    def initialize(username: nil, password: nil, logger: nil, cache_store: nil, connection: nil)
+      # Use a provided faraday client or initalize a new one
+      @connection = connection || initialize_connection(logger: logger, cache_store: cache_store)
 
+      if username && password
+        @connection.basic_auth username, password
+      end
+    end
+
+    def get(url, accept: 'application/json')
+      http_request(Request.new(:get, url, accept: accept))
+    end
+
+    def delete(url, accept: 'application/json')
+      http_request(Request.new(:delete, url, accept: accept))
+    end
+
+    def put(url, data: {}, accept: 'application/json')
+      http_request(Request.new(:put, url, body: data, accept: accept))
+    end
+
+    def post(url, data: {}, accept: 'application/json')
+      http_request(Request.new(:post, url, body: data, accept: accept))
+    end
+
+    private
+
+    def initialize_connection(logger: nil, cache_store: nil)
+      @connection = Faraday.new do |b|
         b.request :url_encoded
         b.response :raise_error
 
@@ -69,25 +95,8 @@ module RestfulResource
       end
     end
 
-    def get(url, accept: 'application/json')
-      http_request(Request.new(:get, url, accept: accept))
-    end
-
-    def delete(url, accept: 'application/json')
-      http_request(Request.new(:delete, url, accept: accept))
-    end
-
-    def put(url, data: {}, accept: 'application/json')
-      http_request(Request.new(:put, url, body: data, accept: accept))
-    end
-
-    def post(url, data: {}, accept: 'application/json')
-      http_request(Request.new(:post, url, body: data, accept: accept))
-    end
-
-    private
     def http_request(request)
-      response = @client.send(request.method) do |req|
+      response = @connection.send(request.method) do |req|
         req.body = request.body unless request.body.nil?
         req.url request.url
 

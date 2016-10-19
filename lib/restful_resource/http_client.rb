@@ -4,12 +4,15 @@ module RestfulResource
       attr_reader :request, :response
 
       def initialize(request, response = nil)
+        @request, @response = request, assign_response(response)
+      end
+
+      def assign_response(response = nil)
         if response
           @response = Response.new body: response[:body], headers: response[:headers], status: response[:status]
         else
           @response = Response.new
         end
-        @request = request
       end
     end
 
@@ -40,32 +43,12 @@ module RestfulResource
       end
     end
 
-    def initialize(username: nil, password: nil, logger: nil, cache_store: nil)
-      @client = Faraday.new do |b|
-        if username.present? && password.present?
-          b.basic_auth username, password
-        end
+    def initialize(username: nil, password: nil, logger: nil, cache_store: nil, connection: nil)
+      # Use a provided faraday client or initalize a new one
+      @connection = connection || initialize_connection(logger: logger, cache_store: cache_store)
 
-        b.request :url_encoded
-        b.response :raise_error
-
-        if logger
-          b.response :logger, logger
-        end
-
-        if cache_store
-          b.use :http_cache, store: cache_store
-        end
-
-        b.response :encoding
-        b.use :gzip
-
-        b.adapter :excon,
-                  nonblock: true, # Always use non-blocking IO (for safe timeouts)
-                  persistent: true, # Re-use TCP connections
-                  connect_timeout: 2, # seconds
-                  read_timeout: 20, # seconds
-                  write_timeout: 2 # seconds
+      if username && password
+        @connection.basic_auth username, password
       end
     end
 
@@ -86,8 +69,34 @@ module RestfulResource
     end
 
     private
+
+    def initialize_connection(logger: nil, cache_store: nil)
+      @connection = Faraday.new do |b|
+        b.request :url_encoded
+        b.response :raise_error
+
+        if logger
+          b.response :logger, logger
+        end
+
+        if cache_store
+          b.use :http_cache, store: cache_store
+        end
+
+        b.response :encoding
+        b.use :gzip
+
+        b.adapter :excon,
+                  nonblock: true, # Always use non-blocking IO (for safe timeouts)
+                  persistent: true, # Re-use TCP connections
+                  connect_timeout: 2, # seconds
+                  read_timeout: 10, # seconds
+                  write_timeout: 2 # seconds
+      end
+    end
+
     def http_request(request)
-      response = @client.send(request.method) do |req|
+      response = @connection.send(request.method) do |req|
         req.body = request.body unless request.body.nil?
         req.url request.url
 

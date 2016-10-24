@@ -20,8 +20,8 @@ describe RestfulResource::HttpClient do
     let(:middleware) { connection.builder.handlers }
 
     describe 'Builder configuration' do
-      it 'uses the excon adapter' do
-        expect(middleware).to include Faraday::Adapter::Excon
+      it 'uses the typhoeus adapter' do
+        expect(middleware).to include Faraday::Adapter::Typhoeus
       end
 
       it 'url_encodes requests' do
@@ -63,30 +63,6 @@ describe RestfulResource::HttpClient do
         it 'uses that cache_store' do
           expect(find_middleware_args(connection, 'Faraday::HttpCache')).to include(store: 'redis')
         end
-      end
-    end
-
-    describe 'Excon Adapter configuration' do
-      let(:config) { find_middleware_args connection, 'Faraday::Adapter::Excon' }
-    
-      it 'uses nonblock' do
-        expect(config[:nonblock]).to eq true
-      end
-
-      it 'uses a persistent connection' do
-        expect(config[:persistent]).to eq true
-      end
-
-      it 'has a connect_timeout of 2' do
-        expect(config[:connect_timeout]).to eq 2
-      end
-
-      it 'has a read_timeout of 10' do
-        expect(config[:read_timeout]).to eq 10
-      end
-
-      it 'has a write_timeout of 2' do
-        expect(config[:write_timeout]).to eq 2
       end
     end
   end

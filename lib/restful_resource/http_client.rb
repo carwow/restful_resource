@@ -1,3 +1,6 @@
+# Use the Faraday-Typhoeus adapter provided by Typhoeus, not Faraday
+require "typhoeus/adapters/faraday"
+
 module RestfulResource
   class HttpClient
     class HttpError < StandardError
@@ -86,17 +89,15 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.adapter :excon,
-                  nonblock: true, # Always use non-blocking IO (for safe timeouts)
-                  persistent: true, # Re-use TCP connections
-                  connect_timeout: 2, # seconds
-                  read_timeout: 10, # seconds
-                  write_timeout: 2 # seconds
+        b.adapter :typhoeus
       end
     end
 
     def http_request(request)
       response = @connection.send(request.method) do |req|
+        req.options.open_timeout = 2 # seconds
+        req.options.timeout = 10 # seconds
+
         req.body = request.body unless request.body.nil?
         req.url request.url
 

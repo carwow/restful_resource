@@ -30,5 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "link_header"
   spec.add_dependency "activesupport"
   spec.add_dependency "rack"
-  spec.add_dependency "excon"
+  spec.add_dependency "typhoeus"
 end

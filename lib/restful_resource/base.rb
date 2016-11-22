@@ -31,9 +31,9 @@ module RestfulResource
       self.paginate_response(response)
     end
 
-    def self.get(params={})
+    def self.get(params = {})
       response = http.get(collection_url(params))
-      RestfulResource::OpenObject.new(parse_json(response.body))
+      self.new(parse_json(response.body))
     end
 
     def self.delete(id, **params)

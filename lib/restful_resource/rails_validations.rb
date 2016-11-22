@@ -18,8 +18,21 @@ module RestfulResource
       end
 
       def post(data: {}, **params)
-        begin
+        with_validations(data: data) do
           super(data: data, **params)
+        end
+      end
+
+      def get(params = {})
+        with_validations do
+          super(params)
+        end
+      end
+
+      private
+      def with_validations(data: {}, &block)
+        begin
+          block.call
         rescue HttpClient::UnprocessableEntity => e
           errors = parse_json(e.response.body)
           result = nil

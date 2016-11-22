@@ -123,13 +123,12 @@ describe RestfulResource::Base do
 
   describe "#get" do
     it "should return an open_object" do
-      expected_response = RestfulResource::Response.new(body: {average_score: 4.3}.to_json)
+      expected_response = RestfulResource::Response.new(body: {average_score: 4.3}.to_json, status: 200)
       expect_get('http://api.carwow.co.uk/makes/average_score?make_slug%5B%5D=Volkswagen&make_slug%5B%5D=Audi', expected_response)
 
       object = Make.action(:average_score).get(make_slug: ['Volkswagen', 'Audi'])
 
       expect(object.average_score).to eq 4.3
-      expect(object.class).to eq RestfulResource::OpenObject
     end
   end
 

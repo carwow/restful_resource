@@ -31,6 +31,21 @@ module RestfulResource
           self.new(result)
         end
       end
+
+      def get(params = {})
+        begin
+          super(params)
+        rescue HttpClient::UnprocessableEntity => e
+          errors = parse_json(e.response.body)
+          result = nil
+          if errors.is_a?(Hash) && errors.has_key?('errors')
+            result = {}.merge(errors)
+          else
+            result = {}.merge(errors: errors)
+          end
+          self.new(result)
+        end
+      end
     end
 
     def self.included(base)

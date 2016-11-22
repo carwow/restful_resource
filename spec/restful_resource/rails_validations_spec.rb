@@ -126,4 +126,52 @@ describe RestfulResource::RailsValidations do
       expect(@object.errors).to eq @error
     end
   end
+
+  context "#get without errors" do
+    before :each do
+      expected_response = RestfulResource::Response.new(body: {name: 'Barak'}.to_json)
+      expect_get("http://api.carwow.co.uk/dealers", expected_response)
+
+      @object = Dealer.get
+    end
+
+    it 'should return object' do
+      expect(@object.name).to eq 'Barak'
+    end
+
+    it 'should return valid object' do
+      expect(@object.valid?).to be_truthy
+    end
+  end
+
+  context "#get with errors" do
+    before :each do
+      @error = 'Missing parameter'
+      expected_response = RestfulResource::Response.new(body: {errors: [@error]}.to_json)
+      expect_get_with_unprocessable_entity("http://api.carwow.co.uk/dealers", expected_response)
+
+      @object = Dealer.get
+    end
+
+    it "should have an error" do
+      expect(@object.errors.count).to eq 1
+    end
+
+    it 'should have correct error' do
+      expect(@object.errors.first).to eq @error
+    end
+
+    it 'should return not valid object' do
+      expect(@object.valid?).to be_falsey
+    end
+
+    it 'should handle errors returned as root object' do
+      expected_response = RestfulResource::Response.new(body: @error.to_json)
+      expect_get_with_unprocessable_entity("http://api.carwow.co.uk/dealers", expected_response)
+
+      @object = Dealer.get
+      expect(@object.valid?).to be_falsey
+      expect(@object.errors).to eq @error
+    end
+  end
 end

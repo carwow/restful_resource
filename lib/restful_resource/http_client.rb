@@ -24,19 +24,25 @@ module RestfulResource
 
     class ResourceNotFound < HttpError
       def message
-        "404 Resource Not Found"
+        "HTTP 404: Resource Not Found"
       end
     end
 
     class OtherHttpError < HttpError
       def message
-        "Http Error - Status code: #{response.status}"
+        "HTTP Error - Status code: #{response.status}"
       end
     end
 
     class ServiceUnavailable < HttpError
       def message
         "HTTP 503: Service unavailable"
+      end
+    end
+
+    class Timeout < HttpError
+      def message
+        "Timeout: Service not responding"
       end
     end
 
@@ -108,6 +114,8 @@ module RestfulResource
       Response.new(body: response.body, headers: response.headers, status: response.status)
     rescue Faraday::ConnectionFailed
       raise
+    rescue Faraday::TimeoutError
+      raise HttpClient::Timeout.new(request)
     rescue Faraday::ClientError => e
       response = e.response
       raise ClientError.new(request) unless response

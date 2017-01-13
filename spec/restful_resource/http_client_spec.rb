@@ -111,6 +111,14 @@ describe RestfulResource::HttpClient do
       expect { http_client(connection).get('https://localhost:3005') }.to raise_error(Faraday::ConnectionFailed)
     end
 
+    it 'should raise Timeout error' do
+      connection = faraday_connection do |stubs|
+        stubs.get('https://localhost:3005') {|env| raise Faraday::TimeoutError.new(nil) }
+      end
+
+      expect { http_client(connection).get('https://localhost:3005') }.to raise_error(RestfulResource::HttpClient::Timeout)
+    end
+
     it 'raises ClientError when a client errors with no response' do
       connection = faraday_connection do |stubs|
         stubs.get('https://localhost:3005') {|env| raise Faraday::ClientError.new(nil) }

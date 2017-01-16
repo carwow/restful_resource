@@ -1,24 +1,76 @@
 # RestfulResource ![build status](https://circleci.com/gh/carwow/restful_resource.svg?style=shield&circle-token=0558310359000e8786d1fe42774b0e30b2b0e12c)
 
-TODO: Write a gem description
+Provides an ActiveResource like interface to JSON API's
 
-## Installation
+## Metrics
 
-Add this line to your application's Gemfile:
+### HTTP Metrics
 
-    gem 'restful_resource'
+Http requests are automatically instrumented using ActiveSupport::Notifications
 
-And then execute:
+A Metrics class can be provided that RestfulResource will use to emit metrics. This class needs to respond to `count, sample, measure` methods.
 
-    $ bundle
+eg
 
-Or install it yourself as:
+```
+RestfulResource::Base.configure(
+  base_url: "http://my.api.com/",
+  instrumentation: {
+    metric_class: Metrics,  # Required
+    app_name: 'rails_site', # Required
+    api_name: 'api'         # Optional, defaults to 'api'
+  }
+)
+```
 
-    $ gem install restful_resource
+Where the `Metrics` class has in interface like:
 
-## Usage
+```
+class Metrics
+  module_function
 
-TODO: Write usage instructions here
+  def count(name, i)
+  end
+
+  def sample(name, i)
+  end
+
+  def measure(name, i)
+  end
+end
+```
+
+This will call the methods on the Metrics class with:
+```
+Metrics.measure('rails_site.api.time', 215.161237) # Time taken
+Metrics.sample('rails_site.api.status', 200) # HTTP status code
+Metrics.count('rails_site.api.called, 1)
+```
+
+Note: To customize the names we can specify `:app_name` and `:api_name` options to `RestfulResource::Base.configure`
+
+### HTTP Cache Metrics
+
+Enable Http caching:
+
+```
+RestfulResource::Base.configure(
+  base_url: "http://my.api.com/",
+  cache_store: Rails.cache,
+  instrumentation: {
+    metric_class: Metrics,
+    app_name: 'rails_site',
+    api_name: 'api'
+  }
+)
+```
+
+This will call the methods on the Metrics class with:
+```
+Metrics.sample('rails_site.api.cache_hit', 1) # When a request is served from the cache
+Metrics.sample('rails_site.api.cache_miss', 1) # When a request is fetched from the remote API
+Metrics.sample('rails_site.api.cache_bypass', 1) # When a request did not go through the cache at all
+```
 
 ## Contributing
 

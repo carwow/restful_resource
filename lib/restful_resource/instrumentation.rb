@@ -24,18 +24,18 @@ module RestfulResource
 
         # Outputs per API log lines like:
         # measure#quotes_site.research_site_api.time=215.161237
-        # sample#quotes_site.research_site_api.status=200
+        # count#quotes_site.research_site_api.status.200=1
         # count#quotes_site.research_site_api.called=1
         metric_class.measure cache_notifier_namespace(metric: 'time'), event.duration
-        metric_class.sample cache_notifier_namespace(metric: 'status'), status
+        metric_class.count cache_notifier_namespace(metric: "status.#{status}"), 1
         metric_class.count cache_notifier_namespace(metric: 'called'), 1
 
         # Outputs per resource log lines like:
         # measure#quotes_site.research_site_api.api_v2_cap_derivatives.time=215.161237
-        # sample#quotes_site.research_site_api.api_v2_cap_derivatives.status=200
+        # count#quotes_site.research_site_api.api_v2_cap_derivatives.status.200=1
         # count#quotes_site.research_site_api.api_v2_cap_derivatives.called=1
         metric_class.measure cache_notifier_namespace(metric: 'time', event: event), event.duration
-        metric_class.sample cache_notifier_namespace(metric: 'status', event: event), status
+        metric_class.count cache_notifier_namespace(metric: "status.#{status}", event: event), 1
         metric_class.count cache_notifier_namespace(metric: 'called', event: event), 1
       end
 
@@ -45,18 +45,18 @@ module RestfulResource
         cache_status = event.payload[:cache_status]
 
         # Outputs log lines like:
-        # sample#quotes_site.research_site_api.cache_hit=1
-        # sample#quotes_site.research_site_api.api_v2_cap_derivatives.cache_hit=1
+        # count#quotes_site.research_site_api.cache_hit=1
+        # count#quotes_site.research_site_api.api_v2_cap_derivatives.cache_hit=1
         case cache_status
           when :fresh, :valid
-            metric_class.sample cache_notifier_namespace(metric: 'cache_hit'), 1
-            metric_class.sample cache_notifier_namespace(metric: 'cache_hit', event: event), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_hit'), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_hit', event: event), 1
           when :invalid, :miss
-            metric_class.sample cache_notifier_namespace(metric: 'cache_miss'), 1
-            metric_class.sample cache_notifier_namespace(metric: 'cache_miss', event: event), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_miss'), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_miss', event: event), 1
           when :unacceptable
-            metric_class.sample cache_notifier_namespace(metric: 'cache_bypass'), 1
-            metric_class.sample cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_bypass'), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
         end
       end
     end

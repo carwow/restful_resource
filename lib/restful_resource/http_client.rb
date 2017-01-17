@@ -52,9 +52,29 @@ module RestfulResource
       end
     end
 
-    def initialize(username: nil, password: nil, logger: nil, cache_store: nil, connection: nil)
+    def initialize(username: nil,
+                   password: nil,
+                   logger: nil,
+                   cache_store: nil,
+                   connection: nil,
+                   instrumentation: {})
+
+
+      api_name = instrumentation[:api_name]     ||= 'api'
+      instrumentation[:request_instrument_name] ||= "http.#{api_name}"
+      instrumentation[:cache_instrument_name]   ||= "http_cache.#{api_name}"
+
+      if instrumentation[:metric_class]
+        @metrics = Instrumentation.new(instrumentation.slice(:app_name, :api_name, :request_instrument_name, :cache_instrument_name, :metric_class))
+        @metrics.subscribe_to_notifications
+      end
+
       # Use a provided faraday client or initalize a new one
-      @connection = connection || initialize_connection(logger: logger, cache_store: cache_store)
+      @connection = connection || initialize_connection(logger: logger,
+                                                        cache_store: cache_store,
+                                                        instrumenter: ActiveSupport::Notifications,
+                                                        request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
+                                                        cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil))
 
       if username && password
         @connection.basic_auth username, password
@@ -79,7 +99,12 @@ module RestfulResource
 
     private
 
-    def initialize_connection(logger: nil, cache_store: nil)
+    def initialize_connection(logger: nil,
+                              cache_store: nil,
+                              instrumenter: nil,
+                              request_instrument_name: nil,
+                              cache_instrument_name: nil)
+
       @connection = Faraday.new do |b|
         b.request :url_encoded
         b.response :raise_error
@@ -89,7 +114,14 @@ module RestfulResource
         end
 
         if cache_store
-          b.use :http_cache, store: cache_store
+          b.use :http_cache, store: cache_store,
+                             logger: logger,
+                             instrumenter: instrumenter,
+                             instrument_name: cache_instrument_name
+        end
+
+        if instrumenter && request_instrument_name
+          b.use :instrumentation, name: request_instrument_name
         end
 
         b.response :encoding

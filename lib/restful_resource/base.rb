@@ -6,14 +6,16 @@ module RestfulResource
                        username: nil,
                        password: nil,
                        logger: nil,
-                       cache_store: nil)
+                       cache_store: nil,
+                       instrumentation: {})
 
       @base_url = URI.parse(base_url)
 
       @http = RestfulResource::HttpClient.new(username: username,
                                               password: password,
                                               logger: logger,
-                                              cache_store: cache_store)
+                                              cache_store: cache_store,
+                                              instrumentation: instrumentation)
     end
 
     def self.resource_path(url)

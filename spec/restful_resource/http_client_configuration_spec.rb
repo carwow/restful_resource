@@ -25,7 +25,7 @@ describe RestfulResource::HttpClient do
       end
 
       it 'url_encodes requests' do
-        expect(middleware).to include Faraday::Request::UrlEncoded
+        expect(middleware).to include FaradayMiddleware::EncodeJson
       end
 
       it 'raises on any error responses' do

@@ -106,7 +106,7 @@ module RestfulResource
                               cache_instrument_name: nil)
 
       @connection = Faraday.new do |b|
-        b.request :url_encoded
+        b.request :json
         b.response :raise_error
 
         if logger

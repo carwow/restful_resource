@@ -12,7 +12,7 @@ module RestfulResource
 
       def assign_response(response = nil)
         if response
-          @response = Response.new body: response[:body], headers: response[:headers], status: response[:status]
+          @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
         else
           @response = Response.new
         end
@@ -28,25 +28,27 @@ module RestfulResource
       end
     end
 
+    class RetryableError < HttpError; end
+
     class OtherHttpError < HttpError
       def message
         "HTTP Error - Status code: #{response.status}"
       end
     end
 
-    class ServiceUnavailable < HttpError
+    class ServiceUnavailable < RetryableError
       def message
         "HTTP 503: Service unavailable"
       end
     end
 
-    class Timeout < HttpError
+    class Timeout < RetryableError
       def message
         "Timeout: Service not responding"
       end
     end
 
-    class ClientError < HttpError
+    class ClientError < RetryableError
       def message
         "There was some client error"
       end

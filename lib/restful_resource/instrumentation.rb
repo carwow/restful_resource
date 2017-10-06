@@ -42,7 +42,7 @@ module RestfulResource
       # Subscribes to events from Faraday::HttpCache
       ActiveSupport::Notifications.subscribe cache_instrument_name do |*args|
         event = ActiveSupport::Notifications::Event.new(*args)
-        cache_status = event.payload[:cache_status]
+        cache_status = event.payload.fetch(:cache_status, nil)
 
         # Outputs log lines like:
         # count#quotes_site.research_site_api.cache_hit=1
@@ -55,6 +55,9 @@ module RestfulResource
             metric_class.count cache_notifier_namespace(metric: 'cache_miss'), 1
             metric_class.count cache_notifier_namespace(metric: 'cache_miss', event: event), 1
           when :unacceptable
+            metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable'), 1
+            metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable', event: event), 1
+          when :bypass
             metric_class.count cache_notifier_namespace(metric: 'cache_bypass'), 1
             metric_class.count cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
         end
@@ -62,13 +65,13 @@ module RestfulResource
     end
 
     def validate_metric_class!
-      metric_methods = [:count, :sample, :measure]
+      metric_methods = %i(count sample measure)
       if metric_methods.any? {|m| !metric_class.respond_to?(m) }
         raise ArgumentError.new "Metric class '#{metric_class}' does not respond to #{metric_methods.join ','}"
       end
     end
 
-    def cache_notifier_namespace(event: nil, metric:)
+    def cache_notifier_namespace(metric:, event: nil)
       [app_name, api_name, base_request_path(event), metric].compact.join('.')
     end
 

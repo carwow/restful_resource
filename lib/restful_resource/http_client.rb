@@ -83,20 +83,20 @@ module RestfulResource
       end
     end
 
-    def get(url, accept: 'application/json')
-      http_request(Request.new(:get, url, accept: accept))
+    def get(url, headers: {})
+      http_request(Request.new(:get, url, headers: headers))
     end
 
-    def delete(url, accept: 'application/json')
-      http_request(Request.new(:delete, url, accept: accept))
+    def delete(url, headers: {})
+      http_request(Request.new(:delete, url, headers: headers))
     end
 
-    def put(url, data: {}, accept: 'application/json')
-      http_request(Request.new(:put, url, body: data, accept: accept))
+    def put(url, data: {}, headers: {})
+      http_request(Request.new(:put, url, body: data, headers: headers))
     end
 
-    def post(url, data: {}, accept: 'application/json')
-      http_request(Request.new(:post, url, body: data, accept: accept))
+    def post(url, data: {}, headers: {})
+      http_request(Request.new(:post, url, body: data, headers: headers))
     end
 
     private
@@ -141,9 +141,7 @@ module RestfulResource
         req.body = request.body unless request.body.nil?
         req.url request.url
 
-        if request.accept
-          req.headers['Accept'] = request.accept
-        end
+        req.headers = req.headers.merge(request.headers)
       end
       Response.new(body: response.body, headers: response.headers, status: response.status)
     rescue Faraday::ConnectionFailed

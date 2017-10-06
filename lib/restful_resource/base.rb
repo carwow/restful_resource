@@ -23,42 +23,50 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      response = http.get(member_url(id, params))
+      headers = params.delete(:headers) || {}
+
+      response = http.get(member_url(id, params), headers: headers)
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
+      headers = params.delete(:headers) || {}
+
       url = collection_url(params)
-      response = http.get(url)
+      response = http.get(url, headers: headers)
       self.paginate_response(response)
     end
 
     def self.get(params = {})
-      response = http.get(collection_url(params))
+      headers = params.delete(:headers) || {}
+
+      response = http.get(collection_url(params), headers: headers)
       self.new(parse_json(response.body))
     end
 
     def self.delete(id, **params)
-      response = http.delete(member_url(id, params))
+      headers = params.delete(:headers) || {}
+
+      response = http.delete(member_url(id, params), headers: headers)
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
-    def self.put(id, data: {}, **params)
+    def self.put(id, data: {}, headers: {}, **params)
       url = member_url(id, params)
-      response = http.put(url, data: data)
+      response = http.put(url, data: data, headers: headers)
       self.new(parse_json(response.body))
     end
 
-    def self.post(data: {}, **params)
+    def self.post(data: {}, headers: {}, **params)
       url = collection_url(params)
 
-      response = http.post(url, data: data)
+      response = http.post(url, data: data, headers: headers)
 
       self.new(parse_json(response.body))
     end
 
-    def self.all
-      self.where
+    def self.all(params = {})
+      self.where(params)
     end
 
     def self.action(action_name)

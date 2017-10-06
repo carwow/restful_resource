@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe RestfulResource::HttpClient do
+RSpec.describe RestfulResource::HttpClient do
   def faraday_connection
     Faraday.new do |builder|
       builder.request :url_encoded
@@ -143,11 +143,22 @@ describe RestfulResource::HttpClient do
 
     it 'should execute authenticated get' do
       connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/basic-auth/user/passwd', { "Authorization"=>"Basic dXNlcjpwYXNzd2Q=" }) { |env| [200, {}, nil] }
+        stubs.get('http://httpbin.org/basic-auth/user/passwd') { |env| [200, {}, nil] }
       end
 
-      response = http_client(connection).get('http://httpbin.org/basic-auth/user/passwd')
+      response = http_client(connection).get('http://httpbin.org/basic-auth/user/passwd', headers: {"Authorization"=>"Basic dXNlcjpwYXNzd2Q="})
 
+      expect(response.status).to eq 200
+    end
+  end
+
+  describe 'Headers' do
+    it 'uses custom headers' do
+      connection = faraday_connection do |stubs|
+        stubs.get('http://httpbin.org/get', { 'Cache-Control' => 'no-cache' }) { |env| [200, {}, nil] }
+      end
+
+      response = http_client(connection).get('http://httpbin.org/get', headers: { cache_control: 'no-cache' })
       expect(response.status).to eq 200
     end
   end

@@ -36,6 +36,12 @@ module RestfulResource
       end
     end
 
+    class BadGateway < RetryableError
+      def message
+        "HTTP 502: Bad gateway"
+      end
+    end
+
     class ServiceUnavailable < RetryableError
       def message
         "HTTP 503: Service unavailable"
@@ -154,6 +160,7 @@ module RestfulResource
       case response[:status]
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
+      when 502 then raise HttpClient::BadGateway.new(request, response)
       when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
       else raise HttpClient::OtherHttpError.new(request, response)
       end

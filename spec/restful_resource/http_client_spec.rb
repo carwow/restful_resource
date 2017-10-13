@@ -73,6 +73,22 @@ RSpec.describe RestfulResource::HttpClient do
       expect { http_client(connection).post('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
 
+    it 'put should raise error 502' do
+      connection = faraday_connection do |stubs|
+        stubs.put('http://httpbin.org/status/502') { |env| [502, {}, nil] }
+      end
+
+      expect { http_client(connection).put('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
+    end
+
+    it 'post should raise error 502' do
+      connection = faraday_connection do |stubs|
+        stubs.post('http://httpbin.org/status/502') { |env| [502, {}, nil] }
+      end
+
+      expect { http_client(connection).post('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
+    end
+
     it 'put should raise error 503' do
       connection = faraday_connection do |stubs|
         stubs.put('http://httpbin.org/status/503') { |env| [503, {}, nil] }

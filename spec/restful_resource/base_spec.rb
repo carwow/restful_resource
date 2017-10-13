@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
-describe RestfulResource::Base do
-  before :each do
+RSpec.describe RestfulResource::Base do
+  before do
     @mock_http = double("mock_http")
     allow(RestfulResource::Base).to receive(:http).and_return(@mock_http)
     RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
@@ -49,6 +49,22 @@ describe RestfulResource::Base do
 
       object = Model.find('Golf Cabriolet?test', make_slug: 'Land Rover?x=0.123', group_id: 'xxx yyy?l=7')
     end
+
+    it 'accepts custom headers' do
+      expect_get("http://api.carwow.co.uk/makes/12",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.find(12, headers: { cache_control: 'no-cache' })
+    end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes/12",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.find(12, no_cache: true)
+    end
   end
 
   describe "#where" do
@@ -74,6 +90,22 @@ describe RestfulResource::Base do
       expect(models.previous_page).to be_nil
       expect(models.next_page).to eq 2
     end
+
+    it 'accepts custom headers' do
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, headers: { cache_control: 'no-cache' })
+    end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
+    end
   end
 
   describe "#all" do
@@ -85,6 +117,22 @@ describe RestfulResource::Base do
       expect(makes).not_to be_nil
       expect(makes.length).to eq 2
       expect(makes.first.name).to eq 'Volkswagen'
+    end
+
+    it 'accepts custom headers' do
+      expect_get("http://api.carwow.co.uk/makes",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.all(headers: { cache_control: 'no-cache' })
+    end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.all(no_cache: true)
     end
   end
 
@@ -130,6 +178,22 @@ describe RestfulResource::Base do
 
       expect(object.average_score).to eq 4.3
     end
+
+    it 'accepts custom headers' do
+      expect_get("http://api.carwow.co.uk/makes/average_score",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.action(:average_score).get(headers: { cache_control: 'no-cache' })
+    end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes/average_score",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.action(:average_score).get(no_cache: true)
+    end
   end
 
   describe "#put" do
@@ -172,6 +236,14 @@ describe RestfulResource::Base do
 
       expect(object.name).to eq 'Audi'
     end
+
+    it 'accepts custom headers' do
+      expect_put("http://api.carwow.co.uk/makes/1",
+        RestfulResource::Response.new,
+        headers: { accept: 'application/json' })
+
+      Make.put(1, data: {}, headers: { accept: 'application/json' })
+    end
   end
 
   describe "#post" do
@@ -186,6 +258,14 @@ describe RestfulResource::Base do
       expect(object.name).to eq 'Audi'
       expect(object.num_of_cars).to eq 3
     end
+
+    it 'accepts custom headers' do
+      expect_post("http://api.carwow.co.uk/makes",
+        RestfulResource::Response.new,
+        headers: { accept: 'application/json' })
+
+      Make.post(data: {}, headers: { accept: 'application/json' })
+    end
   end
 
   describe "#delete" do
@@ -196,6 +276,14 @@ describe RestfulResource::Base do
       object = Make.delete(1)
 
       expect(object.deleted).to be_truthy
+    end
+
+    it 'accepts custom headers' do
+      expect_delete("http://api.carwow.co.uk/makes/1",
+        RestfulResource::Response.new,
+        headers: { accept: 'application/json' })
+
+      Make.delete(1, headers: { accept: 'application/json' })
     end
   end
 

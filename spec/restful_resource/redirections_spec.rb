@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
-describe RestfulResource::Redirections do
-  before :each do
+RSpec.describe RestfulResource::Redirections do
+  before do
     @mock_http = double("mock_http")
     allow(RestfulResource::Base).to receive(:http).and_return(@mock_http)
     RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
@@ -24,7 +24,7 @@ describe RestfulResource::Redirections do
     context 'with a redirect to resource location' do
       let(:redirect_target) { 'http://api.carwow.co.uk/model_with_redirections/123' }
 
-      before(:each) do
+      before do
         allow(RestfulResource::Redirections).to receive(:wait)
         expected_redirect_response = RestfulResource::Response.new(body: 'You are being redirected', status: 303, headers: { location: redirect_target})
         expect_post("http://api.carwow.co.uk/model_with_redirections", expected_redirect_response, data: data)

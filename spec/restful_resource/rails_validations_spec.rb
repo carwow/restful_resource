@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe RestfulResource::RailsValidations do
+RSpec.describe RestfulResource::RailsValidations do
   before :each do
     @mock_http = double("mock_http")
     RestfulResource::Base.configure(base_url: "http://api.carwow.co.uk/")
@@ -26,7 +26,7 @@ describe RestfulResource::RailsValidations do
   end
 
   context "#put with errors" do
-    before :each do
+    before do
       data = {name: 'Leonardo'}
       @error = 'Cannot use Ninja Turtles names'
       expected_response = RestfulResource::Response.new(body: {errors: [@error]}.to_json)

@@ -23,42 +23,50 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      response = http.get(member_url(id, params))
+      params_without_headers, headers = extract_headers!(params)
+
+      response = http.get(member_url(id, params_without_headers), headers: headers)
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
-      url = collection_url(params)
-      response = http.get(url)
+      params_without_headers, headers = extract_headers!(params)
+
+      url = collection_url(params_without_headers)
+      response = http.get(url, headers: headers)
       self.paginate_response(response)
     end
 
     def self.get(params = {})
-      response = http.get(collection_url(params))
+      params_without_headers, headers = extract_headers!(params)
+
+      response = http.get(collection_url(params_without_headers), headers: headers)
       self.new(parse_json(response.body))
     end
 
     def self.delete(id, **params)
-      response = http.delete(member_url(id, params))
+      headers = params.delete(:headers) || {}
+
+      response = http.delete(member_url(id, params), headers: headers)
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
-    def self.put(id, data: {}, **params)
+    def self.put(id, data: {}, headers: {}, **params)
       url = member_url(id, params)
-      response = http.put(url, data: data)
+      response = http.put(url, data: data, headers: headers)
       self.new(parse_json(response.body))
     end
 
-    def self.post(data: {}, **params)
+    def self.post(data: {}, headers: {}, **params)
       url = collection_url(params)
 
-      response = http.post(url, data: data)
+      response = http.post(url, data: data, headers: headers)
 
       self.new(parse_json(response.body))
     end
 
-    def self.all
-      self.where
+    def self.all(params = {})
+      self.where(params)
     end
 
     def self.action(action_name)
@@ -104,6 +112,15 @@ module RestfulResource
     end
 
     private
+
+    def self.extract_headers!(params = {})
+      headers = params.delete(:headers) || {}
+
+      headers.merge!(cache_control: 'no-cache') if params.delete(:no_cache)
+
+      [params, headers]
+    end
+
     def self.merge_url_paths(uri, *paths)
       uri.merge(paths.compact.join('/')).to_s
     end

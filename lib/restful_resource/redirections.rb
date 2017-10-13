@@ -8,10 +8,10 @@ module RestfulResource
   module Redirections
     def self.included(base)
       base.instance_eval do
-        def post(data: {}, delay: 1.0, max_attempts: 10, **params)
+        def post(data: {}, delay: 1.0, max_attempts: 10, headers: {}, **params)
           url = collection_url(params)
 
-          response = self.accept_redirected_result(response: http.post(url, data: data), delay: delay, max_attempts: max_attempts)
+          response = self.accept_redirected_result(response: http.post(url, data: data, headers: headers), delay: delay, max_attempts: max_attempts)
 
           self.new(parse_json(response.body))
         end
@@ -24,12 +24,12 @@ module RestfulResource
             resource_location = response.headers[:location]
 
             RestfulResource::Redirections.wait(delay)
-            new_response = http.get(resource_location)
+            new_response = http.get(resource_location, headers: {})
 
             while (new_response.status == 202) && (attempts < max_attempts)
               attempts += 1
               RestfulResource::Redirections.wait(delay)
-              new_response = http.get(resource_location)
+              new_response = http.get(resource_location, headers: {})
             end
 
             if attempts == max_attempts

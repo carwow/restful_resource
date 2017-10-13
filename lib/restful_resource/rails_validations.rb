@@ -1,9 +1,9 @@
 module RestfulResource
   module RailsValidations
     module ClassMethods
-      def put(id, data: {}, **params)
+      def put(id, data: {}, headers: {}, **params)
         begin
-          super(id, data: data, **params)
+          super(id, data: data, headers: {}, **params)
         rescue HttpClient::UnprocessableEntity => e
           errors = parse_json(e.response.body)
           result = nil
@@ -17,9 +17,9 @@ module RestfulResource
         end
       end
 
-      def post(data: {}, **params)
+      def post(data: {}, headers: {}, **params)
         with_validations(data: data) do
-          super(data: data, **params)
+          super(data: data, headers: {}, **params)
         end
       end
 

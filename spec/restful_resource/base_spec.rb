@@ -57,6 +57,14 @@ RSpec.describe RestfulResource::Base do
 
       Make.find(12, headers: { cache_control: 'no-cache' })
     end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes/12",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.find(12, no_cache: true)
+    end
   end
 
   describe "#where" do
@@ -90,6 +98,14 @@ RSpec.describe RestfulResource::Base do
 
       Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, headers: { cache_control: 'no-cache' })
     end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
+    end
   end
 
   describe "#all" do
@@ -109,6 +125,14 @@ RSpec.describe RestfulResource::Base do
         headers: { cache_control: 'no-cache' })
 
       Make.all(headers: { cache_control: 'no-cache' })
+    end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.all(no_cache: true)
     end
   end
 
@@ -162,6 +186,14 @@ RSpec.describe RestfulResource::Base do
 
       Make.action(:average_score).get(headers: { cache_control: 'no-cache' })
     end
+
+    it 'accepts no_cache option' do
+      expect_get("http://api.carwow.co.uk/makes/average_score",
+        RestfulResource::Response.new,
+        headers: { cache_control: 'no-cache' })
+
+      Make.action(:average_score).get(no_cache: true)
+    end
   end
 
   describe "#put" do
@@ -208,9 +240,9 @@ RSpec.describe RestfulResource::Base do
     it 'accepts custom headers' do
       expect_put("http://api.carwow.co.uk/makes/1",
         RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
+        headers: { accept: 'application/json' })
 
-      Make.put(1, data: {}, headers: { cache_control: 'no-cache' })
+      Make.put(1, data: {}, headers: { accept: 'application/json' })
     end
   end
 
@@ -230,9 +262,9 @@ RSpec.describe RestfulResource::Base do
     it 'accepts custom headers' do
       expect_post("http://api.carwow.co.uk/makes",
         RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
+        headers: { accept: 'application/json' })
 
-      Make.post(data: {}, headers: { cache_control: 'no-cache' })
+      Make.post(data: {}, headers: { accept: 'application/json' })
     end
   end
 
@@ -249,9 +281,9 @@ RSpec.describe RestfulResource::Base do
     it 'accepts custom headers' do
       expect_delete("http://api.carwow.co.uk/makes/1",
         RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
+        headers: { accept: 'application/json' })
 
-      Make.delete(1, headers: { cache_control: 'no-cache' })
+      Make.delete(1, headers: { accept: 'application/json' })
     end
   end
 

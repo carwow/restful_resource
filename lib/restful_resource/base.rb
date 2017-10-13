@@ -23,24 +23,24 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      headers = params.delete(:headers) || {}
+      params_without_headers, headers = extract_headers!(params)
 
-      response = http.get(member_url(id, params), headers: headers)
+      response = http.get(member_url(id, params_without_headers), headers: headers)
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
-      headers = params.delete(:headers) || {}
+      params_without_headers, headers = extract_headers!(params)
 
-      url = collection_url(params)
+      url = collection_url(params_without_headers)
       response = http.get(url, headers: headers)
       self.paginate_response(response)
     end
 
     def self.get(params = {})
-      headers = params.delete(:headers) || {}
+      params_without_headers, headers = extract_headers!(params)
 
-      response = http.get(collection_url(params), headers: headers)
+      response = http.get(collection_url(params_without_headers), headers: headers)
       self.new(parse_json(response.body))
     end
 
@@ -112,6 +112,15 @@ module RestfulResource
     end
 
     private
+
+    def self.extract_headers!(params = {})
+      headers = params.delete(:headers) || {}
+
+      headers.merge!(cache_control: 'no-cache') if params.delete(:no_cache)
+
+      [params, headers]
+    end
+
     def self.merge_url_paths(uri, *paths)
       uri.merge(paths.compact.join('/')).to_s
     end

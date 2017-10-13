@@ -2,6 +2,28 @@
 
 Provides an ActiveResource like interface to JSON API's
 
+## Caching
+
+Caching using [faraday-http-cache](https://github.com/plataformatec/faraday-http-cache)
+
+Enabled by passing an initialsed cache object (eg Rails.cache)
+
+```
+RestfulResource::Base.configure(
+  base_url: "http://my.api.com/",
+  cache_store: Rails.cache
+)
+```
+
+### Bypassing the cache
+
+To make requests that bypass the local HTTP cache use the `no_cache: true` option eg:
+
+```
+Object.find(1, no_cache: true)
+```
+
+
 ## Metrics
 
 ### HTTP Metrics

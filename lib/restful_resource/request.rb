@@ -1,9 +1,14 @@
 module RestfulResource
   class Request
-    attr_reader :body, :method, :url
+    attr_reader :body, :method, :url, :open_timeout, :timeout
 
-    def initialize(method, url, headers: {}, body: nil)
-      @method, @url, @headers, @body = method, url, headers, body
+    def initialize(method, url, headers: {}, body: nil, open_timeout: nil, timeout: nil)
+      @method = method
+      @url = url
+      @headers = headers
+      @body = body
+      @open_timeout = open_timeout
+      @timeout = timeout
     end
 
     def headers
@@ -14,9 +19,8 @@ module RestfulResource
 
     # Formats all keys in Word-Word format
     def format_headers
-      @headers.stringify_keys.inject({}) do |h, key_with_value|
-        h[format_key key_with_value.first] = key_with_value.last
-        h
+      @headers.stringify_keys.each_with_object({}) do |key_with_value, headers|
+        headers[format_key(key_with_value.first)] = key_with_value.last
       end
     end
 

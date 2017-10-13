@@ -9,39 +9,47 @@ RSpec.configure do |config|
 end
 
 
-def expect_get(url, response, headers: {})
-  expect(@mock_http).to receive(:get).with(url, headers: headers).and_return(response)
+def expect_get(url, response, headers: {}, open_timeout: nil, timeout: nil)
+  expect(@mock_http).to receive(:get)
+    .with(url, headers: headers, open_timeout: open_timeout, timeout: timeout)
+    .and_return(response)
 end
 
-def expect_delete(url, response, headers: {})
-  expect(@mock_http).to receive(:delete).with(url, headers: headers).and_return(response)
+def expect_delete(url, response, headers: {}, open_timeout: nil, timeout: nil)
+  expect(@mock_http).to receive(:delete)
+    .with(url, headers: headers, open_timeout: open_timeout, timeout: timeout)
+    .and_return(response)
 end
 
-def expect_put(url, response, data: {}, headers: {})
-  expect(@mock_http).to receive(:put).with(url, data: data, headers: headers).and_return(response)
+def expect_put(url, response, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+  expect(@mock_http).to receive(:put)
+    .with(url, data: data, headers: headers, open_timeout: open_timeout, timeout: timeout)
+    .and_return(response)
 end
 
-def expect_post(url, response, data: {}, headers: {})
-  expect(@mock_http).to receive(:post).with(url, data: data, headers: headers).and_return(response)
+def expect_post(url, response, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+  expect(@mock_http).to receive(:post)
+    .with(url, data: data, headers: headers, open_timeout: open_timeout, timeout: timeout)
+    .and_return(response)
 end
 
 def expect_get_with_unprocessable_entity(url, response)
   request = RestfulResource::Request.new(:get, url)
   rest_client_response = OpenStruct.new({body: response.body, headers: response.headers, code: response.status})
   exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
-  expect(@mock_http).to receive(:get).with(url, headers: {}).and_raise(exception)
+  expect(@mock_http).to receive(:get).with(url, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
 end
 
 def expect_put_with_unprocessable_entity(url, response, data: {})
   request = RestfulResource::Request.new(:put, url, body: data)
   rest_client_response = OpenStruct.new({body: response.body, headers: response.headers, code: response.status})
   exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
-  expect(@mock_http).to receive(:put).with(url, data: data, headers: {}).and_raise(exception)
+  expect(@mock_http).to receive(:put).with(url, data: data, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
 end
 
 def expect_post_with_unprocessable_entity(url, response, data: {})
   request = RestfulResource::Request.new(:put, url, body: data)
   rest_client_response = OpenStruct.new({body: response.body, headers: response.headers, code: response.status})
   exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
-  expect(@mock_http).to receive(:post).with(url, data: data, headers: {}).and_raise(exception)
+  expect(@mock_http).to receive(:post).with(url, data: data, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
 end

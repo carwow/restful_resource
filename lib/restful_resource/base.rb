@@ -23,44 +23,50 @@ module RestfulResource
     end
 
     def self.find(id, params={})
-      params_without_headers, headers = extract_headers!(params)
+      params_without_options, options = format_params(params)
 
-      response = http.get(member_url(id, params_without_headers), headers: headers)
+      response = http.get(member_url(id, params_without_options), **options)
       self.new(parse_json(response.body))
     end
 
     def self.where(params={})
-      params_without_headers, headers = extract_headers!(params)
+      params_without_options, options = format_params(params)
 
-      url = collection_url(params_without_headers)
-      response = http.get(url, headers: headers)
+      url = collection_url(params_without_options)
+      response = http.get(url, **options)
       self.paginate_response(response)
     end
 
     def self.get(params = {})
-      params_without_headers, headers = extract_headers!(params)
+      params_without_options, options = format_params(params)
 
-      response = http.get(collection_url(params_without_headers), headers: headers)
+      response = http.get(collection_url(params_without_options), **options)
       self.new(parse_json(response.body))
     end
 
     def self.delete(id, **params)
-      headers = params.delete(:headers) || {}
-
-      response = http.delete(member_url(id, params), headers: headers)
+      params_without_options, options = format_params(params)
+      response = http.delete(member_url(id, params_without_options), **options)
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
     def self.put(id, data: {}, headers: {}, **params)
-      url = member_url(id, params)
-      response = http.put(url, data: data, headers: headers)
+      params_without_options, options = format_params(params)
+      options.delete(:headers)
+
+      url = member_url(id, params_without_options)
+
+      response = http.put(url, data: data, headers: headers, **options)
       self.new(parse_json(response.body))
     end
 
     def self.post(data: {}, headers: {}, **params)
-      url = collection_url(params)
+      params_without_options, options = format_params(params)
+      options.delete(:headers)
 
-      response = http.post(url, data: data, headers: headers)
+      url = collection_url(params_without_options)
+
+      response = http.post(url, data: data, headers: headers, **options)
 
       self.new(parse_json(response.body))
     end
@@ -113,12 +119,14 @@ module RestfulResource
 
     private
 
-    def self.extract_headers!(params = {})
+    def self.format_params(params = {})
       headers = params.delete(:headers) || {}
 
       headers.merge!(cache_control: 'no-cache') if params.delete(:no_cache)
+      open_timeout = params.delete(:open_timeout)
+      timeout = params.delete(:timeout)
 
-      [params, headers]
+      [params, headers: headers, open_timeout: open_timeout, timeout: timeout]
     end
 
     def self.merge_url_paths(uri, *paths)

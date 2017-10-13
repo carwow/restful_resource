@@ -1,48 +1,41 @@
 module RestfulResource
   module RailsValidations
     module ClassMethods
-      def put(id, data: {}, headers: {}, **params)
-        begin
-          super(id, data: data, headers: {}, **params)
-        rescue HttpClient::UnprocessableEntity => e
-          errors = parse_json(e.response.body)
-          result = nil
-          if errors.is_a?(Hash) && errors.has_key?('errors')
-            result = data.merge(errors)
-          else
-            result = data.merge(errors: errors)
-          end
-          result = result.merge(id: id)
-          self.new(result)
+      def put(id, data: {}, **)
+        super
+      rescue HttpClient::UnprocessableEntity => e
+        errors = parse_json(e.response.body)
+        result = nil
+        if errors.is_a?(Hash) && errors.has_key?('errors')
+          result = data.merge(errors)
+        else
+          result = data.merge(errors: errors)
         end
+        result = result.merge(id: id)
+        self.new(result)
       end
 
-      def post(data: {}, headers: {}, **params)
-        with_validations(data: data) do
-          super(data: data, headers: {}, **params)
-        end
+      def post(data: {}, **)
+        with_validations(data: data) { super }
       end
 
-      def get(params = {})
-        with_validations do
-          super(params)
-        end
+      def get(*)
+        with_validations { super }
       end
 
       private
-      def with_validations(data: {}, &block)
-        begin
-          block.call
-        rescue HttpClient::UnprocessableEntity => e
-          errors = parse_json(e.response.body)
-          result = nil
-          if errors.is_a?(Hash) && errors.has_key?('errors')
-            result = data.merge(errors)
-          else
-            result = data.merge(errors: errors)
-          end
-          self.new(result)
+
+      def with_validations(data: {})
+        yield
+      rescue HttpClient::UnprocessableEntity => e
+        errors = parse_json(e.response.body)
+        result = nil
+        if errors.is_a?(Hash) && errors.has_key?('errors')
+          result = data.merge(errors)
+        else
+          result = data.merge(errors: errors)
         end
+        self.new(result)
       end
     end
 

@@ -65,9 +65,9 @@ module RestfulResource
                    logger: nil,
                    cache_store: nil,
                    connection: nil,
-                   instrumentation: {})
-
-
+                   instrumentation: {},
+                   open_timeout: 2,
+                   timeout: 10)
       api_name = instrumentation[:api_name]     ||= 'api'
       instrumentation[:request_instrument_name] ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]   ||= "http_cache.#{api_name}"
@@ -84,28 +84,64 @@ module RestfulResource
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil))
 
-      if username && password
-        @connection.basic_auth username, password
-      end
+      @connection.basic_auth(username, password) if username && password
+      @default_open_timeout = open_timeout
+      @default_timeout = timeout
     end
 
-    def get(url, headers: {})
-      http_request(Request.new(:get, url, headers: headers))
+    def get(url, headers: {}, open_timeout: nil, timeout: nil)
+      http_request(
+        Request.new(
+          :get,
+          url,
+          headers: headers,
+          open_timeout: open_timeout,
+          timeout: timeout
+        )
+      )
     end
 
-    def delete(url, headers: {})
-      http_request(Request.new(:delete, url, headers: headers))
+    def delete(url, headers: {}, open_timeout: nil, timeout: nil)
+      http_request(
+        Request.new(
+          :delete,
+          url,
+          headers: headers,
+          open_timeout: open_timeout,
+          timeout: timeout
+        )
+      )
     end
 
-    def put(url, data: {}, headers: {})
-      http_request(Request.new(:put, url, body: data, headers: headers))
+    def put(url, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+      http_request(
+        Request.new(
+          :put,
+          url,
+          body: data,
+          headers: headers,
+          open_timeout: open_timeout,
+          timeout: timeout
+        )
+      )
     end
 
-    def post(url, data: {}, headers: {})
-      http_request(Request.new(:post, url, body: data, headers: headers))
+    def post(url, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+      http_request(
+        Request.new(
+          :post,
+          url,
+          body: data,
+          headers: headers,
+          open_timeout: open_timeout,
+          timeout: timeout
+        )
+      )
     end
 
     private
+
+    attr_reader :default_open_timeout, :default_timeout
 
     def initialize_connection(logger: nil,
                               cache_store: nil,
@@ -141,8 +177,8 @@ module RestfulResource
 
     def http_request(request)
       response = @connection.send(request.method) do |req|
-        req.options.open_timeout = 2 # seconds
-        req.options.timeout = 10 # seconds
+        req.options.open_timeout = request.open_timeout || default_open_timeout # seconds
+        req.options.timeout = request.timeout || default_timeout # seconds
 
         req.body = request.body unless request.body.nil?
         req.url request.url

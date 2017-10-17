@@ -176,30 +176,7 @@ module RestfulResource
     end
 
     def http_request(request)
-      response = @connection.send(request.method) do |req|
-        req.options.open_timeout = request.open_timeout || default_open_timeout # seconds
-        req.options.timeout = request.timeout || default_timeout # seconds
-
-        req.body = request.body unless request.body.nil?
-        req.url request.url
-
-        req.headers = req.headers.merge(request.headers)
-      end
-      Response.new(body: response.body, headers: response.headers, status: response.status)
-    rescue Faraday::ConnectionFailed
-      raise
-    rescue Faraday::TimeoutError
-      raise HttpClient::Timeout.new(request)
-    rescue Faraday::ClientError => e
-      response = e.response
-      raise ClientError.new(request) unless response
-      case response[:status]
-      when 404 then raise HttpClient::ResourceNotFound.new(request, response)
-      when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
-      when 502 then raise HttpClient::BadGateway.new(request, response)
-      when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
-      else raise HttpClient::OtherHttpError.new(request, response)
-      end
+      FutureResponse.new(@connection, request)
     end
   end
 end

@@ -75,9 +75,9 @@ module RestfulResource
       [app_name, api_name, base_request_path(event), metric].compact.join('.')
     end
 
-    # Converts a path like "/api/v2/cap_derivatives/75423" to "api_v2_cap_derivatives"
+    # Converts a path like "/api/v2/cap_derivatives/75423/with_colours" to "api_v2_cap_derivatives_with_colours"
     def base_request_path(event)
-      path_from_event(event).split('/').drop(1).take(3).join('_') if event
+      path_from_event(event).split('/').drop(1).select {|a| a.match(/\d+/).nil? }.join('_') if event
     end
 
     def path_from_event(event)

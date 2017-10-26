@@ -3,15 +3,17 @@ require 'active_support/notifications'
 module RestfulResource
   class Instrumentation
 
-    def initialize(app_name:, api_name:, request_instrument_name:, cache_instrument_name:, metric_class:)
+    def initialize(app_name:, api_name:, request_instrument_name:, cache_instrument_name:, server_cache_instrument_name:, metric_class:)
       @app_name = app_name
       @api_name = api_name
       @request_instrument_name = request_instrument_name
       @cache_instrument_name = cache_instrument_name
+      @server_cache_instrument_name = server_cache_instrument_name
       @metric_class = metric_class
     end
 
-    attr_reader :app_name, :api_name, :request_instrument_name, :cache_instrument_name, :metric_class
+    attr_reader :app_name, :api_name, :request_instrument_name, :cache_instrument_name,
+      :server_cache_instrument_name, :metric_class
 
     def subscribe_to_notifications
       validate_metric_class!
@@ -62,6 +64,39 @@ module RestfulResource
             metric_class.count cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
         end
       end
+
+      # Subscribes to events from Faraday::Cdn::Metrics
+      ActiveSupport::Notifications.subscribe server_cache_instrument_name do |*args|
+        event = ActiveSupport::Notifications::Event.new(*args)
+        client_cache_status = event.payload.fetch(:client_cache_status, nil)
+        server_cache_status = event.payload.fetch(:server_cache_status, nil)
+
+        if client_cache_status.nil? || !client_cache_status.in?([:fresh, :valid])
+          # Outputs log lines like:
+          # count#quotes_site.research_site_api.server_cache_hit=1
+          # count#quotes_site.research_site_api.api_v2_cap_derivatives.server_cache_hit=1
+          case server_cache_status
+          when :fresh
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_hit'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_hit', event: event), 1
+          when :valid
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_hit_while_revalidate'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_hit_while_revalidate', event: event), 1
+          when :invalid, :miss
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_miss'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_miss', event: event), 1
+          when :unacceptable
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_not_cacheable'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_not_cacheable', event: event), 1
+          when :bypass
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_bypass'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_bypass', event: event), 1
+          when :unknown
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_unknown'), 1
+            metric_class.count cache_notifier_namespace(metric: 'server_cache_unknown', event: event), 1
+          end
+        end
+      end
     end
 
     def validate_metric_class!
@@ -93,4 +128,3 @@ module RestfulResource
     end
   end
 end
-

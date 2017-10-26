@@ -85,6 +85,7 @@ describe RestfulResource::HttpClient do
                                                      api_name: 'api',
                                                      request_instrument_name: 'http.api',
                                                      cache_instrument_name: 'http_cache.api',
+                                                     server_cache_instrument_name: 'cdn_metrics.api',
                                                      metric_class: FakeMetrics)
           end
 

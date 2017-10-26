@@ -123,6 +123,7 @@ module RestfulResource
       headers = params.delete(:headers) || {}
 
       headers.merge!(cache_control: 'no-cache') if params.delete(:no_cache)
+      headers.merge!(x_total_count: 'skip') if params.delete(:no_count)
       open_timeout = params.delete(:open_timeout)
       timeout = params.delete(:timeout)
 

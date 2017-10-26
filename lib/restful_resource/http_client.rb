@@ -71,6 +71,7 @@ module RestfulResource
       api_name = instrumentation[:api_name]     ||= 'api'
       instrumentation[:request_instrument_name] ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]   ||= "http_cache.#{api_name}"
+      instrumentation[:server_cache_instrument_name]   ||= "cdn_metrics.#{api_name}"
 
       if instrumentation[:metric_class]
         @metrics = Instrumentation.new(instrumentation.slice(:app_name, :api_name, :request_instrument_name, :cache_instrument_name, :metric_class))
@@ -82,7 +83,8 @@ module RestfulResource
                                                         cache_store: cache_store,
                                                         instrumenter: ActiveSupport::Notifications,
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
-                                                        cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil))
+                                                        cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
+                                                        server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil))
 
       @connection.basic_auth(username, password) if username && password
       @default_open_timeout = open_timeout
@@ -147,7 +149,8 @@ module RestfulResource
                               cache_store: nil,
                               instrumenter: nil,
                               request_instrument_name: nil,
-                              cache_instrument_name: nil)
+                              cache_instrument_name: nil,
+                              server_cache_instrument_name: nil)
 
       @connection = Faraday.new do |b|
         b.request :json
@@ -157,7 +160,10 @@ module RestfulResource
           b.response :logger, logger
         end
 
-        b.use :cdn_metrics, instrumenter: instrumenter
+        if server_cache_instrument_name
+          b.use :cdn_metrics, instrumenter: instrumenter,
+                              instrument_name: server_cache_instrument_name
+        end
 
         if cache_store
           b.use :http_cache, store: cache_store,

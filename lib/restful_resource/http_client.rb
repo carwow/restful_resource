@@ -157,6 +157,8 @@ module RestfulResource
           b.response :logger, logger
         end
 
+        b.use :cdn_metrics, instrumenter: instrumenter
+
         if cache_store
           b.use :http_cache, store: cache_store,
                              logger: logger,

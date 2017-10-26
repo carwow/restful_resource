@@ -23,6 +23,20 @@ To make requests that bypass the local HTTP cache use the `no_cache: true` optio
 Object.find(1, no_cache: true)
 ```
 
+### Skipping total count calculation
+
+Paginated APIs are expected to return the total number of results in the `X-Total-Count` header
+(which is used to set up the `total_count` attribute of the `PaginatedArray` returned from listing
+methods). However, this can cause a performance hit for listings which return a lot of results.
+Specifying `no_count: true` instructs the server to not populate that header, meaning that the
+result will not have a `total_count` attribute.
+
+```
+results = Object.where(attr1: 'thing', no_count: true)
+results.total_count # => nil
+results.count # => the page size, e.g. 50
+```
+
 
 ## Metrics
 

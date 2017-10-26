@@ -106,6 +106,14 @@ RSpec.describe RestfulResource::Base do
 
       Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
     end
+
+    it 'accepts no_count option' do
+      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
+        RestfulResource::Response.new,
+        headers: { x_total_count: 'skip' })
+
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_count: true)
+    end
   end
 
   describe "#all" do
@@ -133,6 +141,14 @@ RSpec.describe RestfulResource::Base do
         headers: { cache_control: 'no-cache' })
 
       Make.all(no_cache: true)
+    end
+
+    it 'accepts no_count option' do
+      expect_get("http://api.carwow.co.uk/makes",
+        RestfulResource::Response.new,
+        headers: { x_total_count: 'skip' })
+
+      Make.all(no_count: true)
     end
   end
 

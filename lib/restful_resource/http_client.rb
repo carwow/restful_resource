@@ -28,6 +28,8 @@ module RestfulResource
       end
     end
 
+    class Conflict < HttpError; end
+
     class RetryableError < HttpError; end
 
     class OtherHttpError < HttpError
@@ -208,6 +210,7 @@ module RestfulResource
       raise ClientError.new(request) unless response
       case response[:status]
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
+      when 409 then raise HttpClient::Conflict.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
       when 502 then raise HttpClient::BadGateway.new(request, response)
       when 503 then raise HttpClient::ServiceUnavailable.new(request, response)

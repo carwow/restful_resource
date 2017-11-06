@@ -57,6 +57,14 @@ RSpec.describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
 
+    it 'put should raise error 409' do
+      connection = faraday_connection do |stubs|
+        stubs.put('http://httpbin.org/status/409') { |env| [409, {}, nil] }
+      end
+
+      expect { http_client(connection).put('http://httpbin.org/status/409') }.to raise_error(RestfulResource::HttpClient::Conflict)
+    end
+
     it 'put should raise error 422' do
       connection = faraday_connection do |stubs|
         stubs.put('http://httpbin.org/status/422') { |env| [422, {}, nil] }

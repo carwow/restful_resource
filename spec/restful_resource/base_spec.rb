@@ -310,6 +310,32 @@ RSpec.describe RestfulResource::Base do
     end
   end
 
+  describe ".configure" do
+     let(:username) { double }
+     let(:password) { double }
+     let(:logger) { double }
+     let(:cache_store) { double }
+     let(:instrumentation) { double }
+     let(:faraday_config) { double }
+
+    it "passes arguments to HttpClient" do
+      expect(RestfulResource::HttpClient).to receive(:new).with(username: username,
+                                                                password: password,
+                                                                logger: logger,
+                                                                cache_store: cache_store,
+                                                                instrumentation: instrumentation,
+                                                                faraday_config: faraday_config)
+
+      RestfulResource::Base.configure(base_url: 'http://foo.bar',
+                                      username: username,
+                                      password: password,
+                                      logger: logger,
+                                      cache_store: cache_store,
+                                      instrumentation: instrumentation,
+                                      faraday_config: faraday_config)
+    end
+  end
+
   def response_with_page_information
     RestfulResource::Response.new(body: [{ id: 1, name: 'Golf'}, { id: 2, name: 'Polo' }].to_json,
                                  headers: { links: '<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=6>;rel="last",<http://api.carwow.co.uk/makes/Volkswagen/models.json?page=2>;rel="next"'})

@@ -137,6 +137,18 @@ describe RestfulResource::HttpClient do
           end
         end
       end
+
+      describe 'when provided a faraday config block' do
+        let(:faraday_config_block) do
+          proc { |conn| @block_arg = conn }
+        end
+        let(:connection) { described_class.new(faraday_config: faraday_config_block).instance_variable_get("@connection") }
+
+        it 'passes faraday connection instance and calls it' do
+          connection
+          expect(@block_arg.class).to eq(Faraday::Connection)
+        end
+      end
     end
   end
 end

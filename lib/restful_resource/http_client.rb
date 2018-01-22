@@ -69,7 +69,8 @@ module RestfulResource
                    connection: nil,
                    instrumentation: {},
                    open_timeout: 2,
-                   timeout: 10)
+                   timeout: 10,
+                   faraday_config: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
@@ -91,7 +92,8 @@ module RestfulResource
                                                         instrumenter: ActiveSupport::Notifications,
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
-                                                        server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil))
+                                                        server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
+                                                        faraday_config: faraday_config)
 
       @connection.basic_auth(username, password) if username && password
       @default_open_timeout = open_timeout
@@ -157,7 +159,8 @@ module RestfulResource
                               instrumenter: nil,
                               request_instrument_name: nil,
                               cache_instrument_name: nil,
-                              server_cache_instrument_name: nil)
+                              server_cache_instrument_name: nil,
+                              faraday_config: nil)
 
       @connection = Faraday.new do |b|
         b.request :json
@@ -181,6 +184,10 @@ module RestfulResource
 
         if instrumenter && request_instrument_name
           b.use :instrumentation, name: request_instrument_name
+        end
+
+        if faraday_config
+          faraday_config.call(b)
         end
 
         b.response :encoding

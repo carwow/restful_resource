@@ -7,7 +7,8 @@ module RestfulResource
                        password: nil,
                        logger: nil,
                        cache_store: nil,
-                       instrumentation: {})
+                       instrumentation: {},
+                       faraday_config: nil)
 
       @base_url = URI.parse(base_url)
 
@@ -15,7 +16,8 @@ module RestfulResource
                                               password: password,
                                               logger: logger,
                                               cache_store: cache_store,
-                                              instrumentation: instrumentation)
+                                              instrumentation: instrumentation,
+                                              faraday_config: faraday_config)
     end
 
     def self.resource_path(url)

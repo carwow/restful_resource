@@ -186,4 +186,20 @@ RSpec.describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
   end
+
+  describe 'User-Agent' do
+    def http_client(connection)
+      described_class.new(connection: connection, user_agent: 'sneaky agent')
+    end
+
+    it 'sets user-agent header' do
+      connection = faraday_connection do |stubs|
+        stubs.get('http://httpbin.org/get', { 'User-Agent' => 'sneaky agent' }) { |env| [200, {}, nil] }
+      end
+
+      response = http_client(connection).get('http://httpbin.org/get')
+
+      expect(response.status).to eq 200
+    end
+  end
 end

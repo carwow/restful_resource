@@ -70,6 +70,7 @@ module RestfulResource
                    instrumentation: {},
                    open_timeout: 2,
                    timeout: 10,
+                   user_agent: nil,
                    faraday_config: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
@@ -96,6 +97,7 @@ module RestfulResource
                                                         faraday_config: faraday_config)
 
       @connection.basic_auth(username, password) if username && password
+      @connection.headers[:user_agent] = user_agent if user_agent
       @default_open_timeout = open_timeout
       @default_timeout = timeout
     end

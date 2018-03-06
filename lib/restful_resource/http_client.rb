@@ -97,7 +97,7 @@ module RestfulResource
                                                         faraday_config: faraday_config)
 
       @connection.basic_auth(username, password) if username && password
-      @connection.headers[:user_agent] = user_agent if user_agent
+      @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
       @default_open_timeout = open_timeout
       @default_timeout = timeout
     end
@@ -197,6 +197,13 @@ module RestfulResource
 
         b.adapter :typhoeus
       end
+    end
+
+    def build_user_agent(app_name)
+      parts = ["RestfulResource/#{VERSION}"]
+      parts << "(#{app_name})" if app_name
+      parts << "Faraday/#{Faraday::VERSION}"
+      parts.join(' ')
     end
 
     def http_request(request)

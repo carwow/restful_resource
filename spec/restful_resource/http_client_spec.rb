@@ -188,16 +188,28 @@ RSpec.describe RestfulResource::HttpClient do
   end
 
   describe 'User-Agent' do
-    def http_client(connection)
-      described_class.new(connection: connection, user_agent: 'sneaky agent')
+    def http_client(connection, app_name: nil)
+      described_class.new(connection: connection, instrumentation: { app_name: app_name })
     end
 
-    it 'sets user-agent header' do
+    it 'sets a default user-agent header' do
       connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/get', { 'User-Agent' => 'sneaky agent' }) { |env| [200, {}, nil] }
+        user_agent = "RestfulResource/#{RestfulResource::VERSION} Faraday/#{Faraday::VERSION}"
+        stubs.get('http://httpbin.org/get', { 'User-Agent' => user_agent }) { |env| [200, {}, nil] }
       end
 
       response = http_client(connection).get('http://httpbin.org/get')
+
+      expect(response.status).to eq 200
+    end
+
+    it 'sets a default user-agent header including app name' do
+      connection = faraday_connection do |stubs|
+        user_agent = "RestfulResource/#{RestfulResource::VERSION} (my-app) Faraday/#{Faraday::VERSION}"
+        stubs.get('http://httpbin.org/get', { 'User-Agent' => user_agent }) { |env| [200, {}, nil] }
+      end
+
+      response = http_client(connection, app_name: "my-app").get('http://httpbin.org/get')
 
       expect(response.status).to eq 200
     end

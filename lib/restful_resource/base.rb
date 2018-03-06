@@ -8,7 +8,6 @@ module RestfulResource
                        logger: nil,
                        cache_store: nil,
                        instrumentation: {},
-                       user_agent: nil,
                        faraday_config: nil)
 
       @base_url = URI.parse(base_url)
@@ -18,7 +17,6 @@ module RestfulResource
                                               logger: logger,
                                               cache_store: cache_store,
                                               instrumentation: instrumentation,
-                                              user_agent: user_agent,
                                               faraday_config: faraday_config)
     end
 

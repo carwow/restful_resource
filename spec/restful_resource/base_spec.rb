@@ -316,7 +316,6 @@ RSpec.describe RestfulResource::Base do
      let(:logger) { double }
      let(:cache_store) { double }
      let(:instrumentation) { double }
-     let(:user_agent) { double }
      let(:faraday_config) { double }
 
     it "passes arguments to HttpClient" do
@@ -325,7 +324,6 @@ RSpec.describe RestfulResource::Base do
                                                                 logger: logger,
                                                                 cache_store: cache_store,
                                                                 instrumentation: instrumentation,
-                                                                user_agent: user_agent,
                                                                 faraday_config: faraday_config)
 
       RestfulResource::Base.configure(base_url: 'http://foo.bar',
@@ -334,7 +332,6 @@ RSpec.describe RestfulResource::Base do
                                       logger: logger,
                                       cache_store: cache_store,
                                       instrumentation: instrumentation,
-                                      user_agent: user_agent,
                                       faraday_config: faraday_config)
     end
   end

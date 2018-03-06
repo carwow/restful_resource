@@ -70,7 +70,6 @@ module RestfulResource
                    instrumentation: {},
                    open_timeout: 2,
                    timeout: 10,
-                   user_agent: nil,
                    faraday_config: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"

@@ -199,7 +199,8 @@ module RestfulResource
     end
 
     def build_user_agent(app_name)
-      parts = ["RestfulResource/#{VERSION}"]
+      parts = ["carwow/internal"]
+      parts << "RestfulResource/#{VERSION}"
       parts << "(#{app_name})" if app_name
       parts << "Faraday/#{Faraday::VERSION}"
       parts.join(' ')

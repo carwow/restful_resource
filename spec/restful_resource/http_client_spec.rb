@@ -194,7 +194,7 @@ RSpec.describe RestfulResource::HttpClient do
 
     it 'sets a default user-agent header' do
       connection = faraday_connection do |stubs|
-        user_agent = "RestfulResource/#{RestfulResource::VERSION} Faraday/#{Faraday::VERSION}"
+        user_agent = "carwow/internal RestfulResource/#{RestfulResource::VERSION} Faraday/#{Faraday::VERSION}"
         stubs.get('http://httpbin.org/get', { 'User-Agent' => user_agent }) { |env| [200, {}, nil] }
       end
 
@@ -205,7 +205,7 @@ RSpec.describe RestfulResource::HttpClient do
 
     it 'sets a default user-agent header including app name' do
       connection = faraday_connection do |stubs|
-        user_agent = "RestfulResource/#{RestfulResource::VERSION} (my-app) Faraday/#{Faraday::VERSION}"
+        user_agent = "carwow/internal RestfulResource/#{RestfulResource::VERSION} (my-app) Faraday/#{Faraday::VERSION}"
         stubs.get('http://httpbin.org/get', { 'User-Agent' => user_agent }) { |env| [200, {}, nil] }
       end
 

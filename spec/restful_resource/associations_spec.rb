@@ -27,6 +27,10 @@ describe RestfulResource::Associations do
     it "should use open object when can't infer class name of association" do
       expect(@parent.other_things.first.stuff).to eq 'aaa'
     end
+
+    it "should return nil for missing associations" do
+      expect(@parent.missing).to be_nil
+    end
   end
 
   describe "#has_one" do

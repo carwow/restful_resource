@@ -39,6 +39,7 @@ module ComplicatedModule
     resource_path "parent"
     has_many :children
     has_many :other_things
+    has_many :missing
 
     def is_parent?
       true

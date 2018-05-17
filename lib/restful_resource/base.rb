@@ -12,6 +12,8 @@ module RestfulResource
 
       @base_url = URI.parse(base_url)
 
+      @context_lambda = instrumentation.delete(:context_lambda)
+
       @http = RestfulResource::HttpClient.new(username: username,
                                               password: password,
                                               logger: logger,
@@ -54,7 +56,7 @@ module RestfulResource
 
     def self.put(id, data: {}, headers: {}, **params)
       params_without_options, options = format_params(params)
-      options.delete(:headers)
+      headers.merge! options.delete(:headers)
 
       url = member_url(id, params_without_options)
 
@@ -64,7 +66,7 @@ module RestfulResource
 
     def self.post(data: {}, headers: {}, **params)
       params_without_options, options = format_params(params)
-      options.delete(:headers)
+      headers.merge! options.delete(:headers)
 
       url = collection_url(params_without_options)
 
@@ -119,12 +121,18 @@ module RestfulResource
       replace_parameters(url, params)
     end
 
+    def self.context_lambda
+      supperclass.instance_variable_get :@context_lambda
+    end
+
     private
 
     def self.format_params(params = {})
       headers = params.delete(:headers) || {}
 
       headers.merge!(cache_control: 'no-cache') if params.delete(:no_cache)
+      headers.merge!(context_headers) if self.context_lambda
+
       open_timeout = params.delete(:open_timeout)
       timeout = params.delete(:timeout)
 
@@ -183,6 +191,13 @@ module RestfulResource
 
       array = parse_json(response.body).map { |attributes| self.new(attributes) }
       PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url, total_count: response.headers[:x_total_count])
+    end
+
+    def self.context_headers
+      self
+      .context_lambda
+      .call
+      .select { |k,_| k.to_s.start_with?('source_') }
     end
   end
 end

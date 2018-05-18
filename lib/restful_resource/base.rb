@@ -122,7 +122,7 @@ module RestfulResource
     end
 
     def self.context_lambda
-      supperclass.instance_variable_get :@context_lambda
+      superclass.instance_variable_get :@context_lambda
     end
 
     private

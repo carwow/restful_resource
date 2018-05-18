@@ -81,10 +81,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           cache_control: 'no-cache',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -149,10 +148,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           cache_control: 'no-cache',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -204,10 +202,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           cache_control: 'no-cache',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -291,10 +288,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           cache_control: 'no-cache',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -368,10 +364,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           accept: 'application/json',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -417,10 +412,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           accept: 'application/json',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -463,10 +457,9 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: {
           accept: 'application/json',
-          source_controller: 'SomeController',
-          source_action: 'index',
-          source_job: nil,
-          source_job_id: nil
+          source_type: 'controller',
+          source_class: 'SomeController',
+          source_identifier: 'index',
         }
       )
 
@@ -536,13 +529,30 @@ RSpec.describe RestfulResource::Base do
     end
   end
 
+  describe ".context_headers" do
+    it "builds headers from keys in context_lambda starting with 'source_' only" do
+      a_lambda = context_lambda(
+        source_present: 'value',
+        random_key: 'should not be present'
+      )
+
+      expect(RestfulResource::Base).to receive(:context_lambda).and_return(a_lambda)
+
+      expect(RestfulResource::Base.context_headers).to eq(
+        source_type: 'controller',
+        source_class: 'SomeController',
+        source_identifier: 'index',
+        source_present: 'value'
+      )
+    end
+  end
+
   def context_lambda(args = {})
     lambda do
       {
-        source_controller: 'SomeController',
-        source_action: 'index',
-        source_job: nil,
-        source_job_id: nil
+        source_type: 'controller',
+        source_class: 'SomeController',
+        source_identifier: 'index',
       }.merge(args)
     end
   end

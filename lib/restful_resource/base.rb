@@ -8,11 +8,11 @@ module RestfulResource
                        logger: nil,
                        cache_store: nil,
                        instrumentation: {},
+                       context_lambda: nil,
                        faraday_config: nil)
 
       @base_url = URI.parse(base_url)
-
-      @context_lambda = instrumentation.delete(:context_lambda)
+      @context_lambda = context_lambda
 
       @http = RestfulResource::HttpClient.new(username: username,
                                               password: password,

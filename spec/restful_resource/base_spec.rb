@@ -508,8 +508,6 @@ RSpec.describe RestfulResource::Base do
                                                                 instrumentation: instrumentation,
                                                                 faraday_config: faraday_config)
 
-      expect(instrumentation).to receive(:delete).with(:context_lambda)
-
       RestfulResource::Base.configure(base_url: 'http://foo.bar',
                                       username: username,
                                       password: password,

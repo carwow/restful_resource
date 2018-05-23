@@ -65,32 +65,6 @@ RSpec.describe RestfulResource::Base do
 
       Make.find(12, no_cache: true)
     end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_get("http://api.carwow.co.uk/makes/12",
-        RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.find(12, no_cache: true)
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_get("http://api.carwow.co.uk/makes/12",
-        RestfulResource::Response.new,
-        headers: {
-          cache_control: 'no-cache',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
-
-      Make.find(12, no_cache: true)
-    end
   end
 
   describe "#where" do
@@ -132,32 +106,6 @@ RSpec.describe RestfulResource::Base do
 
       Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
     end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
-        RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_get("http://api.carwow.co.uk/groups/15/makes/Volkswagen/models?on_sale=true",
-        RestfulResource::Response.new,
-        headers: {
-          cache_control: 'no-cache',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
-
-      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
-    end
   end
 
   describe "#all" do
@@ -183,32 +131,6 @@ RSpec.describe RestfulResource::Base do
       expect_get("http://api.carwow.co.uk/makes",
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
-
-      Make.all(no_cache: true)
-    end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_get("http://api.carwow.co.uk/makes",
-        RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.all(no_cache: true)
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_get("http://api.carwow.co.uk/makes",
-        RestfulResource::Response.new,
-        headers: {
-          cache_control: 'no-cache',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
 
       Make.all(no_cache: true)
     end
@@ -272,32 +194,6 @@ RSpec.describe RestfulResource::Base do
 
       Make.action(:average_score).get(no_cache: true)
     end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_get("http://api.carwow.co.uk/makes/average_score",
-        RestfulResource::Response.new,
-        headers: { cache_control: 'no-cache' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.action(:average_score).get(no_cache: true)
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_get("http://api.carwow.co.uk/makes/average_score",
-        RestfulResource::Response.new,
-        headers: {
-          cache_control: 'no-cache',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
-
-      Make.action(:average_score).get(no_cache: true)
-    end
   end
 
   describe "#put" do
@@ -348,32 +244,6 @@ RSpec.describe RestfulResource::Base do
 
       Make.put(1, data: {}, headers: { accept: 'application/json' })
     end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_put("http://api.carwow.co.uk/makes/1",
-        RestfulResource::Response.new,
-        headers: { accept: 'application/json' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.put(1, data: {}, headers: { accept: 'application/json' })
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_put("http://api.carwow.co.uk/makes/1",
-        RestfulResource::Response.new,
-        headers: {
-          accept: 'application/json',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
-
-      Make.put(1, data: {}, headers: { accept: 'application/json' })
-    end
   end
 
   describe "#post" do
@@ -396,32 +266,6 @@ RSpec.describe RestfulResource::Base do
 
       Make.post(data: {}, headers: { accept: 'application/json' })
     end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_post("http://api.carwow.co.uk/makes",
-        RestfulResource::Response.new,
-        headers: { accept: 'application/json' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.post(data: {}, headers: { accept: 'application/json' })
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_post("http://api.carwow.co.uk/makes",
-        RestfulResource::Response.new,
-        headers: {
-          accept: 'application/json',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
-
-      Make.post(data: {}, headers: { accept: 'application/json' })
-    end
   end
 
   describe "#delete" do
@@ -438,32 +282,6 @@ RSpec.describe RestfulResource::Base do
       expect_delete("http://api.carwow.co.uk/makes/1",
         RestfulResource::Response.new,
         headers: { accept: 'application/json' })
-
-      Make.delete(1, headers: { accept: 'application/json' })
-    end
-
-    it 'skips context headers when context_lambda is not set' do
-      expect_delete("http://api.carwow.co.uk/makes/1",
-        RestfulResource::Response.new,
-        headers: { accept: 'application/json' })
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(nil)
-
-      Make.delete(1, headers: { accept: 'application/json' })
-    end
-
-    it 'adds context headers when context_lambda is set' do
-      expect_delete("http://api.carwow.co.uk/makes/1",
-        RestfulResource::Response.new,
-        headers: {
-          accept: 'application/json',
-          source_type: 'controller',
-          source_class: 'SomeController',
-          source_identifier: 'index',
-        }
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(context_lambda).twice
 
       Make.delete(1, headers: { accept: 'application/json' })
     end
@@ -515,43 +333,6 @@ RSpec.describe RestfulResource::Base do
                                       cache_store: cache_store,
                                       instrumentation: instrumentation,
                                       faraday_config: faraday_config)
-    end
-
-    it "stores a lambda when it is defined" do
-      a_lambda = lambda { {context: 'info'} }
-
-      RestfulResource::Base.configure(base_url: 'http://foo.bar',
-                                      instrumentation: {context_lambda: a_lambda})
-
-      RestfulResource::Base.instance_variable_get(:@context_lambda).equal?(a_lambda)
-    end
-  end
-
-  describe ".context_headers" do
-    it "builds headers from keys in context_lambda starting with 'source_' only" do
-      a_lambda = context_lambda(
-        source_present: 'value',
-        random_key: 'should not be present'
-      )
-
-      expect(RestfulResource::Base).to receive(:context_lambda).and_return(a_lambda)
-
-      expect(RestfulResource::Base.context_headers).to eq(
-        source_type: 'controller',
-        source_class: 'SomeController',
-        source_identifier: 'index',
-        source_present: 'value'
-      )
-    end
-  end
-
-  def context_lambda(args = {})
-    lambda do
-      {
-        source_type: 'controller',
-        source_class: 'SomeController',
-        source_identifier: 'index',
-      }.merge(args)
     end
   end
 

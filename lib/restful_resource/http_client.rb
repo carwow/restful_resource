@@ -56,6 +56,12 @@ module RestfulResource
       end
     end
 
+    class TooManyRequests < RetryableError
+      def message
+        "HTTP 429: Too Many Requests"
+      end
+    end
+
     class ClientError < RetryableError
       def message
         "There was some client error"
@@ -228,6 +234,7 @@ module RestfulResource
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 409 then raise HttpClient::Conflict.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)
+      when 429 then raise HttpClient::TooManyRequests.new(request, response)
       when 502 then raise HttpClient::BadGateway.new(request, response)
       when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
       else raise HttpClient::OtherHttpError.new(request, response)

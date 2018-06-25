@@ -81,6 +81,14 @@ RSpec.describe RestfulResource::HttpClient do
       expect { http_client(connection).post('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
 
+    it 'post should raise error 429' do
+      connection = faraday_connection do |stubs|
+        stubs.post('http://httpbin.org/status/429') { |env| [429, {}, nil] }
+      end
+
+      expect { http_client(connection).post('http://httpbin.org/status/429') }.to raise_error(RestfulResource::HttpClient::TooManyRequests)
+    end
+
     it 'put should raise error 502' do
       connection = faraday_connection do |stubs|
         stubs.put('http://httpbin.org/status/502') { |env| [502, {}, nil] }

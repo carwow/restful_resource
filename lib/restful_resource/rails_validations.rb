@@ -16,7 +16,7 @@ module RestfulResource
       private
 
       def with_validations(id: nil, data: {})
-        yield.catch do |e|
+        yield.rescue do |e|
           if e.class == HttpClient::UnprocessableEntity
             errors = parse_json(e.response.body)
             result = nil

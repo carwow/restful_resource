@@ -44,8 +44,8 @@ module RestfulResource
       future_inner_object
     end
 
-    def catch
-      @promise_response = @promise_response.catch do |reason|
+    def rescue
+      @promise_response = @promise_response.rescue do |reason|
         yield reason
       end
       self

@@ -7,9 +7,6 @@ module RestfulResource
         @inner_object = OpenStruct.new(data)
       end
     end
-    #def initialize(attributes = {}, hack_for_activeresource = false)
-    #  @inner_object = OpenStruct.new(attributes)
-    #end
 
     def method_missing(method, *args, &block)
       if future_inner_object.respond_to?(method)
@@ -41,6 +38,10 @@ module RestfulResource
 
     def hash
       future_inner_object.hash
+    end
+
+    def wait_for_response
+      future_inner_object
     end
 
     private

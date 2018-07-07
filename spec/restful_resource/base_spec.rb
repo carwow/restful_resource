@@ -48,6 +48,7 @@ RSpec.describe RestfulResource::Base do
       expect_get("http://api.carwow.co.uk/groups/xxx+yyy%3Fl%3D7/makes/Land+Rover%3Fx%3D0.123/models/Golf+Cabriolet%3Ftest", expected_response)
 
       object = Model.find('Golf Cabriolet?test', make_slug: 'Land Rover?x=0.123', group_id: 'xxx yyy?l=7')
+      object.wait_for_response
     end
 
     it 'accepts custom headers' do
@@ -55,7 +56,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.find(12, headers: { cache_control: 'no-cache' })
+      Make.find(12, headers: { cache_control: 'no-cache' }).wait_for_response
     end
 
     it 'accepts no_cache option' do
@@ -63,7 +64,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.find(12, no_cache: true)
+      Make.find(12, no_cache: true).wait_for_response
     end
   end
 
@@ -145,8 +146,8 @@ RSpec.describe RestfulResource::Base do
       expect_get('http://a.carwow.co.uk/testa/1', RestfulResource::Response.new())
       expect_get('http://b.carwow.co.uk/testb/2', RestfulResource::Response.new())
 
-      TestA.find(1)
-      TestB.find(2)
+      TestA.find(1).wait_for_response
+      TestB.find(2).wait_for_response
     end
   end
 
@@ -174,7 +175,7 @@ RSpec.describe RestfulResource::Base do
       expected_response = RestfulResource::Response.new(body: {average_score: 4.3}.to_json, status: 200)
       expect_get('http://api.carwow.co.uk/makes/average_score?make_slug%5B%5D=Volkswagen&make_slug%5B%5D=Audi', expected_response)
 
-      object = Make.action(:average_score).get(make_slug: ['Volkswagen', 'Audi'])
+      object = Make.action(:average_score).get(make_slug: ['Volkswagen', 'Audi']).wait_for_response
 
       expect(object.average_score).to eq 4.3
     end
@@ -184,7 +185,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.action(:average_score).get(headers: { cache_control: 'no-cache' })
+      Make.action(:average_score).get(headers: { cache_control: 'no-cache' }).wait_for_response
     end
 
     it 'accepts no_cache option' do
@@ -192,7 +193,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.action(:average_score).get(no_cache: true)
+      Make.action(:average_score).get(no_cache: true).wait_for_response
     end
   end
 
@@ -242,7 +243,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { accept: 'application/json' })
 
-      Make.put(1, data: {}, headers: { accept: 'application/json' })
+      Make.put(1, data: {}, headers: { accept: 'application/json' }).wait_for_response
     end
   end
 
@@ -264,7 +265,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { accept: 'application/json' })
 
-      Make.post(data: {}, headers: { accept: 'application/json' })
+      Make.post(data: {}, headers: { accept: 'application/json' }).wait_for_response
     end
   end
 
@@ -283,7 +284,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { accept: 'application/json' })
 
-      Make.delete(1, headers: { accept: 'application/json' })
+      Make.delete(1, headers: { accept: 'application/json' }).wait_for_response
     end
   end
 

@@ -11,8 +11,8 @@ module RestfulResource
         rescue NameError
           nil
         end
-        klass = RestfulResource::FutureOpenObject if (klass.nil? || !(klass < RestfulResource::FutureOpenObject))
-        nested_resource = future_inner_object.send(nested_resource_type)
+        klass = RestfulResource::PromiseOpenObject if (klass.nil? || !(klass < RestfulResource::PromiseOpenObject))
+        nested_resource = promise_inner_object.send(nested_resource_type)
         return nil if nested_resource.nil?
         nested_resource.map { |obj| klass.new(obj) }
       end
@@ -29,10 +29,10 @@ module RestfulResource
         rescue NameError
           nil
         end
-        klass = RestfulResource::FutureOpenObject if (klass.nil? || !(klass < RestfulResource::FutureOpenObject))
-        nested_resource = future_inner_object.send(nested_resource_type)
+        klass = RestfulResource::PromiseOpenObject if (klass.nil? || !(klass < RestfulResource::PromiseOpenObject))
+        nested_resource = promise_inner_object.send(nested_resource_type)
         return nil if nested_resource.nil?
-        klass.new(future_inner_object.send(nested_resource_type))
+        klass.new(promise_inner_object.send(nested_resource_type))
       end
     end
   end

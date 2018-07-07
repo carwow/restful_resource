@@ -1,5 +1,5 @@
 module RestfulResource
-  class Base < FutureOpenObject
+  class Base < PromiseOpenObject
     extend RestfulResource::Associations
 
     def self.configure(base_url: nil,

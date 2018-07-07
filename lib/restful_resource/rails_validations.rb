@@ -37,7 +37,7 @@ module RestfulResource
     end
 
     def valid?
-      future_inner_object.errors.nil?
+      promise_inner_object.errors.nil?
     end
   end
 end

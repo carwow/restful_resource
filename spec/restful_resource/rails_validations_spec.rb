@@ -173,5 +173,7 @@ RSpec.describe RestfulResource::RailsValidations do
       expect(@object.valid?).to be_falsey
       expect(@object.errors).to eq @error
     end
+
+    it 'should raise any non unprocessable entity errors'
   end
 end

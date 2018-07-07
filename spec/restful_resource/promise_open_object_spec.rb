@@ -73,6 +73,20 @@ describe RestfulResource::PromiseOpenObject do
         expect(object.as_json).to eq({})
       end
 
+      it 'uses the hash returned by the block to construct the object' do
+        object = RestfulResource::PromiseOpenObject.new { raise 'oops' }
+
+        object.rescue do |matcher|
+          matcher.match(RuntimeError) do |e|
+            expect(e.message).to eq('oops')
+            {valid?: false}
+          end
+        end
+
+        expect(object.as_json).to eq({'valid?' => false})
+        expect(object.valid?).to eq(false)
+      end
+
       it 'raises the exception if a value is accessed' do
         object = RestfulResource::PromiseOpenObject.new { raise 'oops' }
 

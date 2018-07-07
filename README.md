@@ -23,6 +23,43 @@ To make requests that bypass the local HTTP cache use the `no_cache: true` optio
 Object.find(1, no_cache: true)
 ```
 
+## Exception handling
+
+The library uses promises to make api requests in parallel. For that reason exceptions can be raised when the data is accessed. e.g.:
+
+```
+# won't work!
+begin
+  o = Object.find(1)
+rescue RestfulResource::HttpClient::ServiceUnavailable 
+  do_something()
+end
+
+o.data # -> will raise service unavailable
+```
+
+However if you want to handle those exceptions you can use the rescue method and pass a block:
+
+```
+o = Object.find(1).rescue do |matcher|
+      matcher.match(RestfulResource::HttpClient::ServiceUnavailable) do
+        do_something()
+      end
+    end
+```
+
+Any other exceptions with no matcher will raise when the data is accessed. Anything returned within the matcher block will be used to construct the object returned
+
+```
+o = Object.find(1).rescue do |matcher|
+      matcher.match(RestfulResource::HttpClient::ServiceUnavailable) do
+        {valid?: false}
+      end
+    end
+o.valid? # -> will be false
+```
+
+You can have a look at `rails_validations.rb` for an example on how the result is manipulated
 
 ## Metrics
 

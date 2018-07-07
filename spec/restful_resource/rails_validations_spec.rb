@@ -174,6 +174,12 @@ RSpec.describe RestfulResource::RailsValidations do
       expect(@object.errors).to eq @error
     end
 
-    it 'should raise any non unprocessable entity errors'
+    it 'should raise any non unprocessable entity errors' do
+      expected_response = RestfulResource::Response.new(body: @error.to_json)
+      expect_get_with_service_unavailable("http://api.carwow.co.uk/dealers", expected_response)
+      @object = Dealer.get
+
+      expect { @object.valid? }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
+    end
   end
 end

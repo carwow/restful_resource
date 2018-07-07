@@ -20,7 +20,6 @@ describe RestfulResource::Associations do
       expect(@parent.children.first.to_json).to eq({first_name: 'David', second_name: 'Doe'}.to_json)
     end
 
-    #failing
     it "should pick the right class for the instantiation of chilren" do
       expect(@parent.children.first.full_name).to eq 'David Doe'
     end
@@ -47,7 +46,6 @@ describe RestfulResource::Associations do
       expect(@child.parent.to_json).to eq({name: 'John Smith'}.to_json)
     end
 
-    #failing
     it "should pick the right class for the instantiation of chilren" do
       expect(@child.parent.is_parent?).to be_truthy
     end

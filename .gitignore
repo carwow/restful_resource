@@ -18,3 +18,4 @@ tmp
 .idea
 *.swp
 *.swo
+.ruby-version

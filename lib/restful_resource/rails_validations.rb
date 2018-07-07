@@ -20,7 +20,23 @@ module RestfulResource
       end
 
       def get(*)
-        with_validations { super }
+        super
+      end
+
+      def errors
+        if future_value.rejected?
+          e = future_value.reason
+          errors = parse_json(e.response.body)
+          result = nil
+          if errors.is_a?(Hash) && errors.has_key?('errors')
+            result = data.merge(errors)
+          else
+            result = data.merge(errors: errors)
+          end
+          self.new(result)
+        else
+          nil
+        end
       end
 
       private
@@ -44,7 +60,7 @@ module RestfulResource
     end
 
     def valid?
-      @inner_object.errors.nil?
+      future_inner_object.errors.nil?
     end
   end
 end

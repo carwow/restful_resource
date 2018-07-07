@@ -1,5 +1,5 @@
 module RestfulResource
-  class Base < OpenObject
+  class Base < FutureOpenObject
     extend RestfulResource::Associations
 
     def self.configure(base_url: nil,
@@ -42,8 +42,10 @@ module RestfulResource
     def self.get(params = {})
       params_without_options, options = format_params(params)
 
-      response = http.get(collection_url(params_without_options), **options)
-      self.new(parse_json(response.body))
+      self.new {
+        response = http.get(collection_url(params_without_options), **options)
+        parse_json(response.body)
+      }
     end
 
     def self.delete(id, **params)

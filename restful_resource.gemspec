@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-its"
 
   spec.add_dependency "faraday"
+  spec.add_dependency "concurrent-ruby"
   spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-http-cache"
   spec.add_dependency "faraday-encoding"

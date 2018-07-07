@@ -2,7 +2,7 @@ module RestfulResource
   class FutureOpenObject
     def initialize(data = nil, &block)
       if data.nil?
-        @future_response = Concurrent::Future.execute{ block.call }
+        @promise_response = Concurrent::Promise.execute{ block.call }
       else
         @inner_object = OpenStruct.new(data)
       end
@@ -44,13 +44,16 @@ module RestfulResource
       future_inner_object
     end
 
-    private
-    def future_inner_object
-      @inner_object ||= OpenStruct.new(future_value)
+    def catch
+      @promise_response = @promise_response.catch do |reason|
+        yield reason
+      end
+      self
     end
 
-    def future_value
-      @future_response.value
+    protected
+    def future_inner_object
+      @inner_object ||= OpenStruct.new(@promise_response.value)
     end
   end
 end

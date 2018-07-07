@@ -2,25 +2,32 @@ module RestfulResource
   module RailsValidations
     module ClassMethods
       def put(id, data: {}, **)
-        @put_validation_result_id = id
-        super
+        with_validations(id: id, data: data) { super }
       end
 
-      def errors
-        if future_value.rejected?
-          e = future_value.reason
-          errors = parse_json(e.response.body)
-          result = nil
-          if errors.is_a?(Hash) && errors.has_key?('errors')
-            result = data.merge(errors)
-          else
-            result = data.merge(errors: errors)
-          end
+      def post(data: {}, **)
+        with_validations(data: data) { super }
+      end
 
-          result = result.merge(id: @put_validation_result_id) unless @put_validation_result_id.nil?
-          self.new(result)
-        else
-          nil
+      def get(*)
+        with_validations { super }
+      end
+
+      private
+
+      def with_validations(id: nil, data: {})
+        yield.catch do |e|
+          if e.class == HttpClient::UnprocessableEntity
+            errors = parse_json(e.response.body)
+            result = nil
+            if errors.is_a?(Hash) && errors.has_key?('errors')
+              result = data.merge(errors)
+            else
+              result = data.merge(errors: errors)
+            end
+            result = result.merge(id: id) unless id.nil?
+            @inner_object = result
+          end
         end
       end
     end
@@ -30,7 +37,7 @@ module RestfulResource
     end
 
     def valid?
-      future_inner_object.errors.nil?
+      @inner_object.errors.nil?
     end
   end
 end

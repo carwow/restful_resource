@@ -37,8 +37,7 @@ module RestfulResource
       params_without_options, options = format_params(params)
 
       url = collection_url(params_without_options)
-      response = http.get(url, **options)
-      self.paginate_response(response)
+      PromisePaginatedArray.new(self) { http.get(url, **options) }
     end
 
     def self.get(params = {})
@@ -182,17 +181,6 @@ module RestfulResource
 
       url = url + "?#{params.to_query}" unless params.empty?
       url
-    end
-
-    def self.paginate_response(response)
-      links_header =  response.headers[:links]
-      links = LinkHeader.parse(links_header)
-
-      prev_url = links.find_link(['rel', 'prev']).try(:href)
-      next_url = links.find_link(['rel', 'next']).try(:href)
-
-      array = parse_json(response.body).map { |attributes| self.new(attributes) }
-      PaginatedArray.new(array, previous_page_url: prev_url, next_page_url: next_url, total_count: response.headers[:x_total_count])
     end
   end
 end

@@ -97,7 +97,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, headers: { cache_control: 'no-cache' })
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, headers: { cache_control: 'no-cache' }).wait_for_response
     end
 
     it 'accepts no_cache option' do
@@ -105,7 +105,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true)
+      Model.where(make_slug: 'Volkswagen', on_sale: true, group_id: 15, no_cache: true).wait_for_response
     end
   end
 
@@ -125,7 +125,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.all(headers: { cache_control: 'no-cache' })
+      Make.all(headers: { cache_control: 'no-cache' }).wait_for_response
     end
 
     it 'accepts no_cache option' do
@@ -133,7 +133,7 @@ RSpec.describe RestfulResource::Base do
         RestfulResource::Response.new,
         headers: { cache_control: 'no-cache' })
 
-      Make.all(no_cache: true)
+      Make.all(no_cache: true).wait_for_response
     end
   end
 

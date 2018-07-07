@@ -16,8 +16,8 @@ module RestfulResource
       private
 
       def with_validations(id: nil, data: {})
-        yield.rescue do |e|
-          if e.class == HttpClient::UnprocessableEntity
+        yield.rescue do |matcher|
+          matcher.match(HttpClient::UnprocessableEntity) do |e|
             errors = parse_json(e.response.body)
             result = nil
             if errors.is_a?(Hash) && errors.has_key?('errors')
@@ -26,7 +26,7 @@ module RestfulResource
               result = data.merge(errors: errors)
             end
             result = result.merge(id: id) unless id.nil?
-            @inner_object = result
+            result
           end
         end
       end

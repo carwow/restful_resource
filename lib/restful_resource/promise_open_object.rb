@@ -1,5 +1,38 @@
 module RestfulResource
   class PromiseOpenObject
+    class ExceptionMatcher
+      def initialize
+        @matchers = {}
+        @else = Proc.new{|e| raise e}
+      end
+
+      def match(exceptionClass, &block)
+        @matchers[exceptionClass] = block
+      end
+
+      def else(&block)
+        @else = block
+      end
+
+      def call(exception)
+        result = if @matchers.has_key?(exception.class)
+                   @matchers[exception.class].call(exception)
+                 else
+                   @else.call(exception)
+                 end
+        calculate_result(result)
+      end
+
+      private
+      def calculate_result(result)
+        if result.is_a?(Hash)
+          result
+        else
+          nil
+        end
+      end
+    end
+
     def initialize(data = nil, &block)
       if data.nil?
         @promise_response = Concurrent::Promise.execute{ block.call }
@@ -45,9 +78,11 @@ module RestfulResource
     end
 
     def rescue
+      matcher = ExceptionMatcher.new
+      yield matcher
+
       @promise_response = @promise_response.rescue do |reason|
-        yield reason
-        nil
+        matcher.call(reason)
       end
       self
     end

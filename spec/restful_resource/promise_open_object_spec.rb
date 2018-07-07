@@ -64,9 +64,10 @@ describe RestfulResource::PromiseOpenObject do
       it 'can be rescued using #rescue' do
         object = RestfulResource::PromiseOpenObject.new { raise 'oops' }
 
-        object.rescue do |exception|
-          expect(exception.class).to eq(RuntimeError)
-          expect(exception.message).to eq('oops')
+        object.rescue do |matcher|
+          matcher.match(RuntimeError) do |e|
+            expect(e.message).to eq('oops')
+          end
         end
 
         expect(object.as_json).to eq({})

@@ -40,7 +40,7 @@ describe RestfulResource::PromiseOpenObject do
       expect(a.value).to eq(:a)
       expect(b.value).to eq(:b)
 
-      expect((start_time - Time.now) < 2).to be_truthy
+      expect((Time.now - start_time) < 2).to be_truthy
     end
 
     it 'implements equality correctly' do

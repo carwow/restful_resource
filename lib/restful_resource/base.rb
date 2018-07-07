@@ -27,8 +27,10 @@ module RestfulResource
     def self.find(id, params={})
       params_without_options, options = format_params(params)
 
-      response = http.get(member_url(id, params_without_options), **options)
-      self.new(parse_json(response.body))
+      self.new {
+        response = http.get(member_url(id, params_without_options), **options)
+        parse_json(response.body)
+      }
     end
 
     def self.where(params={})
@@ -50,8 +52,11 @@ module RestfulResource
 
     def self.delete(id, **params)
       params_without_options, options = format_params(params)
-      response = http.delete(member_url(id, params_without_options), **options)
-      RestfulResource::OpenObject.new(parse_json(response.body))
+
+      self.new {
+        response = http.delete(member_url(id, params_without_options), **options)
+        parse_json(response.body)
+      }
     end
 
     def self.put(id, data: {}, headers: {}, **params)
@@ -60,8 +65,10 @@ module RestfulResource
 
       url = member_url(id, params_without_options)
 
-      response = http.put(url, data: data, headers: headers, **options)
-      self.new(parse_json(response.body))
+      self.new {
+        response = http.put(url, data: data, headers: headers, **options)
+        parse_json(response.body)
+      }
     end
 
     def self.post(data: {}, headers: {}, **params)
@@ -70,9 +77,10 @@ module RestfulResource
 
       url = collection_url(params_without_options)
 
-      response = http.post(url, data: data, headers: headers, **options)
-
-      self.new(parse_json(response.body))
+      self.new {
+        response = http.post(url, data: data, headers: headers, **options)
+        parse_json(response.body)
+      }
     end
 
     def self.all(params = {})

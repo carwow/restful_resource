@@ -37,7 +37,7 @@ module RestfulResource
     end
 
     def valid?
-      promise_inner_object.errors.nil?
+      !promise_inner_object.key?(:errors)
     end
   end
 end

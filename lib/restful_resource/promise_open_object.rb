@@ -3,7 +3,7 @@ module RestfulResource
     include RescuablePromise
 
     def initialize(data = nil, &block)
-      if data.nil?
+      if block_given?
         @promise_response = Concurrent::Promise.execute{ block.call }
       else
         @inner_object = OpenStruct.new(data)

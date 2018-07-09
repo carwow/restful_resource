@@ -14,6 +14,21 @@ describe RestfulResource::PromiseOpenObject do
     expect { object.age }.to raise_error(NoMethodError)
   end
 
+  it 'implements the array accessor' do
+    a = RestfulResource::PromiseOpenObject.new({ name: 'Joe', age: 13 })
+
+    expect(a[:name]).to eq('Joe')
+    expect(a[:age]).to eq(13)
+  end
+
+  it 'implements the array assignment' do
+    a = RestfulResource::PromiseOpenObject.new({ name: 'Joe', age: 13 })
+    a['something'] = 'b'
+
+    expect(a['something']).to eq('b')
+    expect(a.something).to eq('b')
+  end
+
   it "should implement equality operators correctly" do
     a = RestfulResource::PromiseOpenObject.new({name: 'Joe', age: 13})
     b = RestfulResource::PromiseOpenObject.new({name: 'Joe', age: 13})

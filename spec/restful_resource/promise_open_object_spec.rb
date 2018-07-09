@@ -31,7 +31,7 @@ describe RestfulResource::PromiseOpenObject do
     expect(list.uniq.length).to eq 2
   end
 
-  context 'when a block is passed in' do
+  context 'when a block is passed' do
     it 'executes the blocks in parallel' do
       start_time = Time.now
       a = RestfulResource::PromiseOpenObject.new { sleep 1; {value: :a} }
@@ -60,6 +60,21 @@ describe RestfulResource::PromiseOpenObject do
       expect(list.uniq.length).to eq 2
     end
 
+    it 'implements the array accessor' do
+      a = RestfulResource::PromiseOpenObject.new { { name: 'Joe', age: 13 } }
+
+      expect(a[:name]).to eq('Joe')
+      expect(a[:age]).to eq(13)
+    end
+
+    it 'implements the array assignment' do
+      a = RestfulResource::PromiseOpenObject.new { { name: 'Joe', age: 13 } }
+      a['something'] = 'b'
+
+      expect(a['something']).to eq('b')
+      expect(a.something).to eq('b')
+    end
+
     context 'when the block raises an exception' do
       it 'can be rescued using #rescue' do
         object = RestfulResource::PromiseOpenObject.new { raise 'oops' }
@@ -79,11 +94,11 @@ describe RestfulResource::PromiseOpenObject do
         object.rescue do |matcher|
           matcher.match(RuntimeError) do |e|
             expect(e.message).to eq('oops')
-            {valid?: false}
+            { valid?: false }
           end
         end
 
-        expect(object.as_json).to eq({'valid?' => false})
+        expect(object.as_json).to eq({ 'valid?' => false })
         expect(object.valid?).to eq(false)
       end
 

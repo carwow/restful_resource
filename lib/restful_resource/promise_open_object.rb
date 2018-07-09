@@ -30,6 +30,14 @@ module RestfulResource
       promise_inner_object == other.send(:promise_inner_object)
     end
 
+    def [](key)
+      promise_inner_object[key]
+    end
+
+    def []=(key, value)
+      promise_inner_object[key] = value
+    end
+
     def eql?(other)
       promise_inner_object.eql?(other.send(:promise_inner_object))
     end

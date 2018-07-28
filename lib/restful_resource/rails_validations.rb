@@ -44,7 +44,7 @@ module RestfulResource
     end
 
     def valid?
-      @inner_object.errors.nil?
+      @inner_object[:errors].nil?
     end
   end
 end

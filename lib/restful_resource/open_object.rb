@@ -52,7 +52,7 @@ module RestfulResource
     end
 
     def as_json(options = nil)
-      @inner_object.send(:table).as_json(options)
+      @inner_object.as_json(options)
     end
 
     def ==(other)

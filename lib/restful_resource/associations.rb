@@ -12,7 +12,7 @@ module RestfulResource
           nil
         end
         klass = RestfulResource::OpenObject if (klass.nil? || !(klass < RestfulResource::OpenObject))
-        nested_resource = @inner_object.send(nested_resource_type)
+        nested_resource = @inner_object[nested_resource_type]
         return nil if nested_resource.nil?
         nested_resource.map { |obj| klass.new(obj) }
       end
@@ -30,9 +30,9 @@ module RestfulResource
           nil
         end
         klass = RestfulResource::OpenObject if (klass.nil? || !(klass < RestfulResource::OpenObject))
-        nested_resource = @inner_object.send(nested_resource_type)
+        nested_resource = @inner_object[nested_resource_type]
         return nil if nested_resource.nil?
-        klass.new(@inner_object.send(nested_resource_type))
+        klass.new(@inner_object[nested_resource_type])
       end
     end
   end

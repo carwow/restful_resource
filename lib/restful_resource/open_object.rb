@@ -9,17 +9,19 @@ module RestfulResource
       name = name.to_sym
       unless singleton_class.method_defined?(name)
         define_singleton_method(name) { @inner_object[name] }
-        define_singleton_method("#{name}=") { |x| name = x }
+        define_singleton_method("#{name}=") { |x| @inner_object[name] = x }
       end
       name
     end
 
     def []=(key, val)
-      @inner_object[key] = val
+      @inner_object[key.to_sym] = val
     end
 
     def [](key)
-      @inner_object[key]
+      result = @inner_object[key]
+      result ||= @inner_object[key.to_sym]
+      result
     end
 
     private :new_enhanced_open_object_member!
@@ -29,6 +31,10 @@ module RestfulResource
       if mid[/.*(?==\z)/m]
         if len != 1
           raise ArgumentError, "wrong number of arguments (#{len} for 1)", caller(1)
+        else
+          field = mid[/.*(?==\z)/m].to_sym
+          @inner_object[field] = args[0]
+          new_enhanced_open_object_member!(field) unless frozen?
         end
       elsif len.zero?
         if @inner_object.key?(mid)
@@ -47,8 +53,16 @@ module RestfulResource
       end
     end
 
+    def dig(*args)
+      @inner_object.dig(args[0].to_sym, *args[1..-1])
+    end
+
     def respond_to?(method, include_private = false)
       super || @inner_object.key?(method)
+    end
+
+    def to_h
+      @inner_object.dup
     end
 
     def as_json(options = nil)

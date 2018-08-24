@@ -7,7 +7,7 @@ RSpec.describe RestfulResource::Base do
     RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
   end
 
-  it "should act as an openobject" do
+  it "should act as an OpenObject" do
     object = RestfulResource::Base.new(name: 'David', surname: 'Santoro')
 
     expect(object.name).to eq 'David'

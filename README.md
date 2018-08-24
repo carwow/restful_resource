@@ -6,7 +6,7 @@ Provides an ActiveResource like interface to JSON API's
 
 Caching using [faraday-http-cache](https://github.com/plataformatec/faraday-http-cache)
 
-Enabled by passing an initialsed cache object (eg Rails.cache)
+Enabled by passing an initialised cache object (eg Rails.cache)
 
 ```
 RestfulResource::Base.configure(
@@ -45,7 +45,7 @@ RestfulResource::Base.configure(
 )
 ```
 
-Where the `Metrics` class has in interface like:
+Where the `Metrics` class has an interface like:
 
 ```
 class Metrics
@@ -66,7 +66,7 @@ This will call the methods on the Metrics class with:
 ```
 Metrics.measure('rails_site.api.time', 215.161237) # Time taken
 Metrics.sample('rails_site.api.status', 200) # HTTP status code
-Metrics.count('rails_site.api.called, 1)
+Metrics.count('rails_site.api.called', 1)
 ```
 
 Note: To customize the names we can specify `:app_name` and `:api_name` options to `RestfulResource::Base.configure`

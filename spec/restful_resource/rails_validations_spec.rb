@@ -112,7 +112,7 @@ RSpec.describe RestfulResource::RailsValidations do
       expect(@object.name).to eq 'Leonardo'
     end
 
-    it 'should return not valid object' do
+    it 'should not return valid object' do
       expect(@object.valid?).to be_falsey
     end
 
@@ -161,7 +161,7 @@ RSpec.describe RestfulResource::RailsValidations do
       expect(@object.errors.first).to eq @error
     end
 
-    it 'should return not valid object' do
+    it 'should not return valid object' do
       expect(@object.valid?).to be_falsey
     end
 

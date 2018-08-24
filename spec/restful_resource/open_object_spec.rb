@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 describe RestfulResource::OpenObject do
-  it "should act as an openstruct" do
+  it "should act as an OpenStruct" do
     object = RestfulResource::OpenObject.new(name: 'David', surname: 'Santoro')
 
     expect(object.name).to eq 'David'

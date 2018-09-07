@@ -169,18 +169,36 @@ RSpec.describe RestfulResource::HttpClient do
   end
 
   describe 'Authentication' do
-    def http_client(connection)
-      described_class.new(connection: connection, username: 'user', password: 'passwd')
-    end
-
-    it 'should execute authenticated get' do
-      connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/basic-auth/user/passwd') { |env| [200, {}, nil] }
+    describe 'Basic auth' do
+      def http_client(connection)
+        described_class.new(connection: connection, username: 'user', password: 'passwd')
       end
 
-      response = http_client(connection).get('http://httpbin.org/basic-auth/user/passwd', headers: {"Authorization"=>"Basic dXNlcjpwYXNzd2Q="})
+      it 'should execute authenticated get' do
+        connection = faraday_connection do |stubs|
+          stubs.get('http://httpbin.org/basic-auth/user/passwd') { |env| [200, {}, nil] }
+        end
 
-      expect(response.status).to eq 200
+        response = http_client(connection).get('http://httpbin.org/basic-auth/user/passwd', headers: {"Authorization"=>"Basic dXNlcjpwYXNzd2Q="})
+
+        expect(response.status).to eq 200
+      end
+    end
+
+    describe 'Token auth' do
+      def http_client(connection)
+        described_class.new(connection: connection, auth_token: 'abc123')
+      end
+
+      it 'should execute authenticated get' do
+        connection = faraday_connection do |stubs|
+          stubs.get('http://httpbin.org/bearer', { 'Authorization' => 'Bearer abc123'} ) { |env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).get('http://httpbin.org/bearer', headers: { 'Authorization' => 'Bearer abc123'})
+
+        expect(response.status).to eq 200
+      end
     end
   end
 

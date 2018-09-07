@@ -5,6 +5,7 @@ module RestfulResource
     def self.configure(base_url: nil,
                        username: nil,
                        password: nil,
+                       auth_token: nil,
                        logger: nil,
                        cache_store: nil,
                        instrumentation: {},
@@ -14,6 +15,7 @@ module RestfulResource
 
       @http = RestfulResource::HttpClient.new(username: username,
                                               password: password,
+                                              auth_token: auth_token,
                                               logger: logger,
                                               cache_store: cache_store,
                                               instrumentation: instrumentation,

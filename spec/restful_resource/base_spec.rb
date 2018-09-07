@@ -313,6 +313,7 @@ RSpec.describe RestfulResource::Base do
   describe ".configure" do
      let(:username) { double }
      let(:password) { double }
+     let(:auth_token) { double }
      let(:logger) { double }
      let(:cache_store) { double }
      let(:instrumentation) { double }
@@ -321,6 +322,7 @@ RSpec.describe RestfulResource::Base do
     it "passes arguments to HttpClient" do
       expect(RestfulResource::HttpClient).to receive(:new).with(username: username,
                                                                 password: password,
+                                                                auth_token: auth_token,
                                                                 logger: logger,
                                                                 cache_store: cache_store,
                                                                 instrumentation: instrumentation,
@@ -329,6 +331,7 @@ RSpec.describe RestfulResource::Base do
       RestfulResource::Base.configure(base_url: 'http://foo.bar',
                                       username: username,
                                       password: password,
+                                      auth_token: auth_token,
                                       logger: logger,
                                       cache_store: cache_store,
                                       instrumentation: instrumentation,

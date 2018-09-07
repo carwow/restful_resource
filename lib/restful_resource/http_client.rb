@@ -70,6 +70,7 @@ module RestfulResource
 
     def initialize(username: nil,
                    password: nil,
+                   auth_token: nil,
                    logger: nil,
                    cache_store: nil,
                    connection: nil,
@@ -101,7 +102,12 @@ module RestfulResource
                                                         server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
                                                         faraday_config: faraday_config)
 
-      @connection.basic_auth(username, password) if username && password
+      if auth_token
+        @connection.headers[:authorization] = "Bearer #{auth_token}"
+      elsif username && password
+        @connection.basic_auth(username, password)
+      end
+
       @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
       @default_open_timeout = open_timeout
       @default_timeout = timeout

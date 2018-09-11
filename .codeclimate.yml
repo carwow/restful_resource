@@ -2,9 +2,7 @@ plugins:
   rubocop:
     enabled: true
     config:
-      file:
-        
-
+      file: .rubocop.yml
   brakeman:
     enabled: true
   fixme:

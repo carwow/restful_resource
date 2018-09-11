@@ -1,0 +1,9 @@
+plugins:
+  rubocop:
+    enabled: true
+    config:
+      file: .rubocop.yml
+  brakeman:
+    enabled: true
+  fixme:
+    enabled: true

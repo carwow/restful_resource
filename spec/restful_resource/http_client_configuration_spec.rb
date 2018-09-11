@@ -2,21 +2,19 @@ require_relative '../spec_helper'
 
 describe RestfulResource::HttpClient do
   def find_middleware(adapter, name)
-    adapter.builder.handlers.find {|m| m.name == name }
-
-    rescue
-      raise "Could not find Faraday middleware: #{name}"
+    adapter.builder.handlers.find { |m| m.name == name }
+  rescue StandardError
+    raise "Could not find Faraday middleware: #{name}"
   end
 
   def find_middleware_args(adapter, name)
-    find_middleware(adapter, name).instance_variable_get("@args").first
-
-    rescue
-      raise "Could not find args for Faraday middleware: #{name}"
+    find_middleware(adapter, name).instance_variable_get('@args').first
+  rescue StandardError
+    raise "Could not find args for Faraday middleware: #{name}"
   end
 
   describe 'Configuration' do
-    let(:connection) { described_class.new.instance_variable_get("@connection") }
+    let(:connection) { described_class.new.instance_variable_get('@connection') }
     let(:middleware) { connection.builder.handlers }
 
     describe 'Builder configuration' do
@@ -48,7 +46,7 @@ describe RestfulResource::HttpClient do
         end
 
         context 'with an api_name' do
-          let(:connection) { described_class.new(instrumentation: { api_name: 'my_api_name'}).instance_variable_get("@connection") }
+          let(:connection) { described_class.new(instrumentation: { api_name: 'my_api_name' }).instance_variable_get('@connection') }
 
           it 'uses default instrumenter with the api_name' do
             expect(find_middleware_args(connection, 'FaradayMiddleware::Instrumentation')).to include(name: 'http.my_api_name')
@@ -56,7 +54,7 @@ describe RestfulResource::HttpClient do
         end
 
         context 'with a custom instrumentation key' do
-          let(:connection) { described_class.new(instrumentation: { request_instrument_name: 'foo.bar'}).instance_variable_get("@connection") }
+          let(:connection) { described_class.new(instrumentation: { request_instrument_name: 'foo.bar' }).instance_variable_get('@connection') }
 
           it 'uses default instrumenter with the custom key' do
             expect(find_middleware_args(connection, 'FaradayMiddleware::Instrumentation')).to include(name: 'foo.bar')
@@ -66,7 +64,9 @@ describe RestfulResource::HttpClient do
         context 'with a given Metrics class' do
           class FakeMetrics
             def count(name, value); end
+
             def sample(name, value); end
+
             def measure(name, value); end
           end
 
@@ -78,7 +78,7 @@ describe RestfulResource::HttpClient do
           end
 
           it 'initializes the Instrumentation' do
-            described_class.new(instrumentation: { app_name: 'rails', api_name: 'api', metric_class: FakeMetrics})
+            described_class.new(instrumentation: { app_name: 'rails', api_name: 'api', metric_class: FakeMetrics })
 
             expect(RestfulResource::Instrumentation).to have_received(:new)
                                                .with(app_name: 'rails',
@@ -86,11 +86,12 @@ describe RestfulResource::HttpClient do
                                                      request_instrument_name: 'http.api',
                                                      cache_instrument_name: 'http_cache.api',
                                                      server_cache_instrument_name: 'cdn_metrics.api',
-                                                     metric_class: FakeMetrics)
+                                                     metric_class: FakeMetrics
+                                                    )
           end
 
           it 'subscribes to the notifications' do
-            described_class.new(instrumentation: { app_name: 'rails', api_name: 'api', metric_class: FakeMetrics})
+            described_class.new(instrumentation: { app_name: 'rails', api_name: 'api', metric_class: FakeMetrics })
 
             expect(mock_instrumention).to have_received(:subscribe_to_notifications)
           end
@@ -98,7 +99,7 @@ describe RestfulResource::HttpClient do
       end
 
       describe 'when provided a logger' do
-        let(:connection) { described_class.new(logger: logger).instance_variable_get("@connection") }
+        let(:connection) { described_class.new(logger: logger).instance_variable_get('@connection') }
         let(:logger) { Logger.new('/dev/null') }
 
         it 'uses the logger middleware' do
@@ -111,7 +112,7 @@ describe RestfulResource::HttpClient do
       end
 
       describe 'when provided a cache store' do
-        let(:connection) { described_class.new(cache_store: 'redis').instance_variable_get("@connection") }
+        let(:connection) { described_class.new(cache_store: 'redis').instance_variable_get('@connection') }
 
         it 'uses the cache_store middleware' do
           expect(middleware).to include Faraday::HttpCache
@@ -122,7 +123,7 @@ describe RestfulResource::HttpClient do
         end
 
         context 'and an api_name is provided' do
-          let(:connection) { described_class.new(cache_store: 'redis', instrumentation: { api_name: 'my_api_name'}).instance_variable_get("@connection") }
+          let(:connection) { described_class.new(cache_store: 'redis', instrumentation: { api_name: 'my_api_name' }).instance_variable_get('@connection') }
 
           it 'passes the instrumenter and the api_name' do
             expect(find_middleware_args(connection, 'Faraday::HttpCache')).to include(instrumenter: ActiveSupport::Notifications, instrument_name: 'http_cache.my_api_name')
@@ -130,7 +131,7 @@ describe RestfulResource::HttpClient do
         end
 
         context 'and a custom instrument name is provided' do
-          let(:connection) { described_class.new(cache_store: 'redis', instrumentation: { cache_instrument_name: 'foo.bar'}).instance_variable_get("@connection") }
+          let(:connection) { described_class.new(cache_store: 'redis', instrumentation: { cache_instrument_name: 'foo.bar' }).instance_variable_get('@connection') }
 
           it 'passes the instrumenter to the http cache middleware' do
             expect(find_middleware_args(connection, 'Faraday::HttpCache')).to include(instrumenter: ActiveSupport::Notifications, instrument_name: 'foo.bar')
@@ -142,7 +143,7 @@ describe RestfulResource::HttpClient do
         let(:faraday_config_block) do
           proc { |conn| @block_arg = conn }
         end
-        let(:connection) { described_class.new(faraday_config: faraday_config_block).instance_variable_get("@connection") }
+        let(:connection) { described_class.new(faraday_config: faraday_config_block).instance_variable_get('@connection') }
 
         it 'passes faraday connection instance and calls it' do
           connection

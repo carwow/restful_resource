@@ -6,13 +6,13 @@ module RestfulResource
       rescue HttpClient::UnprocessableEntity => e
         errors = parse_json(e.response.body)
         result = nil
-        if errors.is_a?(Hash) && errors.has_key?('errors')
-          result = data.merge(errors)
-        else
-          result = data.merge(errors: errors)
-        end
+        result = if errors.is_a?(Hash) && errors.key?('errors')
+                   data.merge(errors)
+                 else
+                   data.merge(errors: errors)
+                 end
         result = result.merge(id: id)
-        self.new(result)
+        new(result)
       end
 
       def post(data: {}, **)
@@ -30,12 +30,12 @@ module RestfulResource
       rescue HttpClient::UnprocessableEntity => e
         errors = parse_json(e.response.body)
         result = nil
-        if errors.is_a?(Hash) && errors.has_key?('errors')
-          result = data.merge(errors)
-        else
-          result = data.merge(errors: errors)
-        end
-        self.new(result)
+        result = if errors.is_a?(Hash) && errors.key?('errors')
+                   data.merge(errors)
+                 else
+                   data.merge(errors: errors)
+                 end
+        new(result)
       end
     end
 

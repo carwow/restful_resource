@@ -1,4 +1,4 @@
-# RestfulResource ![build status](https://circleci.com/gh/carwow/restful_resource.svg?style=shield&circle-token=0558310359000e8786d1fe42774b0e30b2b0e12c)
+# RestfulResource ![build status](https://circleci.com/gh/carwow/restful_resource.svg?style=shield&circle-token=0558310359000e8786d1fe42774b0e30b2b0e12c) [![Maintainability](https://api.codeclimate.com/v1/badges/61c85db718d559aa97c5/maintainability)](https://codeclimate.com/github/carwow/restful_resource/maintainability)
 
 Provides an ActiveResource like interface to JSON API's
 

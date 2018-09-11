@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'rspec_junit_formatter'
   spec.add_development_dependency 'rspec-its'
-  spec.add_development_dependency 'rubocop'
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'faraday'

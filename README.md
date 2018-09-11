@@ -2,6 +2,9 @@
 
 Provides an ActiveResource like interface to JSON API's
 
+## Build status
+[![Maintainability](https://api.codeclimate.com/v1/badges/61c85db718d559aa97c5/maintainability)](https://codeclimate.com/github/carwow/restful_resource/maintainability)
+
 ## Caching
 
 Caching using [faraday-http-cache](https://github.com/plataformatec/faraday-http-cache)

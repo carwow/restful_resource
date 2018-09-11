@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'carwow_rubocop', '~> 2.0'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.1'
+  spec.add_development_dependency 'rspec_junit_formatter'
   spec.add_development_dependency 'rspec-its'
 
   spec.add_dependency 'activesupport'

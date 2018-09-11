@@ -1,0 +1,11 @@
+plugins:
+  rubocop:
+    enabled: true
+    config:
+      file:
+        
+
+  brakeman:
+    enabled: true
+  fixme:
+    enabled: true

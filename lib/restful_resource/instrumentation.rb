@@ -2,7 +2,6 @@ require 'active_support/notifications'
 
 module RestfulResource
   class Instrumentation
-
     def initialize(app_name:, api_name:, request_instrument_name:, cache_instrument_name:, server_cache_instrument_name:, metric_class:)
       @app_name = app_name
       @api_name = api_name
@@ -50,18 +49,18 @@ module RestfulResource
         # count#quotes_site.research_site_api.cache_hit=1
         # count#quotes_site.research_site_api.api_v2_cap_derivatives.cache_hit=1
         case cache_status
-          when :fresh, :valid
-            metric_class.count cache_notifier_namespace(metric: 'cache_hit'), 1
-            metric_class.count cache_notifier_namespace(metric: 'cache_hit', event: event), 1
-          when :invalid, :miss
-            metric_class.count cache_notifier_namespace(metric: 'cache_miss'), 1
-            metric_class.count cache_notifier_namespace(metric: 'cache_miss', event: event), 1
-          when :unacceptable
-            metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable'), 1
-            metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable', event: event), 1
-          when :bypass
-            metric_class.count cache_notifier_namespace(metric: 'cache_bypass'), 1
-            metric_class.count cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
+        when :fresh, :valid
+          metric_class.count cache_notifier_namespace(metric: 'cache_hit'), 1
+          metric_class.count cache_notifier_namespace(metric: 'cache_hit', event: event), 1
+        when :invalid, :miss
+          metric_class.count cache_notifier_namespace(metric: 'cache_miss'), 1
+          metric_class.count cache_notifier_namespace(metric: 'cache_miss', event: event), 1
+        when :unacceptable
+          metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable'), 1
+          metric_class.count cache_notifier_namespace(metric: 'cache_not_cacheable', event: event), 1
+        when :bypass
+          metric_class.count cache_notifier_namespace(metric: 'cache_bypass'), 1
+          metric_class.count cache_notifier_namespace(metric: 'cache_bypass', event: event), 1
         end
       end
 
@@ -71,7 +70,7 @@ module RestfulResource
         client_cache_status = event.payload.fetch(:client_cache_status, nil)
         server_cache_status = event.payload.fetch(:server_cache_status, nil)
 
-        if client_cache_status.nil? || !client_cache_status.in?([:fresh, :valid])
+        if client_cache_status.nil? || !client_cache_status.in?(%i[fresh valid])
           # Outputs log lines like:
           # count#quotes_site.research_site_api.server_cache_hit=1
           # count#quotes_site.research_site_api.api_v2_cap_derivatives.server_cache_hit=1
@@ -100,19 +99,17 @@ module RestfulResource
     end
 
     def validate_metric_class!
-      metric_methods = %i(count sample measure)
-      if metric_methods.any? {|m| !metric_class.respond_to?(m) }
-        raise ArgumentError.new "Metric class '#{metric_class}' does not respond to #{metric_methods.join ','}"
-      end
+      metric_methods = %i[count sample measure]
+      raise ArgumentError, "Metric class '#{metric_class}' does not respond to #{metric_methods.join ','}" if metric_methods.any? { |m| !metric_class.respond_to?(m) }
     end
 
     def cache_notifier_namespace(metric:, event: nil)
       [app_name, api_name, base_request_path(event), metric].compact.join('.')
     end
 
-    # Converts a path like "/api/v2/cap_derivatives/75423/with_colours" to "api_v2_cap_derivatives_with_colours"
+    #  Converts a path like "/api/v2/cap_derivatives/75423/with_colours" to "api_v2_cap_derivatives_with_colours"
     def base_request_path(event)
-      path_from_event(event).split('/').drop(1).select {|a| a.match(/\d+/).nil? }.join('_') if event
+      path_from_event(event).split('/').drop(1).select { |a| a.match(/\d+/).nil? }.join('_') if event
     end
 
     def path_from_event(event)

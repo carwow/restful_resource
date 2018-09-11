@@ -1,0 +1,5 @@
+inherit_gem:
+  carwow_rubocop:
+    - default.yml
+
+inherit_from: .rubocop_todo.yml

@@ -1,7 +1,7 @@
 module RestfulResource
   class MaximumAttemptsReached < StandardError
     def message
-      "The maximum attempts limit was reached before the resource was ready"
+      'The maximum attempts limit was reached before the resource was ready'
     end
   end
 
@@ -11,12 +11,13 @@ module RestfulResource
         def post(data: {}, delay: 1.0, max_attempts: 10, headers: {}, open_timeout: nil, timeout: nil, **params)
           url = collection_url(params)
 
-          response = self.accept_redirected_result(response: http.post(url, data: data, headers: headers, open_timeout: nil, timeout: nil), delay: delay, max_attempts: max_attempts)
+          response = accept_redirected_result(response: http.post(url, data: data, headers: headers, open_timeout: nil, timeout: nil), delay: delay, max_attempts: max_attempts)
 
-          self.new(parse_json(response.body))
+          new(parse_json(response.body))
         end
 
         private
+
         def self.accept_redirected_result(response:, delay:, max_attempts:)
           new_response = response
           if response.status == 303
@@ -32,9 +33,7 @@ module RestfulResource
               new_response = http.get(resource_location, headers: {}, open_timeout: nil, timeout: nil)
             end
 
-            if attempts == max_attempts
-              raise RestfulResource::MaximumAttemptsReached
-            end
+            raise RestfulResource::MaximumAttemptsReached if attempts == max_attempts
           end
           response = new_response
         end

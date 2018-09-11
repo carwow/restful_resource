@@ -1,5 +1,5 @@
 # Use the Faraday-Typhoeus adapter provided by Typhoeus, not Faraday
-require "typhoeus/adapters/faraday"
+require 'typhoeus/adapters/faraday'
 
 module RestfulResource
   class HttpClient
@@ -7,15 +7,16 @@ module RestfulResource
       attr_reader :request, :response
 
       def initialize(request, response = nil)
-        @request, @response = request, assign_response(response)
+        @request = request
+        @response = assign_response(response)
       end
 
       def assign_response(response = nil)
-        if response
-          @response = Response.new(body: response[:body], headers: response[:headers], status: response[:status])
-        else
-          @response = Response.new
-        end
+        @response = if response
+                      Response.new(body: response[:body], headers: response[:headers], status: response[:status])
+                    else
+                      Response.new
+                    end
       end
     end
 
@@ -24,7 +25,7 @@ module RestfulResource
 
     class ResourceNotFound < HttpError
       def message
-        "HTTP 404: Resource Not Found"
+        'HTTP 404: Resource Not Found'
       end
     end
 
@@ -40,44 +41,44 @@ module RestfulResource
 
     class BadGateway < RetryableError
       def message
-        "HTTP 502: Bad gateway"
+        'HTTP 502: Bad gateway'
       end
     end
 
     class ServiceUnavailable < RetryableError
       def message
-        "HTTP 503: Service unavailable"
+        'HTTP 503: Service unavailable'
       end
     end
 
     class Timeout < RetryableError
       def message
-        "Timeout: Service not responding"
+        'Timeout: Service not responding'
       end
     end
 
     class TooManyRequests < RetryableError
       def message
-        "HTTP 429: Too Many Requests"
+        'HTTP 429: Too Many Requests'
       end
     end
 
     class ClientError < RetryableError
       def message
-        "There was some client error"
+        'There was some client error'
       end
     end
 
     def initialize(username: nil,
-                   password: nil,
-                   auth_token: nil,
-                   logger: nil,
-                   cache_store: nil,
-                   connection: nil,
-                   instrumentation: {},
-                   open_timeout: 2,
-                   timeout: 10,
-                   faraday_config: nil)
+      password: nil,
+      auth_token: nil,
+      logger: nil,
+      cache_store: nil,
+      connection: nil,
+      instrumentation: {},
+      open_timeout: 2,
+      timeout: 10,
+      faraday_config: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
@@ -85,11 +86,13 @@ module RestfulResource
 
       if instrumentation[:metric_class]
         @metrics = Instrumentation.new(instrumentation.slice(:app_name,
-                                                             :api_name,
-                                                             :request_instrument_name,
-                                                             :cache_instrument_name,
-                                                             :server_cache_instrument_name,
-                                                             :metric_class))
+          :api_name,
+          :request_instrument_name,
+          :cache_instrument_name,
+          :server_cache_instrument_name,
+          :metric_class
+        )
+                                      )
         @metrics.subscribe_to_notifications
       end
 
@@ -100,7 +103,8 @@ module RestfulResource
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
                                                         server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
-                                                        faraday_config: faraday_config)
+                                                        faraday_config: faraday_config
+                                                       )
 
       if auth_token
         @connection.headers[:authorization] = "Bearer #{auth_token}"
@@ -168,20 +172,18 @@ module RestfulResource
     attr_reader :default_open_timeout, :default_timeout
 
     def initialize_connection(logger: nil,
-                              cache_store: nil,
-                              instrumenter: nil,
-                              request_instrument_name: nil,
-                              cache_instrument_name: nil,
-                              server_cache_instrument_name: nil,
-                              faraday_config: nil)
+      cache_store: nil,
+      instrumenter: nil,
+      request_instrument_name: nil,
+      cache_instrument_name: nil,
+      server_cache_instrument_name: nil,
+      faraday_config: nil)
 
       @connection = Faraday.new do |b|
         b.request :json
         b.response :raise_error
 
-        if logger
-          b.response :logger, logger
-        end
+        b.response :logger, logger if logger
 
         if server_cache_instrument_name
           b.use :cdn_metrics, instrumenter: instrumenter,
@@ -195,13 +197,9 @@ module RestfulResource
                              instrument_name: cache_instrument_name
         end
 
-        if instrumenter && request_instrument_name
-          b.use :instrumentation, name: request_instrument_name
-        end
+        b.use :instrumentation, name: request_instrument_name if instrumenter && request_instrument_name
 
-        if faraday_config
-          faraday_config.call(b)
-        end
+        faraday_config&.call(b)
 
         b.response :encoding
         b.use :gzip
@@ -211,7 +209,7 @@ module RestfulResource
     end
 
     def build_user_agent(app_name)
-      parts = ["carwow/internal"]
+      parts = ['carwow/internal']
       parts << "RestfulResource/#{VERSION}"
       parts << "(#{app_name})" if app_name
       parts << "Faraday/#{Faraday::VERSION}"
@@ -232,10 +230,11 @@ module RestfulResource
     rescue Faraday::ConnectionFailed
       raise
     rescue Faraday::TimeoutError
-      raise HttpClient::Timeout.new(request)
+      raise HttpClient::Timeout, request
     rescue Faraday::ClientError => e
       response = e.response
-      raise ClientError.new(request) unless response
+      raise ClientError, request unless response
+
       case response[:status]
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 409 then raise HttpClient::Conflict.new(request, response)

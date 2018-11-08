@@ -329,6 +329,7 @@ RSpec.describe RestfulResource::Base do
     let(:cache_store) { double }
     let(:instrumentation) { double }
     let(:faraday_config) { double }
+    let(:faraday_options) { double }
 
     it 'passes arguments to HttpClient' do
       expect(RestfulResource::HttpClient).to receive(:new).with(username: username,
@@ -337,7 +338,8 @@ RSpec.describe RestfulResource::Base do
                                                                 logger: logger,
                                                                 cache_store: cache_store,
                                                                 instrumentation: instrumentation,
-                                                                faraday_config: faraday_config
+                                                                faraday_config: faraday_config,
+                                                                faraday_options: faraday_options
                                                                )
 
       described_class.configure(base_url: 'http://foo.bar',
@@ -347,7 +349,8 @@ RSpec.describe RestfulResource::Base do
                                 logger: logger,
                                 cache_store: cache_store,
                                 instrumentation: instrumentation,
-                                faraday_config: faraday_config
+                                faraday_config: faraday_config,
+                                faraday_options: faraday_options
                                )
     end
   end

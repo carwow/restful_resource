@@ -78,7 +78,8 @@ module RestfulResource
       instrumentation: {},
       open_timeout: 2,
       timeout: 10,
-      faraday_config: nil)
+      faraday_config: nil,
+      faraday_options: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
@@ -103,7 +104,8 @@ module RestfulResource
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
                                                         server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
-                                                        faraday_config: faraday_config
+                                                        faraday_config: faraday_config,
+                                                        faraday_options: faraday_options
                                                        )
 
       if auth_token
@@ -177,9 +179,10 @@ module RestfulResource
       request_instrument_name: nil,
       cache_instrument_name: nil,
       server_cache_instrument_name: nil,
-      faraday_config: nil)
+      faraday_config: nil,
+      faraday_options: nil)
 
-      @connection = Faraday.new do |b|
+      @connection = Faraday.new(nil, faraday_options) do |b|
         b.request :json
         b.response :raise_error
 

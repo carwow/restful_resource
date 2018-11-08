@@ -1,5 +1,10 @@
 # Changelog
 
+v2.4.0
+---
+
+- Add `faraday_options` to `Base.configure`
+
 v2.1.0
 ---
 

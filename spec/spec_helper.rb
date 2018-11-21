@@ -20,6 +20,12 @@ def expect_delete(url, response, headers: {}, open_timeout: nil, timeout: nil)
     .and_return(response)
 end
 
+def expect_patch(url, response, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+  expect(@mock_http).to receive(:patch)
+    .with(url, data: data, headers: headers, open_timeout: open_timeout, timeout: timeout)
+    .and_return(response)
+end
+
 def expect_put(url, response, data: {}, headers: {}, open_timeout: nil, timeout: nil)
   expect(@mock_http).to receive(:put)
     .with(url, data: data, headers: headers, open_timeout: open_timeout, timeout: timeout)

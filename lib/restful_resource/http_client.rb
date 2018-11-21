@@ -143,6 +143,19 @@ module RestfulResource
       )
     end
 
+    def patch(url, data: {}, headers: {}, open_timeout: nil, timeout: nil)
+      http_request(
+        Request.new(
+          :patch,
+          url,
+          body: data,
+          headers: headers,
+          open_timeout: open_timeout,
+          timeout: timeout
+        )
+      )
+    end
+
     def put(url, data: {}, headers: {}, open_timeout: nil, timeout: nil)
       http_request(
         Request.new(

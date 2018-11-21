@@ -1,5 +1,11 @@
 # Changelog
 
+2.5.1
+---
+
+- Add support for `PATCH` in `RestfulResource::RailsValidation`
+- Improved specs for `PATCH` features
+
 2.5.0
 ---
 

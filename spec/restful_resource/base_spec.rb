@@ -204,6 +204,57 @@ RSpec.describe RestfulResource::Base do
     end
   end
 
+  describe '#patch' do
+    it 'patchs no data with no params' do
+      expected_response = RestfulResource::Response.new(body: { name: 'Audi' }.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1', expected_response)
+
+      object = Make.patch(1)
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'patchs no data with no params passed' do
+      expected_response = RestfulResource::Response.new(body: { name: 'Audi' }.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response)
+
+      object = Make.patch(1, make_slug: 'Volkswagen')
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'patchs data with params passed' do
+      data = { make_slug: 'Audi' }
+
+      expected_response = RestfulResource::Response.new(body: { name: 'Audi' }.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1', expected_response, data: data)
+
+      object = Make.patch(1, data: { make_slug: 'Audi' })
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'patchs data with params passed' do
+      data = { make_slug: 'Audi' }
+
+      expected_response = RestfulResource::Response.new(body: { name: 'Audi' }.to_json, status: 200)
+      expect_patch('http://api.carwow.co.uk/makes/1?make_slug=Volkswagen', expected_response, data: data)
+
+      object = Make.patch(1, data: data, make_slug: 'Volkswagen')
+
+      expect(object.name).to eq 'Audi'
+    end
+
+    it 'accepts custom headers' do
+      expect_patch('http://api.carwow.co.uk/makes/1',
+        RestfulResource::Response.new,
+        headers: { accept: 'application/json' }
+      )
+
+      Make.patch(1, data: {}, headers: { accept: 'application/json' })
+    end
+  end
+
   describe '#put' do
     it 'puts no data with no params' do
       expected_response = RestfulResource::Response.new(body: { name: 'Audi' }.to_json, status: 200)

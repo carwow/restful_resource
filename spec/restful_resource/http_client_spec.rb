@@ -25,6 +25,16 @@ RSpec.describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
 
+    it 'executes patch' do
+      connection = faraday_connection do |stubs|
+        # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+        stubs.patch('http://httpbin.org/patch', 'name=Alfred') { |_env| [200, {}, nil] }
+      end
+
+      response = http_client(connection).patch('http://httpbin.org/patch', data: { name: 'Alfred' })
+      expect(response.status).to eq 200
+    end
+
     it 'executes put' do
       connection = faraday_connection do |stubs|
         # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
@@ -55,6 +65,22 @@ RSpec.describe RestfulResource::HttpClient do
       response = http_client(connection).delete('http://httpbin.org/delete')
 
       expect(response.status).to eq 200
+    end
+
+    it 'patch should raise error 409' do
+      connection = faraday_connection do |stubs|
+        stubs.patch('http://httpbin.org/status/409') { |_env| [409, {}, nil] }
+      end
+
+      expect { http_client(connection).patch('http://httpbin.org/status/409') }.to raise_error(RestfulResource::HttpClient::Conflict)
+    end
+
+    it 'patch should raise error 422' do
+      connection = faraday_connection do |stubs|
+        stubs.patch('http://httpbin.org/status/422') { |_env| [422, {}, nil] }
+      end
+
+      expect { http_client(connection).patch('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
     end
 
     it 'put should raise error 409' do
@@ -89,6 +115,14 @@ RSpec.describe RestfulResource::HttpClient do
       expect { http_client(connection).post('http://httpbin.org/status/429') }.to raise_error(RestfulResource::HttpClient::TooManyRequests)
     end
 
+    it 'patch should raise error 502' do
+      connection = faraday_connection do |stubs|
+        stubs.patch('http://httpbin.org/status/502') { |_env| [502, {}, nil] }
+      end
+
+      expect { http_client(connection).patch('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
+    end
+
     it 'put should raise error 502' do
       connection = faraday_connection do |stubs|
         stubs.put('http://httpbin.org/status/502') { |_env| [502, {}, nil] }
@@ -103,6 +137,14 @@ RSpec.describe RestfulResource::HttpClient do
       end
 
       expect { http_client(connection).post('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
+    end
+
+    it 'patch should raise error 503' do
+      connection = faraday_connection do |stubs|
+        stubs.patch('http://httpbin.org/status/503') { |_env| [503, {}, nil] }
+      end
+
+      expect { http_client(connection).patch('http://httpbin.org/status/503') }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
     end
 
     it 'put should raise error 503' do
@@ -125,12 +167,14 @@ RSpec.describe RestfulResource::HttpClient do
       connection = faraday_connection do |stubs|
         stubs.get('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
         stubs.post('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
+        stubs.patch('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
         stubs.put('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
         stubs.delete('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
       end
 
       expect { http_client(connection).get('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { http_client(connection).delete('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
+      expect { http_client(connection).patch('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { http_client(connection).put('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
       expect { http_client(connection).post('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
     end

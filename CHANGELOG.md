@@ -1,5 +1,10 @@
 # Changelog
 
+2.5.0
+---
+
+- Add support for `PATCH`
+
 v2.4.0
 ---
 

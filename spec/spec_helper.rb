@@ -45,6 +45,13 @@ def expect_get_with_unprocessable_entity(url, response)
   expect(@mock_http).to receive(:get).with(url, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
 end
 
+def expect_patch_with_unprocessable_entity(url, response, data: {})
+  request = RestfulResource::Request.new(:patch, url, body: data)
+  rest_client_response = OpenStruct.new(body: response.body, headers: response.headers, code: response.status)
+  exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
+  expect(@mock_http).to receive(:patch).with(url, data: data, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
+end
+
 def expect_put_with_unprocessable_entity(url, response, data: {})
   request = RestfulResource::Request.new(:put, url, body: data)
   rest_client_response = OpenStruct.new(body: response.body, headers: response.headers, code: response.status)

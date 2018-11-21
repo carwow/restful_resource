@@ -57,6 +57,16 @@ module RestfulResource
       RestfulResource::OpenObject.new(parse_json(response.body))
     end
 
+    def self.patch(id, data: {}, headers: {}, **params)
+      params_without_options, options = format_params(params)
+      options.delete(:headers)
+
+      url = member_url(id, params_without_options)
+
+      response = http.patch(url, data: data, headers: headers, **options)
+      new(parse_json(response.body))
+    end
+
     def self.put(id, data: {}, headers: {}, **params)
       params_without_options, options = format_params(params)
       options.delete(:headers)

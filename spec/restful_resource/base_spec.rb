@@ -379,6 +379,8 @@ RSpec.describe RestfulResource::Base do
     let(:logger) { double }
     let(:cache_store) { double }
     let(:instrumentation) { double }
+    let(:timeout) { double }
+    let(:open_timeout) { double }
     let(:faraday_config) { double }
     let(:faraday_options) { double }
 
@@ -389,6 +391,8 @@ RSpec.describe RestfulResource::Base do
                                                                 logger: logger,
                                                                 cache_store: cache_store,
                                                                 instrumentation: instrumentation,
+                                                                timeout: timeout,
+                                                                open_timeout: open_timeout,
                                                                 faraday_config: faraday_config,
                                                                 faraday_options: faraday_options
                                                                )
@@ -400,6 +404,8 @@ RSpec.describe RestfulResource::Base do
                                 logger: logger,
                                 cache_store: cache_store,
                                 instrumentation: instrumentation,
+                                timeout: timeout,
+                                open_timeout: open_timeout,
                                 faraday_config: faraday_config,
                                 faraday_options: faraday_options
                                )

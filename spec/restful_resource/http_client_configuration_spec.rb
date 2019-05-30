@@ -111,6 +111,13 @@ describe RestfulResource::HttpClient do
         end
       end
 
+      describe 'when provided a timeout' do
+        let(:connection) { described_class.new(timeout: 111, open_timeout: 222).instance_variable_get('@connection') }
+
+        it { expect(connection.options.timeout).to eq(111) }
+        it { expect(connection.options.open_timeout).to eq(222) }
+      end
+
       describe 'when provided a cache store' do
         let(:connection) { described_class.new(cache_store: 'redis').instance_variable_get('@connection') }
 

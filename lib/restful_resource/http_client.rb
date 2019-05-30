@@ -69,8 +69,8 @@ module RestfulResource
       end
     end
 
-    DEFAULT_TIMEOUT_IN_SECS = 10 # seconds
-    DEFAULT_OPEN_TIMEOUT_IN_SECS = 2 # seconds
+    DEFAULT_TIMEOUT_IN_SECS = 10
+    DEFAULT_OPEN_TIMEOUT_IN_SECS = 2
 
     def initialize(username: nil,
       password: nil,

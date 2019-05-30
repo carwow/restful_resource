@@ -69,8 +69,8 @@ module RestfulResource
       end
     end
 
-    DEFAULT_TIMEOUT = 10 # seconds
-    DEFAULT_OPEN_TIMEOUT = 2 # seconds
+    DEFAULT_TIMEOUT_IN_SECS = 10 # seconds
+    DEFAULT_OPEN_TIMEOUT_IN_SECS = 2 # seconds
 
     def initialize(username: nil,
       password: nil,
@@ -218,8 +218,8 @@ module RestfulResource
 
         b.use :instrumentation, name: request_instrument_name if instrumenter && request_instrument_name
 
-        b.options.timeout = timeout || DEFAULT_TIMEOUT
-        b.options.open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT
+        b.options.timeout = timeout || DEFAULT_TIMEOUT_IN_SECS
+        b.options.open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT_IN_SECS
 
         faraday_config&.call(b)
 
@@ -248,6 +248,7 @@ module RestfulResource
 
         req.headers = req.headers.merge(request.headers)
       end
+
       Response.new(body: response.body, headers: response.headers, status: response.status)
     rescue Faraday::ConnectionFailed
       raise

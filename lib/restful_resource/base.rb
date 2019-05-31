@@ -9,6 +9,8 @@ module RestfulResource
       logger: nil,
       cache_store: nil,
       instrumentation: {},
+      timeout: nil,
+      open_timeout: nil,
       faraday_config: nil,
       faraday_options: nil)
 
@@ -19,6 +21,8 @@ module RestfulResource
                                               auth_token: auth_token,
                                               logger: logger,
                                               cache_store: cache_store,
+                                              timeout: timeout,
+                                              open_timeout: open_timeout,
                                               instrumentation: instrumentation,
                                               faraday_config: faraday_config,
                                               faraday_options: faraday_options

@@ -69,6 +69,9 @@ module RestfulResource
       end
     end
 
+    DEFAULT_TIMEOUT_IN_SECS = 10
+    DEFAULT_OPEN_TIMEOUT_IN_SECS = 2
+
     def initialize(username: nil,
       password: nil,
       auth_token: nil,
@@ -76,8 +79,8 @@ module RestfulResource
       cache_store: nil,
       connection: nil,
       instrumentation: {},
-      open_timeout: 2,
-      timeout: 10,
+      timeout: nil,
+      open_timeout: nil,
       faraday_config: nil,
       faraday_options: nil)
       api_name = instrumentation[:api_name]            ||= 'api'
@@ -101,6 +104,8 @@ module RestfulResource
       @connection = connection || initialize_connection(logger: logger,
                                                         cache_store: cache_store,
                                                         instrumenter: ActiveSupport::Notifications,
+                                                        timeout: timeout,
+                                                        open_timeout: open_timeout,
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
                                                         server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
@@ -115,8 +120,6 @@ module RestfulResource
       end
 
       @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
-      @default_open_timeout = open_timeout
-      @default_timeout = timeout
     end
 
     def get(url, headers: {}, open_timeout: nil, timeout: nil)
@@ -184,11 +187,11 @@ module RestfulResource
 
     private
 
-    attr_reader :default_open_timeout, :default_timeout
-
     def initialize_connection(logger: nil,
       cache_store: nil,
       instrumenter: nil,
+      timeout: nil,
+      open_timeout: nil,
       request_instrument_name: nil,
       cache_instrument_name: nil,
       server_cache_instrument_name: nil,
@@ -215,6 +218,9 @@ module RestfulResource
 
         b.use :instrumentation, name: request_instrument_name if instrumenter && request_instrument_name
 
+        b.options.timeout = timeout || DEFAULT_TIMEOUT_IN_SECS
+        b.options.open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT_IN_SECS
+
         faraday_config&.call(b)
 
         b.response :encoding
@@ -234,14 +240,15 @@ module RestfulResource
 
     def http_request(request)
       response = @connection.send(request.method) do |req|
-        req.options.open_timeout = request.open_timeout || default_open_timeout # seconds
-        req.options.timeout = request.timeout || default_timeout # seconds
+        req.options.timeout = request.timeout if request.timeout
+        req.options.open_timeout = request.open_timeout if request.open_timeout
 
         req.body = request.body unless request.body.nil?
         req.url request.url
 
         req.headers = req.headers.merge(request.headers)
       end
+
       Response.new(body: response.body, headers: response.headers, status: response.status)
     rescue Faraday::ConnectionFailed
       raise

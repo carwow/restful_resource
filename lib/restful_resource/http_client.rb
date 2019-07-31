@@ -227,7 +227,6 @@ module RestfulResource
         faraday_config&.call(b)
 
         b.response :encoding
-        b.response :multi_json
         b.use :gzip
 
         b.adapter :typhoeus

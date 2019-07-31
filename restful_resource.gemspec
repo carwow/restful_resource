@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday-encoding'
   spec.add_dependency 'faraday-http-cache'
   spec.add_dependency 'faraday_middleware'
+  spec.add_dependency 'oj'
   spec.add_dependency 'link_header'
   spec.add_dependency 'rack'
   spec.add_dependency 'typhoeus'

@@ -1,3 +1,5 @@
+require 'oj'
+
 module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
@@ -170,7 +172,7 @@ module RestfulResource
     def self.parse_json(json)
       return nil if json.strip.empty?
 
-      ActiveSupport::JSON.decode(json)
+      Oj.load(json)
     end
 
     def self.replace_parameters(url, params)

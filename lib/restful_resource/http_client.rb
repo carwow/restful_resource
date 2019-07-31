@@ -1,8 +1,5 @@
 # Use the Faraday-Typhoeus adapter provided by Typhoeus, not Faraday
 require 'typhoeus/adapters/faraday'
-require 'oj'
-require 'faraday_middleware/multi_json'
-
 
 module RestfulResource
   class HttpClient
@@ -202,7 +199,7 @@ module RestfulResource
       faraday_options: nil)
 
       @connection = Faraday.new(nil, faraday_options) do |b|
-        b.request :multi_json
+        b.request :json
         b.response :raise_error
 
         b.response :logger, logger if logger

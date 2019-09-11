@@ -51,6 +51,12 @@ module RestfulResource
       end
     end
 
+    class GatewayTimeout < RetryableError
+      def message
+        'HTTP 504: Gateway timeout'
+      end
+    end
+
     class Timeout < RetryableError
       def message
         'Timeout: Service not responding'
@@ -265,6 +271,7 @@ module RestfulResource
       when 429 then raise HttpClient::TooManyRequests.new(request, response)
       when 502 then raise HttpClient::BadGateway.new(request, response)
       when 503 then raise HttpClient::ServiceUnavailable.new(request, response)
+      when 504 then raise HttpClient::GatewayTimeout.new(request, response)
       else raise HttpClient::OtherHttpError.new(request, response)
       end
     end

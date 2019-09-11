@@ -163,6 +163,14 @@ RSpec.describe RestfulResource::HttpClient do
       expect { http_client(connection).post('http://httpbin.org/status/503') }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
     end
 
+    it 'post should raise error 504' do
+      connection = faraday_connection do |stubs|
+        stubs.post('http://httpbin.org/status/504') { |_env| [504, {}, nil] }
+      end
+
+      expect { http_client(connection).post('http://httpbin.org/status/504') }.to raise_error(RestfulResource::HttpClient::GatewayTimeout)
+    end
+
     it 'raises error on 404' do
       connection = faraday_connection do |stubs|
         stubs.get('http://httpbin.org/status/404') { |_env| [404, {}, nil] }

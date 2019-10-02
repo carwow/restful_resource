@@ -7,7 +7,9 @@ jobs:
       - checkout
       - run:
           name: Bundle Install
-          command: bundle check || bundle install
+          command: |
+            gem install bundler && \
+            bundle check || bundle install
       - run:
           name: Run rspec in parallel
           command: |

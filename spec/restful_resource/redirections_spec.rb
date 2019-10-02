@@ -3,8 +3,8 @@ require_relative '../spec_helper'
 RSpec.describe RestfulResource::Redirections do
   before do
     @mock_http = double('mock_http')
-    allow(RestfulResource::Base).to receive(:http).and_return(@mock_http)
-    RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
+    allow(ModelWithRedirections).to receive(:http).and_return(@mock_http)
+    ModelWithRedirections.configure(base_url: 'http://api.carwow.co.uk/')
   end
 
   describe '#post' do

@@ -20,3 +20,10 @@ jobs:
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
       - store_test_results:
           path: test_results
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build

@@ -264,6 +264,12 @@ module RestfulResource
       response = e.response
       raise ClientError, request unless response
 
+      handle_error(request, response)
+    rescue Faraday::ServerError => e
+      handle_error(request, e.response)
+    end
+
+    def handle_error(request, response)
       case response[:status]
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 409 then raise HttpClient::Conflict.new(request, response)

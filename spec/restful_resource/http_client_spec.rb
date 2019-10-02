@@ -306,7 +306,7 @@ RSpec.describe RestfulResource::HttpClient do
     end
 
 
-    context 'when explicit timeout set' do
+    context 'when explicit timeout set on connection' do
       let(:timeout) { 5 }
       let(:required_headers) { { 'X-Client-Timeout' => 5 } }
       it 'sets X-Client-Timeout correctly' do
@@ -322,6 +322,17 @@ RSpec.describe RestfulResource::HttpClient do
 
       it 'sets X-Client-Timeout correctly' do
         response = http_client.get('http://httpbin.org/get')
+
+        expect(response.status).to eq 200
+      end
+    end
+
+    context 'when set on request' do
+      let(:timeout) { nil }
+      let(:required_headers) { { 'X-Client-Timeout' => 1 } }
+
+      it 'sets X-Client-Timeout correctly' do
+        response = http_client.get('http://httpbin.org/get', timeout: 1)
 
         expect(response.status).to eq 200
       end

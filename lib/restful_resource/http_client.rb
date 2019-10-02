@@ -253,6 +253,7 @@ module RestfulResource
         req.url request.url
 
         req.headers = req.headers.merge(request.headers)
+        req.headers = req.headers.merge(x_client_timeout: req.options[:timeout]) if req.options[:timeout]
       end
 
       Response.new(body: response.body, headers: response.headers, status: response.status)

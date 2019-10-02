@@ -3,8 +3,10 @@ require_relative '../spec_helper'
 RSpec.describe RestfulResource::Base do
   before do
     @mock_http = double('mock_http')
-    allow(described_class).to receive(:http).and_return(@mock_http)
-    described_class.configure(base_url: 'http://api.carwow.co.uk/')
+    allow(Make).to receive(:http).and_return(@mock_http)
+    Make.configure(base_url: 'http://api.carwow.co.uk/')
+    allow(Model).to receive(:http).and_return(@mock_http)
+    Model.configure(base_url: 'http://api.carwow.co.uk/')
   end
 
   it 'acts as an openobject' do
@@ -143,9 +145,14 @@ RSpec.describe RestfulResource::Base do
   end
 
   describe '#base_url' do
+    before do
+      @mock_http = double('mock_http')
+      allow(TestA).to receive(:http).and_return(@mock_http)
+      allow(TestB).to receive(:http).and_return(@mock_http)
+    end
+
     it 'is different for each subclass of Base' do
       BaseA.configure(base_url: 'http://a.carwow.co.uk')
-
       BaseB.configure(base_url: 'http://b.carwow.co.uk')
 
       expect_get('http://a.carwow.co.uk/testa/1', RestfulResource::Response.new)
@@ -385,6 +392,7 @@ RSpec.describe RestfulResource::Base do
     let(:faraday_options) { double }
 
     it 'passes arguments to HttpClient' do
+      client = Class.new(described_class)
       expect(RestfulResource::HttpClient).to receive(:new).with(username: username,
                                                                 password: password,
                                                                 auth_token: auth_token,
@@ -397,7 +405,7 @@ RSpec.describe RestfulResource::Base do
                                                                 faraday_options: faraday_options
                                                                )
 
-      described_class.configure(base_url: 'http://foo.bar',
+      client.configure(base_url: 'http://foo.bar',
                                 username: username,
                                 password: password,
                                 auth_token: auth_token,

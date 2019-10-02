@@ -2,12 +2,8 @@ require_relative '../spec_helper'
 
 describe RestfulResource::Base, 'authorization' do
   before do
-    class FirstClient < RestfulResource::Base
-    end
-
-    class SecondClient < RestfulResource::Base
-    end
-
+    class FirstClient < RestfulResource::Base; end
+    class SecondClient < RestfulResource::Base; end
     class NotConfiguredClient < RestfulResource::Base; end
 
     class FirstTest < FirstClient

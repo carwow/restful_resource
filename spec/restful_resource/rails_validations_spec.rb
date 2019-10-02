@@ -3,8 +3,8 @@ require_relative '../spec_helper'
 RSpec.describe RestfulResource::RailsValidations do
   before do
     @mock_http = double('mock_http')
-    RestfulResource::Base.configure(base_url: 'http://api.carwow.co.uk/')
-    allow(RestfulResource::Base).to receive(:http).and_return(@mock_http)
+    Dealer.configure(base_url: 'http://api.carwow.co.uk/')
+    allow(Dealer).to receive(:http).and_return(@mock_http)
   end
 
   context '#patch without errors' do

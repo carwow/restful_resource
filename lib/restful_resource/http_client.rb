@@ -126,6 +126,7 @@ module RestfulResource
       end
 
       @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
+      @connection.headers[:x_client_timeout] = @connection.options[:timeout] if @connection.options[:timeout]
     end
 
     def get(url, headers: {}, open_timeout: nil, timeout: nil)

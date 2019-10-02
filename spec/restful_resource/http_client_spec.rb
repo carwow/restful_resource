@@ -1,8 +1,8 @@
 require_relative '../spec_helper'
 
 RSpec.describe RestfulResource::HttpClient do
-  def faraday_connection
-    Faraday.new do |builder|
+  def faraday_connection(opts = {})
+    Faraday.new(opts) do |builder|
       builder.request :url_encoded
       builder.response :raise_error
       builder.adapter :test do |stubs|
@@ -290,6 +290,41 @@ RSpec.describe RestfulResource::HttpClient do
       response = http_client(connection, app_name: 'my-app').get('http://httpbin.org/get')
 
       expect(response.status).to eq 200
+    end
+  end
+
+  describe 'X-Client-Timeout' do
+    let(:http_client) { described_class.new(connection: connection, timeout: timeout) }
+    let(:connection) do
+      conn = faraday_connection do |stubs|
+        stubs.get('http://httpbin.org/get', required_headers) { |_env| [200, {}, nil] }
+      end
+
+      conn.options[:timeout] = timeout
+
+      conn
+    end
+
+
+    context 'when explicit timeout set' do
+      let(:timeout) { 5 }
+      let(:required_headers) { { 'X-Client-Timeout' => 5 } }
+      it 'sets X-Client-Timeout correctly' do
+        response = http_client.get('http://httpbin.org/get')
+
+        expect(response.status).to eq 200
+      end
+    end
+
+    context 'when not explicit timeout set' do
+      let(:timeout) { nil }
+      let(:required_headers) { {} }
+
+      it 'sets X-Client-Timeout correctly' do
+        response = http_client.get('http://httpbin.org/get')
+
+        expect(response.status).to eq 200
+      end
     end
   end
 end

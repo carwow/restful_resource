@@ -1,5 +1,22 @@
 # Changelog
 
+2.6.0
+---
+
+- Add `X-Client-Timeout` header on requests if a client timeout is set
+
+
+2.5.3
+---
+
+- Raise `RestfulResource::HttpClient::GatewayTimeout` when response status is `504`
+
+
+2.5.2
+---
+
+- Add ability to set `timeout` and `open_timeout` options on connection
+
 2.5.1
 ---
 

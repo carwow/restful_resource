@@ -88,7 +88,7 @@ module RestfulResource
       timeout: nil,
       open_timeout: nil,
       faraday_config: nil,
-      faraday_options: nil)
+      faraday_options: {})
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
@@ -202,7 +202,7 @@ module RestfulResource
       cache_instrument_name: nil,
       server_cache_instrument_name: nil,
       faraday_config: nil,
-      faraday_options: nil)
+      faraday_options: {})
 
       @connection = Faraday.new(nil, faraday_options) do |b|
         b.request :json

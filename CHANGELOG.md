@@ -1,10 +1,15 @@
 # Changelog
 
-2.6.0
+2.6.1
+---
+- Support only `faraday-0.15.x`
+    - `0.16.x` breaks `faraday-http-cache`
+
+2.6.0 (yanked)
 ---
 
+- Upgrade to `faraday-0.16.x`
 - Add `X-Client-Timeout` header on requests if a client timeout is set
-
 
 2.5.3
 ---

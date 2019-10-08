@@ -252,7 +252,7 @@ module RestfulResource
         req.body = request.body unless request.body.nil?
         req.url request.url
 
-        req.headers = req.headers.merge(request.headers)
+        req.headers = req.headers.merge(request.headers).merge(x_client_start: time_current_ms)
         req.headers = req.headers.merge(x_client_timeout: req.options[:timeout]) if req.options[:timeout]
       end
 
@@ -281,6 +281,10 @@ module RestfulResource
       when 504 then raise HttpClient::GatewayTimeout.new(request, response)
       else raise HttpClient::OtherHttpError.new(request, response)
       end
+    end
+
+    def time_current_ms
+      (Time.current.to_f * 1_000.0).to_i
     end
   end
 end

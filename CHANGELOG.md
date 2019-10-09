@@ -1,7 +1,13 @@
 # Changelog
 
+2.7.0
+---
+
+- Add `X-Client-Start` header on request containing milliseconds since unix epoch
+
 2.6.1
 ---
+
 - Support only `faraday-0.15.x`
     - `0.16.x` breaks `faraday-http-cache`
 

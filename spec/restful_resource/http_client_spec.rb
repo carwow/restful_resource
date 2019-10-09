@@ -338,4 +338,23 @@ RSpec.describe RestfulResource::HttpClient do
       end
     end
   end
+
+  describe 'X-Client-Start' do
+    let(:now) { Time.current }
+    let(:required_headers) { { 'X-Client-Start' => (now.to_f * 1000.0).to_i } }
+    let(:http_client) { described_class.new(connection: connection) }
+    let(:connection) do
+      conn = faraday_connection do |stubs|
+        stubs.get('http://httpbin.org/get', required_headers) { |_env| [200, {}, nil] }
+      end
+    end
+
+    before { allow(Time).to receive(:current).and_return(now) }
+
+    it 'sets X-Client-Start correctly' do
+      response = http_client.get('http://httpbin.org/get')
+
+      expect(response.status).to eq 200
+    end
+  end
 end

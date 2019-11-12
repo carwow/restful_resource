@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-its'
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'faraday', '~> 0.15.0'
+  spec.add_dependency 'faraday', '>= 0.15', '< 0.18'
   spec.add_dependency 'faraday-cdn-metrics'
   spec.add_dependency 'faraday-encoding'
   spec.add_dependency 'faraday-http-cache'

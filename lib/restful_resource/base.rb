@@ -33,14 +33,14 @@ module RestfulResource
       @resource_path = url
     end
 
-    def self.find(id, params = {})
+    def self.find(id, **params)
       params_without_options, options = format_params(params)
 
       response = http.get(member_url(id, params_without_options), **options)
       new(parse_json(response.body))
     end
 
-    def self.where(params = {})
+    def self.where(**params)
       params_without_options, options = format_params(params)
 
       url = collection_url(params_without_options)
@@ -48,7 +48,7 @@ module RestfulResource
       paginate_response(response)
     end
 
-    def self.get(params = {})
+    def self.get(**params)
       params_without_options, options = format_params(params)
 
       response = http.get(collection_url(params_without_options), **options)
@@ -92,7 +92,7 @@ module RestfulResource
       new(parse_json(response.body))
     end
 
-    def self.all(params = {})
+    def self.all(**params)
       where(params)
     end
 
@@ -133,14 +133,14 @@ module RestfulResource
       result
     end
 
-    def self.collection_url(params)
+    def self.collection_url(**params)
       url = merge_url_paths(base_url, @resource_path, @action_prefix)
       replace_parameters(url, params)
     end
 
     private
 
-    def self.format_params(params = {})
+    def self.format_params(**params)
       headers = params.delete(:headers) || {}
 
       headers[:cache_control] = 'no-cache' if params.delete(:no_cache)
@@ -154,7 +154,7 @@ module RestfulResource
       uri.merge(paths.compact.join('/')).to_s
     end
 
-    def self.member_url(id, params)
+    def self.member_url(id, **params)
       raise ResourceIdMissingError if id.blank?
 
       url = merge_url_paths(base_url, @resource_path, CGI.escape(id.to_s), @action_prefix)
@@ -173,7 +173,7 @@ module RestfulResource
       ActiveSupport::JSON.decode(json)
     end
 
-    def self.replace_parameters(url, params)
+    def self.replace_parameters(url, **params)
       missing_params = []
       params = params.with_indifferent_access
 

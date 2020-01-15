@@ -22,7 +22,7 @@ GEM
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2)
     ast (2.4.0)
-    carwow_rubocop (3.2.0)
+    carwow_rubocop (3.2.1)
       rubocop (>= 0.78)
       rubocop-performance
       rubocop-rspec

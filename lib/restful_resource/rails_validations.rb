@@ -17,13 +17,16 @@ module RestfulResource
         with_validations { super }
       end
 
+      def delete(*)
+        with_validations { super }
+      end
+
       private
 
       def with_validations(id = nil, data: {})
         yield
       rescue HttpClient::UnprocessableEntity => e
         errors = parse_json(e.response.body)
-        result = nil
         result = if errors.is_a?(Hash) && errors.key?('errors')
                    data.merge(errors)
                  else

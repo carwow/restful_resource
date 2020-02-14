@@ -72,13 +72,13 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#patch without errors' do
+  context '#put without errors' do
     before do
       data = { name: 'Barak' }
       expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
-      expect_patch('http://api.carwow.co.uk/dealers/1', expected_response, data: data)
+      expect_put('http://api.carwow.co.uk/dealers/1', expected_response, data: data)
 
-      @object = Dealer.patch(1, data: data)
+      @object = Dealer.put(1, data: data)
     end
 
     it 'returns object' do
@@ -237,6 +237,55 @@ RSpec.describe RestfulResource::RailsValidations do
       @object = Dealer.get
       expect(@object).not_to be_valid
       expect(@object.errors).to eq @error
+    end
+  end
+
+  describe '#delete' do
+    subject { Dealer.delete(123) }
+
+    context 'without errors' do
+      before do
+        expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
+        expect_delete('http://api.carwow.co.uk/dealers/123', expected_response)
+      end
+
+      it 'returns object' do
+        expect(subject.name).to eq 'Barak'
+      end
+
+      it 'returns valid object' do
+        expect(subject).to be_valid
+      end
+    end
+
+    context 'with errors' do
+      let(:errors) { { errors: ['Cannot use Ninja Turtles names'] } }
+
+      before do
+        expected_response = RestfulResource::Response.new(body: errors.to_json)
+        expect_delete_with_unprocessable_entity('http://api.carwow.co.uk/dealers/123', expected_response)
+      end
+
+      it 'has an error' do
+        expect(subject.errors.count).to eq 1
+      end
+
+      it 'has correct error' do
+        expect(subject.errors.first).to eq 'Cannot use Ninja Turtles names'
+      end
+
+      it 'returns not valid object' do
+        expect(subject).not_to be_valid
+      end
+
+      context 'when there is a single error' do
+        let(:errors) { 'Cannot use Ninja Turtles names' }
+
+        it 'handles errors returned as root object' do
+          expect(subject).not_to be_valid
+          expect(subject.errors).to eq errors
+        end
+      end
     end
   end
 end

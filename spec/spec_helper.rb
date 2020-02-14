@@ -65,3 +65,10 @@ def expect_post_with_unprocessable_entity(url, response, data: {})
   exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
   expect(@mock_http).to receive(:post).with(url, data: data, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
 end
+
+def expect_delete_with_unprocessable_entity(url, response)
+  request = RestfulResource::Request.new(:delete, url)
+  rest_client_response = OpenStruct.new(body: response.body, headers: response.headers, code: response.status)
+  exception = RestfulResource::HttpClient::UnprocessableEntity.new(request, rest_client_response)
+  expect(@mock_http).to receive(:delete).with(url, headers: {}, open_timeout: nil, timeout: nil).and_raise(exception)
+end

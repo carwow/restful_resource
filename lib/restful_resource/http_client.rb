@@ -20,6 +20,12 @@ module RestfulResource
       end
     end
 
+    class BadRequest < HttpError
+      def message
+        'HTTP 400: Bad Request'
+      end
+    end
+
     class UnprocessableEntity < HttpError
     end
 
@@ -270,6 +276,7 @@ module RestfulResource
 
     def handle_error(request, response)
       case response[:status]
+      when 400 then raise HttpClient::BadRequest.new(request, response)
       when 404 then raise HttpClient::ResourceNotFound.new(request, response)
       when 409 then raise HttpClient::Conflict.new(request, response)
       when 422 then raise HttpClient::UnprocessableEntity.new(request, response)

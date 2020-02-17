@@ -29,7 +29,6 @@ RSpec.describe RestfulResource::HttpClient do
     end
 
     shared_examples 'raise an exception on error responses' do |verb|
-      include_examples 'error codes throw exception', verb, 400, RestfulResource::HttpClient::BadRequest
       include_examples 'error codes throw exception', verb, 409, RestfulResource::HttpClient::Conflict
       include_examples 'error codes throw exception', verb, 404, RestfulResource::HttpClient::ResourceNotFound
       include_examples 'error codes throw exception', verb, 422, RestfulResource::HttpClient::UnprocessableEntity

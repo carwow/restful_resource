@@ -16,175 +16,97 @@ RSpec.describe RestfulResource::HttpClient do
   end
 
   describe 'Basic HTTP' do
-    it 'executes get' do
-      connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/get') { |_env| [200, {}, nil] }
-      end
+    shared_examples 'error codes throw exception' do |verb, status, exception_class|
+      it "should raise an error #{status}" do
+        url = "http://httpbin.org/status/#{status}"
 
-      response = http_client(connection).get('http://httpbin.org/get')
-      expect(response.status).to eq 200
+        connection = faraday_connection do |stubs|
+          stubs.send(verb, url) { [status, {}, nil] }
+        end
+
+        expect { http_client(connection).send(verb, url) }.to raise_error(exception_class)
+      end
     end
 
-    it 'executes patch' do
-      connection = faraday_connection do |stubs|
-        # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
-        stubs.patch('http://httpbin.org/patch', 'name=Alfred') { |_env| [200, {}, nil] }
-      end
+    shared_examples 'raise an exception on error responses' do |verb|
+      include_examples 'error codes throw exception', verb, 409, RestfulResource::HttpClient::Conflict
+      include_examples 'error codes throw exception', verb, 404, RestfulResource::HttpClient::ResourceNotFound
+      include_examples 'error codes throw exception', verb, 422, RestfulResource::HttpClient::UnprocessableEntity
+      include_examples 'error codes throw exception', verb, 429, RestfulResource::HttpClient::TooManyRequests
+      include_examples 'error codes throw exception', verb, 502, RestfulResource::HttpClient::BadGateway
+      include_examples 'error codes throw exception', verb, 503, RestfulResource::HttpClient::ServiceUnavailable
+      include_examples 'error codes throw exception', verb, 504, RestfulResource::HttpClient::GatewayTimeout
 
-      response = http_client(connection).patch('http://httpbin.org/patch', data: { name: 'Alfred' })
-      expect(response.status).to eq 200
+      include_examples 'error codes throw exception', verb, 418, RestfulResource::HttpClient::OtherHttpError
     end
 
-    it 'executes put' do
-      connection = faraday_connection do |stubs|
-        # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
-        stubs.put('http://httpbin.org/put', 'name=Alfred') { |_env| [200, {}, nil] }
-      end
+    context 'GET' do
+      include_examples 'raise an exception on error responses', :get
 
-      response = http_client(connection).put('http://httpbin.org/put', data: { name: 'Alfred' })
-      expect(response.status).to eq 200
+      it 'executes get' do
+        connection = faraday_connection do |stubs|
+          stubs.get('http://httpbin.org/get') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).get('http://httpbin.org/get')
+        expect(response.status).to eq 200
+      end
     end
 
-    it 'executes post' do
-      connection = faraday_connection do |stubs|
-        # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
-        stubs.post('http://httpbin.org/post', 'name=Alfred') { |_env| [200, {}, %("name": "Alfred")] }
+    context 'PATCH' do
+      include_examples 'raise an exception on error responses', :patch
+
+      it 'executes patch' do
+        connection = faraday_connection do |stubs|
+          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          stubs.patch('http://httpbin.org/patch', 'name=Alfred') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).patch('http://httpbin.org/patch', data: { name: 'Alfred' })
+        expect(response.status).to eq 200
       end
-
-      response = http_client(connection).post('http://httpbin.org/post', data: { name: 'Alfred' })
-
-      expect(response.body).to include 'name": "Alfred'
-      expect(response.status).to eq 200
     end
 
-    it 'executes delete' do
-      connection = faraday_connection do |stubs|
-        stubs.delete('http://httpbin.org/delete') { |_env| [200, {}, nil] }
+    context 'PUT' do
+      include_examples 'raise an exception on error responses', :put
+      it 'executes put' do
+        connection = faraday_connection do |stubs|
+          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          stubs.put('http://httpbin.org/put', 'name=Alfred') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).put('http://httpbin.org/put', data: { name: 'Alfred' })
+        expect(response.status).to eq 200
       end
-
-      response = http_client(connection).delete('http://httpbin.org/delete')
-
-      expect(response.status).to eq 200
     end
 
-    it 'patch should raise error 409' do
-      connection = faraday_connection do |stubs|
-        stubs.patch('http://httpbin.org/status/409') { |_env| [409, {}, nil] }
-      end
+    context 'POST' do
+      include_examples 'raise an exception on error responses', :post
+      it 'executes post' do
+        connection = faraday_connection do |stubs|
+          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          stubs.post('http://httpbin.org/post', 'name=Alfred') { |_env| [200, {}, %("name": "Alfred")] }
+        end
 
-      expect { http_client(connection).patch('http://httpbin.org/status/409') }.to raise_error(RestfulResource::HttpClient::Conflict)
+        response = http_client(connection).post('http://httpbin.org/post', data: { name: 'Alfred' })
+
+        expect(response.body).to include 'name": "Alfred'
+        expect(response.status).to eq 200
+      end
     end
 
-    it 'patch should raise error 422' do
-      connection = faraday_connection do |stubs|
-        stubs.patch('http://httpbin.org/status/422') { |_env| [422, {}, nil] }
+    context 'DELETE' do
+      include_examples 'raise an exception on error responses', :delete
+
+      it 'executes delete' do
+        connection = faraday_connection do |stubs|
+          stubs.delete('http://httpbin.org/delete') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).delete('http://httpbin.org/delete')
+
+        expect(response.status).to eq 200
       end
-
-      expect { http_client(connection).patch('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
-    end
-
-    it 'put should raise error 409' do
-      connection = faraday_connection do |stubs|
-        stubs.put('http://httpbin.org/status/409') { |_env| [409, {}, nil] }
-      end
-
-      expect { http_client(connection).put('http://httpbin.org/status/409') }.to raise_error(RestfulResource::HttpClient::Conflict)
-    end
-
-    it 'put should raise error 422' do
-      connection = faraday_connection do |stubs|
-        stubs.put('http://httpbin.org/status/422') { |_env| [422, {}, nil] }
-      end
-
-      expect { http_client(connection).put('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
-    end
-
-    it 'post should raise error 422' do
-      connection = faraday_connection do |stubs|
-        stubs.post('http://httpbin.org/status/422') { |_env| [422, {}, nil] }
-      end
-
-      expect { http_client(connection).post('http://httpbin.org/status/422') }.to raise_error(RestfulResource::HttpClient::UnprocessableEntity)
-    end
-
-    it 'post should raise error 429' do
-      connection = faraday_connection do |stubs|
-        stubs.post('http://httpbin.org/status/429') { |_env| [429, {}, nil] }
-      end
-
-      expect { http_client(connection).post('http://httpbin.org/status/429') }.to raise_error(RestfulResource::HttpClient::TooManyRequests)
-    end
-
-    it 'patch should raise error 502' do
-      connection = faraday_connection do |stubs|
-        stubs.patch('http://httpbin.org/status/502') { |_env| [502, {}, nil] }
-      end
-
-      expect { http_client(connection).patch('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
-    end
-
-    it 'put should raise error 502' do
-      connection = faraday_connection do |stubs|
-        stubs.put('http://httpbin.org/status/502') { |_env| [502, {}, nil] }
-      end
-
-      expect { http_client(connection).put('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
-    end
-
-    it 'post should raise error 502' do
-      connection = faraday_connection do |stubs|
-        stubs.post('http://httpbin.org/status/502') { |_env| [502, {}, nil] }
-      end
-
-      expect { http_client(connection).post('http://httpbin.org/status/502') }.to raise_error(RestfulResource::HttpClient::BadGateway)
-    end
-
-    it 'patch should raise error 503' do
-      connection = faraday_connection do |stubs|
-        stubs.patch('http://httpbin.org/status/503') { |_env| [503, {}, nil] }
-      end
-
-      expect { http_client(connection).patch('http://httpbin.org/status/503') }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
-    end
-
-    it 'put should raise error 503' do
-      connection = faraday_connection do |stubs|
-        stubs.put('http://httpbin.org/status/503') { |_env| [503, {}, nil] }
-      end
-
-      expect { http_client(connection).put('http://httpbin.org/status/503') }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
-    end
-
-    it 'post should raise error 503' do
-      connection = faraday_connection do |stubs|
-        stubs.post('http://httpbin.org/status/503') { |_env| [503, {}, nil] }
-      end
-
-      expect { http_client(connection).post('http://httpbin.org/status/503') }.to raise_error(RestfulResource::HttpClient::ServiceUnavailable)
-    end
-
-    it 'post should raise error 504' do
-      connection = faraday_connection do |stubs|
-        stubs.post('http://httpbin.org/status/504') { |_env| [504, {}, nil] }
-      end
-
-      expect { http_client(connection).post('http://httpbin.org/status/504') }.to raise_error(RestfulResource::HttpClient::GatewayTimeout)
-    end
-
-    it 'raises error on 404' do
-      connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
-        stubs.post('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
-        stubs.patch('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
-        stubs.put('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
-        stubs.delete('http://httpbin.org/status/404') { |_env| [404, {}, nil] }
-      end
-
-      expect { http_client(connection).get('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
-      expect { http_client(connection).delete('http://httpbin.org/status/404') }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
-      expect { http_client(connection).patch('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
-      expect { http_client(connection).put('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
-      expect { http_client(connection).post('http://httpbin.org/status/404', data: { name: 'Mad cow' }) }.to raise_error(RestfulResource::HttpClient::ResourceNotFound)
     end
 
     it 'raises Faraday::ConnectionFailed errors' do
@@ -209,14 +131,6 @@ RSpec.describe RestfulResource::HttpClient do
       end
 
       expect { http_client(connection).get('https://localhost:3005') }.to raise_error(RestfulResource::HttpClient::ClientError)
-    end
-
-    it 'raises OtherHttpError for other status response codes' do
-      connection = faraday_connection do |stubs|
-        stubs.get('http://httpbin.org/status/418') { |_env| [418, {}, nil] }
-      end
-
-      expect { http_client(connection).get('http://httpbin.org/status/418') }.to raise_error(RestfulResource::HttpClient::OtherHttpError)
     end
   end
 

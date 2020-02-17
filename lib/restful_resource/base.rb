@@ -58,7 +58,7 @@ module RestfulResource
     def self.delete(id, **params)
       params_without_options, options = format_params(params)
       response = http.delete(member_url(id, params_without_options), **options)
-      RestfulResource::OpenObject.new(parse_json(response.body))
+      new(parse_json(response.body))
     end
 
     def self.patch(id, data: {}, headers: {}, **params)

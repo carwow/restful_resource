@@ -37,7 +37,7 @@ GEM
       faraday (~> 0.11)
     faraday-encoding (0.0.5)
       faraday
-    faraday-http-cache (2.0.0)
+    faraday-http-cache (2.1.0)
       faraday (~> 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)

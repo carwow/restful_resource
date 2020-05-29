@@ -17,7 +17,7 @@ RSpec.describe RestfulResource::HttpClient do
 
   describe 'Basic HTTP' do
     shared_examples 'error codes throw exception' do |verb, status, exception_class|
-      it "should raise an error #{status}" do
+      it "raises an error #{status}" do
         url = "http://httpbin.org/status/#{status}"
 
         connection = faraday_connection do |stubs|
@@ -180,8 +180,8 @@ RSpec.describe RestfulResource::HttpClient do
   end
 
   describe 'User-Agent' do
-    def http_client(connection, app_name: nil)
-      described_class.new(connection: connection, instrumentation: { app_name: app_name })
+    def http_client(connection, user_agent_name: nil)
+      described_class.new(connection: connection, user_agent_name: user_agent_name)
     end
 
     it 'sets a default user-agent header' do
@@ -201,7 +201,7 @@ RSpec.describe RestfulResource::HttpClient do
         stubs.get('http://httpbin.org/get', 'User-Agent' => user_agent) { |_env| [200, {}, nil] }
       end
 
-      response = http_client(connection, app_name: 'my-app').get('http://httpbin.org/get')
+      response = http_client(connection, user_agent_name: 'my-app').get('http://httpbin.org/get')
 
       expect(response.status).to eq 200
     end
@@ -219,10 +219,10 @@ RSpec.describe RestfulResource::HttpClient do
       conn
     end
 
-
     context 'when explicit timeout set on connection' do
       let(:timeout) { 5 }
       let(:required_headers) { { 'X-Client-Timeout' => 5 } }
+
       it 'sets X-Client-Timeout correctly' do
         response = http_client.get('http://httpbin.org/get')
 

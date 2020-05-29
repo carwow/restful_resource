@@ -365,11 +365,11 @@ RSpec.describe RestfulResource::Base do
     end
 
     it 'does not return inner object table' do
-      expect(@makes.first.as_json).to eq ({ 'name' => 'Audi', 'slug' => 'Audi-Slug' })
+      expect(@makes.first.as_json).to eq({ 'name' => 'Audi', 'slug' => 'Audi-Slug' })
     end
 
     it 'returns inner object table on selected fields' do
-      expect(@makes.last.as_json(only: [:name])).to eq ({ 'name' => 'Fiat' })
+      expect(@makes.last.as_json(only: [:name])).to eq({ 'name' => 'Fiat' })
     end
   end
 
@@ -385,11 +385,9 @@ RSpec.describe RestfulResource::Base do
     let(:auth_token) { double }
     let(:logger) { double }
     let(:cache_store) { double }
-    let(:instrumentation) { double }
+    let(:user_agent_name) { double }
     let(:timeout) { double }
     let(:open_timeout) { double }
-    let(:faraday_config) { double }
-    let(:faraday_options) { double }
 
     it 'passes arguments to HttpClient' do
       client = Class.new(described_class)
@@ -398,25 +396,21 @@ RSpec.describe RestfulResource::Base do
                                                                 auth_token: auth_token,
                                                                 logger: logger,
                                                                 cache_store: cache_store,
-                                                                instrumentation: instrumentation,
+                                                                user_agent_name: user_agent_name,
                                                                 timeout: timeout,
-                                                                open_timeout: open_timeout,
-                                                                faraday_config: faraday_config,
-                                                                faraday_options: faraday_options
+                                                                open_timeout: open_timeout
                                                                )
 
       client.configure(base_url: 'http://foo.bar',
-                                username: username,
-                                password: password,
-                                auth_token: auth_token,
-                                logger: logger,
-                                cache_store: cache_store,
-                                instrumentation: instrumentation,
-                                timeout: timeout,
-                                open_timeout: open_timeout,
-                                faraday_config: faraday_config,
-                                faraday_options: faraday_options
-                               )
+                       username: username,
+                       password: password,
+                       auth_token: auth_token,
+                       logger: logger,
+                       cache_store: cache_store,
+                       user_agent_name: user_agent_name,
+                       timeout: timeout,
+                       open_timeout: open_timeout
+                      )
     end
   end
 

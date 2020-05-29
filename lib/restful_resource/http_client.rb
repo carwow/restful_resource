@@ -78,43 +78,33 @@ module RestfulResource
     DEFAULT_TIMEOUT_IN_SECS = 10
     DEFAULT_OPEN_TIMEOUT_IN_SECS = 2
 
-    def initialize(username: nil,
+    def initialize(
+      username: nil,
       password: nil,
       auth_token: nil,
       logger: nil,
       cache_store: nil,
-      connection: nil,
-      instrumentation: {},
+      user_agent_name: nil,
       timeout: nil,
       open_timeout: nil,
-      faraday_config: nil,
-      faraday_options: {})
-      api_name = instrumentation[:api_name]            ||= 'api'
-      instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
-      instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
+      connection: nil
+    )
+      @connection = connection || Faraday.new do |b|
+        b.request :json
+        b.response :raise_error
 
-      if instrumentation[:metric_class]
-        @metrics = Instrumentation.new(instrumentation.slice(:app_name,
-          :api_name,
-          :request_instrument_name,
-          :cache_instrument_name,
-          :metric_class
-        )
-                                      )
-        @metrics.subscribe_to_notifications
+        b.response :logger, logger if logger
+
+        b.use :http_cache, store: cache_store, logger: logger if cache_store
+
+        b.options.timeout = timeout || DEFAULT_TIMEOUT_IN_SECS
+        b.options.open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT_IN_SECS
+
+        b.response :encoding
+        b.use :gzip
+
+        b.adapter :typhoeus
       end
-
-      # Use a provided faraday client or initalize a new one
-      @connection = connection || initialize_connection(logger: logger,
-                                                        cache_store: cache_store,
-                                                        instrumenter: ActiveSupport::Notifications,
-                                                        timeout: timeout,
-                                                        open_timeout: open_timeout,
-                                                        request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
-                                                        cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
-                                                        faraday_config: faraday_config,
-                                                        faraday_options: faraday_options
-                                                       )
 
       if auth_token
         @connection.headers[:authorization] = "Bearer #{auth_token}"
@@ -122,7 +112,7 @@ module RestfulResource
         @connection.basic_auth(username, password)
       end
 
-      @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
+      @connection.headers[:user_agent] = build_user_agent(user_agent_name)
     end
 
     def get(url, headers: {}, open_timeout: nil, timeout: nil)
@@ -189,43 +179,6 @@ module RestfulResource
     end
 
     private
-
-    def initialize_connection(logger: nil,
-      cache_store: nil,
-      instrumenter: nil,
-      timeout: nil,
-      open_timeout: nil,
-      request_instrument_name: nil,
-      cache_instrument_name: nil,
-      faraday_config: nil,
-      faraday_options: {})
-
-      @connection = Faraday.new(nil, faraday_options) do |b|
-        b.request :json
-        b.response :raise_error
-
-        b.response :logger, logger if logger
-
-        if cache_store
-          b.use :http_cache, store: cache_store,
-                             logger: logger,
-                             instrumenter: instrumenter,
-                             instrument_name: cache_instrument_name
-        end
-
-        b.use :instrumentation, name: request_instrument_name if instrumenter && request_instrument_name
-
-        b.options.timeout = timeout || DEFAULT_TIMEOUT_IN_SECS
-        b.options.open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT_IN_SECS
-
-        faraday_config&.call(b)
-
-        b.response :encoding
-        b.use :gzip
-
-        b.adapter :typhoeus
-      end
-    end
 
     def build_user_agent(app_name)
       parts = ['carwow/internal']

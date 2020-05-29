@@ -8,25 +8,22 @@ module RestfulResource
       auth_token: nil,
       logger: nil,
       cache_store: nil,
-      instrumentation: {},
+      user_agent_name: nil,
       timeout: nil,
-      open_timeout: nil,
-      faraday_config: nil,
-      faraday_options: {})
+      open_timeout: nil)
 
       @base_url = URI.parse(base_url)
 
-      @http = RestfulResource::HttpClient.new(username: username,
-                                              password: password,
-                                              auth_token: auth_token,
-                                              logger: logger,
-                                              cache_store: cache_store,
-                                              timeout: timeout,
-                                              open_timeout: open_timeout,
-                                              instrumentation: instrumentation,
-                                              faraday_config: faraday_config,
-                                              faraday_options: faraday_options
-                                             )
+      @http = RestfulResource::HttpClient.new(
+        username: username,
+        password: password,
+        auth_token: auth_token,
+        logger: logger,
+        cache_store: cache_store,
+        user_agent_name: user_agent_name,
+        timeout: timeout,
+        open_timeout: open_timeout
+      )
     end
 
     def self.resource_path(url)
@@ -119,8 +116,6 @@ module RestfulResource
       end
     end
 
-    protected
-
     def self.http
       @http || superclass.http
     end
@@ -137,8 +132,6 @@ module RestfulResource
       url = merge_url_paths(base_url, @resource_path, @action_prefix)
       replace_parameters(url, params)
     end
-
-    private
 
     def self.format_params(**params)
       headers = params.delete(:headers) || {}
@@ -177,7 +170,7 @@ module RestfulResource
       missing_params = []
       params = params.with_indifferent_access
 
-      url_params = url.scan(/:([A-Za-z][^\/]*)/).flatten
+      url_params = url.scan(%r{:([A-Za-z][^/]*)}).flatten
       url_params.each do |key|
         value = params.delete(key)
         if value.nil?

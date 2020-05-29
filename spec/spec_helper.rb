@@ -1,3 +1,4 @@
+require 'pry'
 require 'rspec'
 require 'rspec/its'
 require_relative '../lib/restful_resource'
@@ -5,6 +6,7 @@ require_relative 'fixtures'
 
 RSpec.configure do |config|
   config.color = true
+  config.filter_run_when_matching :focus
   config.formatter = :progress
 end
 

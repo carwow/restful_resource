@@ -2,15 +2,14 @@ PATH
   remote: .
   specs:
     restful_resource (2.9.0)
-      activesupport
-      faraday (>= 0.15, < 1.1)
-      faraday-cdn-metrics
+      activesupport (~> 6.0)
+      faraday (~> 1.0)
       faraday-encoding
-      faraday-http-cache
-      faraday_middleware
+      faraday-http-cache (~> 2.2)
+      faraday_middleware (~> 1.0)
       link_header
-      rack
-      typhoeus
+      rack (~> 2.2)
+      typhoeus (~> 1.4)
 
 GEM
   remote: https://rubygems.org/
@@ -31,16 +30,14 @@ GEM
     diff-lcs (1.3)
     ethon (0.12.0)
       ffi (>= 1.3.0)
-    faraday (0.17.3)
+    faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
-    faraday-cdn-metrics (0.1.0)
-      faraday (~> 0.11)
     faraday-encoding (0.0.5)
       faraday
     faraday-http-cache (2.2.0)
       faraday (>= 0.8)
-    faraday_middleware (0.14.0)
-      faraday (>= 0.7.4, < 1.0)
+    faraday_middleware (1.0.0)
+      faraday (~> 1.0)
     ffi (1.12.2)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)

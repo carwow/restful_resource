@@ -92,14 +92,12 @@ module RestfulResource
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
-      instrumentation[:server_cache_instrument_name]   ||= "cdn_metrics.#{api_name}"
 
       if instrumentation[:metric_class]
         @metrics = Instrumentation.new(instrumentation.slice(:app_name,
           :api_name,
           :request_instrument_name,
           :cache_instrument_name,
-          :server_cache_instrument_name,
           :metric_class
         )
                                       )
@@ -114,7 +112,6 @@ module RestfulResource
                                                         open_timeout: open_timeout,
                                                         request_instrument_name: instrumentation.fetch(:request_instrument_name, nil),
                                                         cache_instrument_name: instrumentation.fetch(:cache_instrument_name, nil),
-                                                        server_cache_instrument_name: instrumentation.fetch(:server_cache_instrument_name, nil),
                                                         faraday_config: faraday_config,
                                                         faraday_options: faraday_options
                                                        )
@@ -200,7 +197,6 @@ module RestfulResource
       open_timeout: nil,
       request_instrument_name: nil,
       cache_instrument_name: nil,
-      server_cache_instrument_name: nil,
       faraday_config: nil,
       faraday_options: {})
 
@@ -209,11 +205,6 @@ module RestfulResource
         b.response :raise_error
 
         b.response :logger, logger if logger
-
-        if server_cache_instrument_name
-          b.use :cdn_metrics, instrumenter: instrumenter,
-                              instrument_name: server_cache_instrument_name
-        end
 
         if cache_store
           b.use :http_cache, store: cache_store,
@@ -262,6 +253,11 @@ module RestfulResource
     rescue Faraday::TimeoutError
       raise HttpClient::Timeout, request
     rescue Faraday::ClientError => e
+      response = e.response
+      raise ClientError, request unless response
+
+      handle_error(request, response)
+    rescue Faraday::ServerError => e
       response = e.response
       raise ClientError, request unless response
 

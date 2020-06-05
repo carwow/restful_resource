@@ -19,7 +19,7 @@ describe RestfulResource::HttpClient do
 
     describe 'Builder configuration' do
       it 'uses the typhoeus adapter' do
-        expect(middleware).to include Faraday::Adapter::Typhoeus
+        expect(connection.adapter).to eq Faraday::Adapter::Typhoeus
       end
 
       it 'url_encodes requests' do

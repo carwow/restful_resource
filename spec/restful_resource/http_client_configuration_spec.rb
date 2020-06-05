@@ -19,7 +19,7 @@ describe RestfulResource::HttpClient do
 
     describe 'Builder configuration' do
       it 'uses the typhoeus adapter' do
-        expect(middleware).to include Faraday::Adapter::Typhoeus
+        expect(connection.adapter).to eq Faraday::Adapter::Typhoeus
       end
 
       it 'url_encodes requests' do
@@ -81,13 +81,13 @@ describe RestfulResource::HttpClient do
             described_class.new(instrumentation: { app_name: 'rails', api_name: 'api', metric_class: FakeMetrics })
 
             expect(RestfulResource::Instrumentation).to have_received(:new)
-                                               .with(app_name: 'rails',
-                                                     api_name: 'api',
-                                                     request_instrument_name: 'http.api',
-                                                     cache_instrument_name: 'http_cache.api',
-                                                     server_cache_instrument_name: 'cdn_metrics.api',
-                                                     metric_class: FakeMetrics
-                                                    )
+              .with(app_name: 'rails',
+                    api_name: 'api',
+                    request_instrument_name: 'http.api',
+                    cache_instrument_name: 'http_cache.api',
+                    server_cache_instrument_name: 'cdn_metrics.api',
+                    metric_class: FakeMetrics
+                   )
           end
 
           it 'subscribes to the notifications' do

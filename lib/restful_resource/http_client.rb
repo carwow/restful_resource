@@ -266,6 +266,11 @@ module RestfulResource
       raise ClientError, request unless response
 
       handle_error(request, response)
+    rescue Faraday::ServerError => e
+      response = e.response
+      raise ClientError, request unless response
+
+      handle_error(request, response)
     end
 
     def handle_error(request, response)

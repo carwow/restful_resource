@@ -1,3 +1,4 @@
+require 'pry'
 require 'rspec'
 require 'rspec/its'
 require_relative '../lib/restful_resource'

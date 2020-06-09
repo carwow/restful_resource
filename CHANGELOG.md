@@ -1,5 +1,25 @@
 # Changelog
 
+2.10.0
+---
+
+- Support Faraday v1 (#85)
+
+2.9.0
+---
+
+- Add support for DELETE in RestfulResource::RailsValidations (#73)
+
+2.8.1
+---
+
+- Looser Faraday requirement >= 0.15, < 1.1
+
+2.8.0
+---
+
+- Make params hash in methods consistent, and always optional (#61)
+
 2.7.0
 ---
 

@@ -36,7 +36,7 @@ module RestfulResource
     def self.find(id, **params)
       params_without_options, options = format_params(params)
 
-      response = http.get(member_url(id, params_without_options), **options)
+      response = http.get(member_url(id, **params_without_options), **options)
       new(parse_json(response.body))
     end
 
@@ -57,7 +57,7 @@ module RestfulResource
 
     def self.delete(id, **params)
       params_without_options, options = format_params(params)
-      response = http.delete(member_url(id, params_without_options), **options)
+      response = http.delete(member_url(id, **params_without_options), **options)
       new(parse_json(response.body))
     end
 
@@ -65,7 +65,7 @@ module RestfulResource
       params_without_options, options = format_params(params)
       options.delete(:headers)
 
-      url = member_url(id, params_without_options)
+      url = member_url(id, **params_without_options)
 
       response = http.patch(url, data: data, headers: headers, **options)
       new(parse_json(response.body))
@@ -75,7 +75,7 @@ module RestfulResource
       params_without_options, options = format_params(params)
       options.delete(:headers)
 
-      url = member_url(id, params_without_options)
+      url = member_url(id, **params_without_options)
 
       response = http.put(url, data: data, headers: headers, **options)
       new(parse_json(response.body))
@@ -158,7 +158,7 @@ module RestfulResource
       raise ResourceIdMissingError if id.blank?
 
       url = merge_url_paths(base_url, @resource_path, CGI.escape(id.to_s), @action_prefix)
-      replace_parameters(url, params)
+      replace_parameters(url, **params)
     end
 
     def self.new_collection(json)

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    restful_resource (2.10.0)
+    restful_resource (2.10.1)
       activesupport (~> 6.0)
       faraday (~> 1.0)
       faraday-cdn-metrics (~> 0.2)
@@ -41,7 +41,7 @@ GEM
       faraday (>= 0.8)
     faraday_middleware (1.0.0)
       faraday (~> 1.0)
-    ffi (1.13.0)
+    ffi (1.13.1)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     link_header (0.0.8)

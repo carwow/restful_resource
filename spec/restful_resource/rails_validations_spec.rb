@@ -7,7 +7,7 @@ RSpec.describe RestfulResource::RailsValidations do
     allow(Dealer).to receive(:http).and_return(@mock_http)
   end
 
-  context '#patch without errors' do
+  describe '#patch without errors' do
     before do
       data = { name: 'Barak' }
       expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
@@ -25,7 +25,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#patch with errors' do
+  describe '#patch with errors' do
     before do
       data = { name: 'Leonardo' }
       @error = 'Cannot use Ninja Turtles names'
@@ -72,7 +72,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#put without errors' do
+  describe '#put without errors' do
     before do
       data = { name: 'Barak' }
       expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
@@ -90,7 +90,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#put with errors' do
+  describe '#put with errors' do
     before do
       data = { name: 'Leonardo' }
       @error = 'Cannot use Ninja Turtles names'
@@ -137,7 +137,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#post without errors' do
+  describe '#post without errors' do
     before do
       data = { name: 'Barak' }
       expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
@@ -155,7 +155,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#post with errors' do
+  describe '#post with errors' do
     before do
       data = { name: 'Leonardo' }
       @error = 'Cannot use Ninja Turtles names'
@@ -192,7 +192,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#get without errors' do
+  describe '#get without errors' do
     before do
       expected_response = RestfulResource::Response.new(body: { name: 'Barak' }.to_json)
       expect_get('http://api.carwow.co.uk/dealers', expected_response)
@@ -209,7 +209,7 @@ RSpec.describe RestfulResource::RailsValidations do
     end
   end
 
-  context '#get with errors' do
+  describe '#get with errors' do
     before do
       @error = 'Missing parameter'
       expected_response = RestfulResource::Response.new(body: { errors: [@error] }.to_json)

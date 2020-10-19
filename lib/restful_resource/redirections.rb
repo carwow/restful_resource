@@ -9,9 +9,13 @@ module RestfulResource
     def self.included(base)
       base.instance_eval do
         def post(data: {}, delay: 1.0, max_attempts: 10, headers: {}, open_timeout: nil, timeout: nil, **params)
-          url = collection_url(params)
+          url = collection_url(**params)
 
-          response = accept_redirected_result(response: http.post(url, data: data, headers: headers, open_timeout: nil, timeout: nil), delay: delay, max_attempts: max_attempts)
+          response = accept_redirected_result(
+            response: http.post(url, data: data, headers: headers, open_timeout: nil, timeout: nil),
+            delay: delay,
+            max_attempts: max_attempts
+          )
 
           new(parse_json(response.body))
         end

@@ -375,7 +375,7 @@ RSpec.describe RestfulResource::Base do
 
   describe '.member_url' do
     it 'requires a member ID' do
-      expect { described_class.member_url('', {}) }.to raise_error(RestfulResource::ResourceIdMissingError)
+      expect { described_class.member_url('') }.to raise_error(RestfulResource::ResourceIdMissingError)
     end
   end
 
@@ -406,17 +406,17 @@ RSpec.describe RestfulResource::Base do
                                                                )
 
       client.configure(base_url: 'http://foo.bar',
-                                username: username,
-                                password: password,
-                                auth_token: auth_token,
-                                logger: logger,
-                                cache_store: cache_store,
-                                instrumentation: instrumentation,
-                                timeout: timeout,
-                                open_timeout: open_timeout,
-                                faraday_config: faraday_config,
-                                faraday_options: faraday_options
-                               )
+                       username: username,
+                       password: password,
+                       auth_token: auth_token,
+                       logger: logger,
+                       cache_store: cache_store,
+                       instrumentation: instrumentation,
+                       timeout: timeout,
+                       open_timeout: open_timeout,
+                       faraday_config: faraday_config,
+                       faraday_options: faraday_options
+                      )
     end
   end
 

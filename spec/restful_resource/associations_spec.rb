@@ -11,7 +11,6 @@ describe RestfulResource::Associations do
             { first_name: 'David', second_name: 'Doe' },
             { first_name: 'Mary', second_name: 'Doe' }
           ]
-
       )
     end
 
@@ -39,7 +38,6 @@ describe RestfulResource::Associations do
       @child = ComplicatedModule::Child.new(
         first_name: 'David', second_name: 'Smith',
         parent: { name: 'John Smith' }
-
       )
     end
 

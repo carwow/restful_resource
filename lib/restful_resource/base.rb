@@ -34,35 +34,35 @@ module RestfulResource
     end
 
     def self.find(id, **params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
 
       response = http.get(member_url(id, **params_without_options), **options)
       new(parse_json(response.body))
     end
 
     def self.where(**params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
 
-      url = collection_url(params_without_options)
+      url = collection_url(**params_without_options)
       response = http.get(url, **options)
       paginate_response(response)
     end
 
     def self.get(**params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
 
-      response = http.get(collection_url(params_without_options), **options)
+      response = http.get(collection_url(**params_without_options), **options)
       new(parse_json(response.body))
     end
 
     def self.delete(id, **params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
       response = http.delete(member_url(id, **params_without_options), **options)
       new(parse_json(response.body))
     end
 
     def self.patch(id, data: {}, headers: {}, **params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
       options.delete(:headers)
 
       url = member_url(id, **params_without_options)
@@ -72,7 +72,7 @@ module RestfulResource
     end
 
     def self.put(id, data: {}, headers: {}, **params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
       options.delete(:headers)
 
       url = member_url(id, **params_without_options)
@@ -82,10 +82,10 @@ module RestfulResource
     end
 
     def self.post(data: {}, headers: {}, **params)
-      params_without_options, options = format_params(params)
+      params_without_options, options = format_params(**params)
       options.delete(:headers)
 
-      url = collection_url(params_without_options)
+      url = collection_url(**params_without_options)
 
       response = http.post(url, data: data, headers: headers, **options)
 
@@ -93,7 +93,7 @@ module RestfulResource
     end
 
     def self.all(**params)
-      where(params)
+      where(**params)
     end
 
     def self.action(action_name)
@@ -135,7 +135,7 @@ module RestfulResource
 
     def self.collection_url(**params)
       url = merge_url_paths(base_url, @resource_path, @action_prefix)
-      replace_parameters(url, params)
+      replace_parameters(url, **params)
     end
 
     private

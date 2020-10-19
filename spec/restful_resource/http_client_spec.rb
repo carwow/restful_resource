@@ -17,7 +17,7 @@ RSpec.describe RestfulResource::HttpClient do
 
   describe 'Basic HTTP' do
     shared_examples 'error codes throw exception' do |verb, status, exception_class|
-      it "should raise an error #{status}" do
+      it "raises an error #{status}" do
         url = "http://httpbin.org/status/#{status}"
 
         connection = faraday_connection do |stubs|
@@ -219,10 +219,10 @@ RSpec.describe RestfulResource::HttpClient do
       conn
     end
 
-
     context 'when explicit timeout set on connection' do
       let(:timeout) { 5 }
       let(:required_headers) { { 'X-Client-Timeout' => 5 } }
+
       it 'sets X-Client-Timeout correctly' do
         response = http_client.get('http://httpbin.org/get')
 

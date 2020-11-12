@@ -119,8 +119,6 @@ module RestfulResource
       end
     end
 
-    protected
-
     def self.http
       @http || superclass.http
     end
@@ -138,8 +136,6 @@ module RestfulResource
       replace_parameters(url, **params)
     end
 
-    private
-
     def self.format_params(**params)
       headers = params.delete(:headers) || {}
 
@@ -147,7 +143,7 @@ module RestfulResource
       open_timeout = params.delete(:open_timeout)
       timeout = params.delete(:timeout)
 
-      [params, headers: headers, open_timeout: open_timeout, timeout: timeout]
+      [params, { headers: headers, open_timeout: open_timeout, timeout: timeout }]
     end
 
     def self.merge_url_paths(uri, *paths)
@@ -177,7 +173,7 @@ module RestfulResource
       missing_params = []
       params = params.with_indifferent_access
 
-      url_params = url.scan(/:([A-Za-z][^\/]*)/).flatten
+      url_params = url.scan(%r{:([A-Za-z][^/]*)}).flatten
       url_params.each do |key|
         value = params.delete(key)
         if value.nil?

@@ -58,7 +58,7 @@ RSpec.describe RestfulResource::HttpClient do
 
       it 'executes patch' do
         connection = faraday_connection do |stubs|
-          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          # NOTE: request body is serialized as url-encoded so the stub body must be in the same format to match
           stubs.patch('http://httpbin.org/patch', 'name=Alfred') { |_env| [200, {}, nil] }
         end
 
@@ -71,7 +71,7 @@ RSpec.describe RestfulResource::HttpClient do
       include_examples 'raise an exception on error responses', :put
       it 'executes put' do
         connection = faraday_connection do |stubs|
-          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          # NOTE: request body is serialized as url-encoded so the stub body must be in the same format to match
           stubs.put('http://httpbin.org/put', 'name=Alfred') { |_env| [200, {}, nil] }
         end
 
@@ -84,7 +84,7 @@ RSpec.describe RestfulResource::HttpClient do
       include_examples 'raise an exception on error responses', :post
       it 'executes post' do
         connection = faraday_connection do |stubs|
-          # Note: request body is serialized as url-encoded so the stub body must be in the same format to match
+          # NOTE: request body is serialized as url-encoded so the stub body must be in the same format to match
           stubs.post('http://httpbin.org/post', 'name=Alfred') { |_env| [200, {}, %("name": "Alfred")] }
         end
 

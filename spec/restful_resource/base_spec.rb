@@ -365,11 +365,11 @@ RSpec.describe RestfulResource::Base do
     end
 
     it 'does not return inner object table' do
-      expect(@makes.first.as_json).to eq ({ 'name' => 'Audi', 'slug' => 'Audi-Slug' })
+      expect(@makes.first.as_json).to eq({ 'name' => 'Audi', 'slug' => 'Audi-Slug' })
     end
 
     it 'returns inner object table on selected fields' do
-      expect(@makes.last.as_json(only: [:name])).to eq ({ 'name' => 'Fiat' })
+      expect(@makes.last.as_json(only: [:name])).to eq({ 'name' => 'Fiat' })
     end
   end
 

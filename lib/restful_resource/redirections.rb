@@ -20,8 +20,6 @@ module RestfulResource
           new(parse_json(response.body))
         end
 
-        private
-
         def self.accept_redirected_result(response:, delay:, max_attempts:)
           new_response = response
           if response.status == 303

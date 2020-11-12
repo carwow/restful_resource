@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    restful_resource (2.10.2)
+    restful_resource (2.10.3)
       activesupport (~> 6.0)
       faraday (~> 1.0)
       faraday-cdn-metrics (~> 0.2)

@@ -1,8 +1,17 @@
 module RestfulResource
-  class OpenObject
+  class OpenObject3 < OpenObject
     def initialize(attributes = {}, _hack_for_activeresource = false)
       @inner_object = StrictOpenStruct.new(attributes)
     end
+  end
+
+  class OpenObject
+    def initialize(attributes = {}, _hack_for_activeresource = false)
+      @inner_object = WhinyOpenStruct.new(attributes)
+    end
+
+    # All clients should migrate to using OpenObject3
+    deprecate :initialize
 
     def method_missing(method, *args, &block)
       if @inner_object.respond_to?(method)

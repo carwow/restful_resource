@@ -1,5 +1,5 @@
 module RestfulResource
   class StrictOpenStruct < ::OpenStruct
-    deprecate :dig, :[]
+    deprecate :dig, :[], deprecator: Deprecator.build
   end
 end

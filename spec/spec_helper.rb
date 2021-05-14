@@ -7,6 +7,7 @@ require_relative 'fixtures'
 RSpec.configure do |config|
   config.color = true
   config.formatter = :progress
+  config.filter_run_when_matching :focus
 end
 
 def expect_get(url, response, headers: {}, open_timeout: nil, timeout: nil)

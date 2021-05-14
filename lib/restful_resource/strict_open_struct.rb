@@ -6,6 +6,6 @@ module RestfulResource
       end)
     end
 
-    deprecate :dig, :[]
+    deprecate :dig, :[], deprecator: Deprecator.build
   end
 end

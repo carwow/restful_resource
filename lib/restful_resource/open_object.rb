@@ -1,7 +1,7 @@
 module RestfulResource
   class OpenObject
     def initialize(attributes = {}, _hack_for_activeresource = false)
-      @inner_object = StrictOpenStruct.new(attributes)
+      @inner_object = StrictOpenStruct.recursively_build(attributes)
     end
 
     def method_missing(method, *args, &block)

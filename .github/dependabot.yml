@@ -1,0 +1,23 @@
+version: 2
+registries:
+  rubygems-server-rubygems-pkg-github-com-carwow:
+    type: rubygems-server
+    url: https://rubygems.pkg.github.com/carwow
+    username: "${{secrets.RUBYGEMS_SERVER_RUBYGEMS_PKG_GITHUB_COM_CARWOW_USERNAME}}"
+    password: "${{secrets.RUBYGEMS_SERVER_RUBYGEMS_PKG_GITHUB_COM_CARWOW_PASSWORD}}"
+
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "09:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: activesupport
+    versions:
+    - 6.1.2
+    - 6.1.2.1
+    - 6.1.3
+  registries:
+  - rubygems-server-rubygems-pkg-github-com-carwow

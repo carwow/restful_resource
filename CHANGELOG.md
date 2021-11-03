@@ -1,5 +1,10 @@
 # Changelog
 
+2.13.0
+---
+
+- Require ruby >= 2.7
+
 2.10.0
 ---
 

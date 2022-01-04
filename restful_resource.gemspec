@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec_junit_formatter'
 
   spec.add_dependency 'activesupport', '~> 6.0'
-  spec.add_dependency 'faraday', '~> 1.0'
+  spec.add_dependency 'faraday', '>= 1', '< 3'
   spec.add_dependency 'faraday-cdn-metrics', '~> 0.2'
   spec.add_dependency 'faraday-encoding'
   spec.add_dependency 'faraday-http-cache', '~> 2.2'

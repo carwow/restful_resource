@@ -6,17 +6,11 @@ jobs:
       ruby:
         type: string
     docker:
-      - image: cimg/ruby:<< parameters.ruby >>
+      - image: 'cimg/ruby:<< parameters.ruby >>'
     steps:
       - checkout
       - run: bundle install
-      - run:
-          name: rspec
-          command: |
-            bundle exec rspec --format progress \
-                              --format RspecJunitFormatter --out test-results/rspec.xml
-      - store_test_results:
-          path: test-results
+      - run: bundle exec rspec
 
 workflows:
   version: 2
@@ -25,4 +19,4 @@ workflows:
       - test:
           matrix:
             parameters:
-              ruby: ['2.7', '3.0']
+              ruby: ['2.7', '3.1']

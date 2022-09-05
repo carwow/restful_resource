@@ -1,5 +1,10 @@
 # Changelog
 
+2.13.1
+---
+
+- Update activesupport requirement from ~> 6.0 to >= 6, < 8 (#152)
+
 2.13.0
 ---
 

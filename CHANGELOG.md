@@ -1,5 +1,10 @@
 # Changelog
 
+2.13.2
+---
+
+- Added double splat operator to resolve failures when fetching data from other projects
+
 2.13.1
 ---
 

@@ -110,7 +110,7 @@ module RestfulResource
       Enumerator.new do |y|
         next_page = 1
         begin
-          resources = where(conditions.merge(page: next_page))
+          resources = where(**conditions.merge(page: next_page))
           resources.each do |resource|
             y << resource
           end

@@ -1,4 +1,8 @@
 # Changelog
+2.13.3
+---
+
+- Added double splat operator to resolve failures when fetching data from finance app
 
 2.13.2
 ---

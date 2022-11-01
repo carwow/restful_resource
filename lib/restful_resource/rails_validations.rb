@@ -13,11 +13,11 @@ module RestfulResource
         with_validations(data: data) { super }
       end
 
-      def get(*)
+      def get(**)
         with_validations { super }
       end
 
-      def delete(*)
+      def delete(id, **)
         with_validations { super }
       end
 

@@ -51,7 +51,7 @@ module RestfulResource
     def self.get(**params)
       params_without_options, options = format_params(**params)
 
-      response = http.get(collection_url(**params_without_options), **options)
+      response = http.get(collection_url(params_without_options), **options)
       new(parse_json(response.body))
     end
 
@@ -85,7 +85,7 @@ module RestfulResource
       params_without_options, options = format_params(**params)
       options.delete(:headers)
 
-      url = collection_url(**params_without_options)
+      url = collection_url(params_without_options)
 
       response = http.post(url, data: data, headers: headers, **options)
 

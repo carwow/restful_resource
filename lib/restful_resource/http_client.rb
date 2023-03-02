@@ -11,8 +11,12 @@ module RestfulResource
         @response = assign_response(response)
       end
 
-      def assign_response(response = nil)
-        @response = if response
+      private
+
+      def assign_response(response)
+        @response = if response.is_a?(Response)
+                      response
+                    elsif response
                       Response.new(body: response[:body], headers: response[:headers], status: response[:status])
                     else
                       Response.new

@@ -1,4 +1,9 @@
 # Changelog
+2.13.4
+---
+
+- Support passing a an instance of `RestfulResource::Response` to the constructor for a `RestfulResource::HttpClient::HttpError`
+
 2.13.3
 ---
 

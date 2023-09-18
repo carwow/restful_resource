@@ -1,4 +1,9 @@
 # Changelog
+2.14
+---
+
+- Added support for default headers when configuring a `RestfulResource::Base`
+
 2.13.4
 ---
 

@@ -92,7 +92,9 @@ module RestfulResource
       timeout: nil,
       open_timeout: nil,
       faraday_config: nil,
-      faraday_options: {})
+      faraday_options: {},
+      default_headers: {}
+    )
       api_name = instrumentation[:api_name]            ||= 'api'
       instrumentation[:request_instrument_name]        ||= "http.#{api_name}"
       instrumentation[:cache_instrument_name]          ||= "http_cache.#{api_name}"
@@ -122,6 +124,8 @@ module RestfulResource
                                                         faraday_config: faraday_config,
                                                         faraday_options: faraday_options
                                                        )
+
+      @connection.headers.merge!(default_headers)
 
       if auth_token
         @connection.headers[:authorization] = "Bearer #{auth_token}"

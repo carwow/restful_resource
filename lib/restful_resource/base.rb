@@ -12,7 +12,9 @@ module RestfulResource
       timeout: nil,
       open_timeout: nil,
       faraday_config: nil,
-      faraday_options: {})
+      faraday_options: {},
+      default_headers: {}
+    )
 
       @base_url = URI.parse(base_url)
 
@@ -25,7 +27,8 @@ module RestfulResource
                                               open_timeout: open_timeout,
                                               instrumentation: instrumentation,
                                               faraday_config: faraday_config,
-                                              faraday_options: faraday_options
+                                              faraday_options: faraday_options,
+                                              default_headers: default_headers
                                              )
     end
 

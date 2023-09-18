@@ -390,33 +390,38 @@ RSpec.describe RestfulResource::Base do
     let(:open_timeout) { double }
     let(:faraday_config) { double }
     let(:faraday_options) { double }
+    let(:default_headers) { double }
 
     it 'passes arguments to HttpClient' do
       client = Class.new(described_class)
-      expect(RestfulResource::HttpClient).to receive(:new).with(username: username,
-                                                                password: password,
-                                                                auth_token: auth_token,
-                                                                logger: logger,
-                                                                cache_store: cache_store,
-                                                                instrumentation: instrumentation,
-                                                                timeout: timeout,
-                                                                open_timeout: open_timeout,
-                                                                faraday_config: faraday_config,
-                                                                faraday_options: faraday_options
-                                                               )
+      expect(RestfulResource::HttpClient).to receive(:new).with(
+        username: username,
+        password: password,
+        auth_token: auth_token,
+        logger: logger,
+        cache_store: cache_store,
+        instrumentation: instrumentation,
+        timeout: timeout,
+        open_timeout: open_timeout,
+        faraday_config: faraday_config,
+        faraday_options: faraday_options,
+        default_headers: default_headers
+      )
 
-      client.configure(base_url: 'http://foo.bar',
-                       username: username,
-                       password: password,
-                       auth_token: auth_token,
-                       logger: logger,
-                       cache_store: cache_store,
-                       instrumentation: instrumentation,
-                       timeout: timeout,
-                       open_timeout: open_timeout,
-                       faraday_config: faraday_config,
-                       faraday_options: faraday_options
-                      )
+      client.configure(
+        base_url: 'http://foo.bar',
+        username: username,
+        password: password,
+        auth_token: auth_token,
+        logger: logger,
+        cache_store: cache_store,
+        instrumentation: instrumentation,
+        timeout: timeout,
+        open_timeout: open_timeout,
+        faraday_config: faraday_config,
+        faraday_options: faraday_options,
+        default_headers: default_headers
+      )
     end
   end
 

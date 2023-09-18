@@ -271,4 +271,16 @@ RSpec.describe RestfulResource::HttpClient do
       expect(response.status).to eq 200
     end
   end
+
+  describe 'default headers' do
+    it 'uses default headers' do
+      connection = faraday_connection do |stubs|
+        stubs.get('http://httpbin.org/get', 'Foo' => 'bar') { |_env| [200, {}, nil] }
+      end
+
+      response = described_class.new(connection: connection, default_headers: { foo: 'bar' }).get('http://httpbin.org/get')
+
+      expect(response.status).to eq 200
+    end
+  end
 end

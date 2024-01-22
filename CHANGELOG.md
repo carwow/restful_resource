@@ -1,4 +1,9 @@
 # Changelog
+2.15
+---
+
+- Bump `faraday` to a minimum of `1.10` to resolve dependency issues
+
 2.14
 ---
 

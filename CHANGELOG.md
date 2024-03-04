@@ -1,4 +1,9 @@
 # Changelog
+2.16
+---
+
+- Remove `RestfulResource::Deprecator` class in favor of default `ActiveSupport::Deprecation`
+
 2.15
 ---
 

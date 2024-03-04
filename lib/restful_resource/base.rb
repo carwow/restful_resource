@@ -2,9 +2,7 @@ module RestfulResource
   class Base < OpenObject
     extend RestfulResource::Associations
 
-    def self.deprecator
-      @deprecator ||= ActiveSupport::Deprecation.new('soon', 'restful_resource')
-    end
+    Deprecator = ActiveSupport::Deprecation.new('soon', 'restful_resource')
 
     def self.configure(base_url: nil,
       username: nil,

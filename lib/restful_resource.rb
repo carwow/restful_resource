@@ -24,3 +24,4 @@ require_relative 'restful_resource/redirections'
 require_relative 'restful_resource/instrumentation'
 require_relative 'restful_resource/base'
 require_relative 'restful_resource/strict_open_struct'
+require_relative 'restful_resource/railtie' if defined?(Rails::Railtie)

@@ -2,7 +2,7 @@
 2.16
 ---
 
-- Remove `RestfulResource::Deprecator` class in favor of default `ActiveSupport::Deprecation`
+- Remove deprecation for :dig and :[]
 
 2.15
 ---

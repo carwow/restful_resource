@@ -1,4 +1,9 @@
 # Changelog
+2.16
+---
+
+- Remove deprecation for :dig and :[]
+
 2.15
 ---
 

@@ -102,6 +102,14 @@ Metrics.sample('rails_site.api.cache_bypass', 1) # When a request did not go thr
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+## Releasing new version
+
+1. Amend the `version.rb` to your desired version on your Pull Request & get it merged
+2. Pull latest `main` & create a matching tag e.g.: `git tag -a v2.15.0 -m "Bump Faraday to a minimum 1.10"`
+3. Push the tag e.g.: ` git push origin v2.15.0`
+4. Run `bundle exec rake release`
+    - You'll need to authenticate with RubyGems, the credentials are in [Bitwarden](https://vault.bitwarden.com/#/vault?search=ruby&itemId=54601528-29be-494f-ba3c-aa3300d5dd18)
+
 ## Planned Features
 
 ### Core

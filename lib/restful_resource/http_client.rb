@@ -237,7 +237,7 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.adapter :net_http
+        b.adapter Faraday.default_adapter
       end
     end
 

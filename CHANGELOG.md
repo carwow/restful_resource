@@ -1,4 +1,9 @@
 # Changelog
+2.18
+---
+
+- Configure Faraday's default adapter as `net_http`
+
 2.17
 ---
 

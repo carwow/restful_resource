@@ -18,8 +18,8 @@ describe RestfulResource::HttpClient do
     let(:middleware) { connection.builder.handlers }
 
     describe 'Builder configuration' do
-      it 'uses the typhoeus adapter' do
-        expect(connection.adapter).to eq Faraday::Adapter::Typhoeus
+      it 'uses the net http adapter' do
+        expect(connection.adapter).to eq Faraday::Adapter::NetHttp
       end
 
       it 'url_encodes requests' do

@@ -1,6 +1,3 @@
-# Use the Faraday-Typhoeus adapter provided by Typhoeus, not Faraday
-require 'typhoeus/adapters/faraday'
-
 module RestfulResource
   class HttpClient
     class HttpError < StandardError
@@ -240,7 +237,7 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.adapter :typhoeus
+        b.adapter :net_http
       end
     end
 

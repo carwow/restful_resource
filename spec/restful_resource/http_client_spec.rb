@@ -221,7 +221,7 @@ RSpec.describe RestfulResource::HttpClient do
 
     context 'when explicit timeout set on connection' do
       let(:timeout) { 5 }
-      let(:required_headers) { { 'X-Client-Timeout' => 5 } }
+      let(:required_headers) { { 'X-Client-Timeout' => '5' } }
 
       it 'sets X-Client-Timeout correctly' do
         response = http_client.get('http://httpbin.org/get')
@@ -243,7 +243,7 @@ RSpec.describe RestfulResource::HttpClient do
 
     context 'when set on request' do
       let(:timeout) { nil }
-      let(:required_headers) { { 'X-Client-Timeout' => 1 } }
+      let(:required_headers) { { 'X-Client-Timeout' => '1' } }
 
       it 'sets X-Client-Timeout correctly' do
         response = http_client.get('http://httpbin.org/get', timeout: 1)
@@ -255,7 +255,7 @@ RSpec.describe RestfulResource::HttpClient do
 
   describe 'X-Client-Start' do
     let(:now) { Time.current }
-    let(:required_headers) { { 'X-Client-Start' => (now.to_f * 1000.0).to_i } }
+    let(:required_headers) { { 'X-Client-Start' => (now.to_f * 1000.0).to_i.to_s } }
     let(:http_client) { described_class.new(connection: connection) }
     let(:connection) do
       conn = faraday_connection do |stubs|

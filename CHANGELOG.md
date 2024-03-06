@@ -1,4 +1,10 @@
 # Changelog
+2.18
+---
+
+- Configure Faraday's default adapter as `net_http`
+- Fix `X-Client-Start` & `X-Client-Timeout` headers to be strings not integers
+
 2.17
 ---
 

@@ -1,6 +1,3 @@
-# Use the Faraday-Typhoeus adapter provided by Typhoeus, not Faraday
-require 'typhoeus/adapters/faraday'
-
 module RestfulResource
   class HttpClient
     class HttpError < StandardError
@@ -240,7 +237,7 @@ module RestfulResource
         b.response :encoding
         b.use :gzip
 
-        b.adapter :typhoeus
+        b.adapter Faraday.default_adapter
       end
     end
 
@@ -261,7 +258,7 @@ module RestfulResource
         req.url request.url
 
         req.headers = req.headers.merge(request.headers).merge(x_client_start: time_current_ms)
-        req.headers = req.headers.merge(x_client_timeout: req.options[:timeout]) if req.options[:timeout]
+        req.headers = req.headers.merge(x_client_timeout: req.options[:timeout]&.to_s) if req.options[:timeout]
       end
 
       Response.new(body: response.body, headers: response.headers, status: response.status)
@@ -295,7 +292,7 @@ module RestfulResource
     end
 
     def time_current_ms
-      (Time.current.to_f * 1_000.0).to_i
+      (Time.current.to_f * 1_000.0).to_i.to_s
     end
   end
 end

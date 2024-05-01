@@ -1,4 +1,9 @@
 # Changelog
+2.18.1
+---
+
+- Explicitly require 'ostruct' to prevent load error
+
 2.18
 ---
 

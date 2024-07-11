@@ -235,7 +235,7 @@ module RestfulResource
         faraday_config&.call(b)
 
         b.response :encoding
-        b.use :gzip
+        b.request :gzip
 
         b.adapter Faraday.default_adapter
       end

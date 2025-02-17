@@ -1,4 +1,10 @@
 # Changelog
+2.18.2
+---
+
+- Unpin rack version to allow for newer versions
+- Change `faraday` version to `>= 1.10`
+
 2.18.1
 ---
 

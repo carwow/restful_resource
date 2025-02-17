@@ -1,4 +1,9 @@
 # Changelog
+2.18.2
+---
+
+- Update rack to `~ 3.0` to resolve security vulnerabilities
+
 2.18.1
 ---
 

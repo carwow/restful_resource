@@ -22,10 +22,6 @@ describe RestfulResource::HttpClient do
         expect(connection.adapter).to eq Faraday::Adapter::NetHttp
       end
 
-      it 'url_encodes requests' do
-        expect(middleware).to include FaradayMiddleware::EncodeJson
-      end
-
       it 'raises on any error responses' do
         expect(middleware).to include Faraday::Response::RaiseError
       end

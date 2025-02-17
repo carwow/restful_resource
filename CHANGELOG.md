@@ -2,8 +2,7 @@
 2.18.2
 ---
 
-- Unpin rack version to allow for newer versions
-- Change `faraday` version to `>= 1.10`
+- Update rack to `~ 3.0` to resolve security vulnerabilities
 
 2.18.1
 ---

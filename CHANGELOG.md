@@ -1,4 +1,9 @@
 # Changelog
+2.19.0
+---
+- Remove resolv-replace dependency
+
+
 2.18.2
 ---
 

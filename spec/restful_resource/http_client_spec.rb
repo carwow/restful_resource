@@ -152,7 +152,7 @@ RSpec.describe RestfulResource::HttpClient do
     end
 
     describe 'Token auth' do
-      def http_client(connection)
+      def http_client_with_auth(connection)
         described_class.new(connection: connection, auth_token: 'abc123')
       end
 
@@ -161,7 +161,17 @@ RSpec.describe RestfulResource::HttpClient do
           stubs.get('http://httpbin.org/bearer', 'Authorization' => 'Bearer abc123') { |_env| [200, {}, nil] }
         end
 
-        response = http_client(connection).get('http://httpbin.org/bearer', headers: { 'Authorization' => 'Bearer abc123' })
+        response = http_client_with_auth(connection).get('http://httpbin.org/bearer')
+
+        expect(response.status).to eq 200
+      end
+
+      it 'overrides authentication headers when a custom authentication header is passed in' do
+        connection = faraday_connection do |stubs|
+          stubs.get('http://httpbin.org/bearer', 'Authorization' => 'Bearer my-custom-header') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client_with_auth(connection).get('http://httpbin.org/bearer', headers: { 'Authorization' => 'Bearer my-custom-header' })
 
         expect(response.status).to eq 200
       end

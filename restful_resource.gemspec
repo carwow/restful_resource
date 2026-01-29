@@ -26,12 +26,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'rspec_junit_formatter'
 
-  spec.add_dependency 'activesupport', '>= 6', '< 8'
+  spec.add_dependency 'activesupport', '>= 7', '< 9'
   spec.add_dependency 'faraday', '~> 1.10'
   spec.add_dependency 'faraday-cdn-metrics', '~> 0.2'
   spec.add_dependency 'faraday-encoding'
   spec.add_dependency 'faraday-http-cache', '~> 2.2'
   spec.add_dependency 'faraday_middleware', '~> 1.0'
   spec.add_dependency 'link_header'
+  spec.add_dependency 'ostruct'
   spec.add_dependency 'rack', '~> 3'
 end

@@ -1,4 +1,9 @@
 # Changelog
+2.19.1
+---
+- Update activesupport requirement to `>= 7, < 9`
+- Add explicit `ostruct` dependency
+
 2.19.0
 ---
 - Remove resolv-replace dependency

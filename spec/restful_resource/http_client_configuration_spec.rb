@@ -31,13 +31,13 @@ describe RestfulResource::HttpClient do
       end
 
       it 'compresses requests' do
-        expect(middleware).to include FaradayMiddleware::Gzip
+        expect(middleware).to include Faraday::Gzip::Middleware
       end
 
       describe 'instrumentation' do
         context 'with the default key' do
           it 'uses default instrumenter and key' do
-            expect(find_middleware_args(connection, 'FaradayMiddleware::Instrumentation')).to include(name: 'http.api')
+            expect(find_middleware_args(connection, 'RestfulResource::InstrumentationMiddleware')).to include(name: 'http.api')
           end
         end
 
@@ -45,7 +45,7 @@ describe RestfulResource::HttpClient do
           let(:connection) { described_class.new(instrumentation: { api_name: 'my_api_name' }).instance_variable_get('@connection') }
 
           it 'uses default instrumenter with the api_name' do
-            expect(find_middleware_args(connection, 'FaradayMiddleware::Instrumentation')).to include(name: 'http.my_api_name')
+            expect(find_middleware_args(connection, 'RestfulResource::InstrumentationMiddleware')).to include(name: 'http.my_api_name')
           end
         end
 
@@ -53,7 +53,7 @@ describe RestfulResource::HttpClient do
           let(:connection) { described_class.new(instrumentation: { request_instrument_name: 'foo.bar' }).instance_variable_get('@connection') }
 
           it 'uses default instrumenter with the custom key' do
-            expect(find_middleware_args(connection, 'FaradayMiddleware::Instrumentation')).to include(name: 'foo.bar')
+            expect(find_middleware_args(connection, 'RestfulResource::InstrumentationMiddleware')).to include(name: 'foo.bar')
           end
         end
 

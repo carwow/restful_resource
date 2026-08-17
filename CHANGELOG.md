@@ -1,4 +1,8 @@
 # Changelog
+2.19.2
+---
+- Drop `faraday_middleware` dependency (deprecated upstream, no Faraday 2 support). `:gzip` now uses the `faraday-gzip` gem; `:instrumentation` is a small custom middleware reproducing the previous behaviour. `faraday` stays `~> 1.10` for now.
+
 2.19.1
 ---
 - Update activesupport requirement to `>= 7, < 9`

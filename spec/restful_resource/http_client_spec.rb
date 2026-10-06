@@ -149,6 +149,16 @@ RSpec.describe RestfulResource::HttpClient do
 
         expect(response.status).to eq 200
       end
+
+      it 'sends the basic auth header built from the username and password' do
+        connection = faraday_connection do |stubs|
+          stubs.get('http://httpbin.org/basic-auth/user/passwd', 'Authorization' => 'Basic dXNlcjpwYXNzd2Q=') { |_env| [200, {}, nil] }
+        end
+
+        response = http_client(connection).get('http://httpbin.org/basic-auth/user/passwd')
+
+        expect(response.status).to eq 200
+      end
     end
 
     describe 'Token auth' do

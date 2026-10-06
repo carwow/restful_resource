@@ -127,7 +127,7 @@ module RestfulResource
       if auth_token
         @connection.headers[:authorization] = "Bearer #{auth_token}"
       elsif username && password
-        @connection.basic_auth(username, password)
+        @connection.headers[:authorization] = basic_auth_header(username, password)
       end
 
       @connection.headers[:user_agent] = build_user_agent(instrumentation[:app_name])
@@ -239,6 +239,12 @@ module RestfulResource
 
         b.adapter Faraday.default_adapter
       end
+    end
+
+    # Faraday 2 removed Connection#basic_auth, so build the header ourselves
+    # (same value Faraday 1 produced) to work on both major versions.
+    def basic_auth_header(username, password)
+      "Basic #{["#{username}:#{password}"].pack('m0')}"
     end
 
     def build_user_agent(app_name)

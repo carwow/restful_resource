@@ -1,3 +1,3 @@
 module RestfulResource
-  VERSION = '2.19.2'.freeze
+  VERSION = '2.20.0'.freeze
 end

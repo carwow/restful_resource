@@ -5,11 +5,16 @@ jobs:
     parameters:
       ruby:
         type: string
+      faraday:
+        type: string
     docker:
       - image: 'cimg/ruby:<< parameters.ruby >>'
+    environment:
+      FARADAY_VERSION: '<< parameters.faraday >>'
     steps:
       - checkout
       - run: bundle install
+      - run: bundle list | grep faraday
       - run: bundle exec rspec
 
 workflows:
@@ -20,3 +25,4 @@ workflows:
           matrix:
             parameters:
               ruby: ['2.7', '3.1']
+              faraday: ['1.10', '2.0']

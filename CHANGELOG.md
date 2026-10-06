@@ -1,4 +1,11 @@
 # Changelog
+2.20.0
+---
+- Support Faraday 2 while keeping Faraday 1.10 support: `faraday` is now `>= 1.10, < 3`, so apps can upgrade this gem first and Faraday separately.
+- Relax plugin requirements to versions that work with both Faraday majors: `faraday-cdn-metrics >= 0.3, < 1`, `faraday-encoding >= 0.0.6`, `faraday-gzip >= 2, < 4`, `faraday-http-cache >= 2.2, < 4`.
+- Set the basic auth `Authorization` header directly instead of calling `Connection#basic_auth`, which Faraday 2 removed. The header value is unchanged.
+- CI runs the suite against both Faraday 1.10 and Faraday 2.
+
 2.19.2
 ---
 - Drop `faraday_middleware` dependency (deprecated upstream, no Faraday 2 support). `:gzip` now uses the `faraday-gzip` gem; `:instrumentation` is a small custom middleware reproducing the previous behaviour. `faraday` stays `~> 1.10` for now.

@@ -7,8 +7,10 @@ describe RestfulResource::HttpClient do
     raise "Could not find Faraday middleware: #{name}"
   end
 
+  # Faraday 1 keeps keyword options in @args, Faraday 2 keeps them in @kwargs
   def find_middleware_args(adapter, name)
-    find_middleware(adapter, name).instance_variable_get('@args').first
+    handler = find_middleware(adapter, name)
+    handler.instance_variable_get(:@kwargs).presence || handler.instance_variable_get(:@args).first
   rescue StandardError
     raise "Could not find args for Faraday middleware: #{name}"
   end
